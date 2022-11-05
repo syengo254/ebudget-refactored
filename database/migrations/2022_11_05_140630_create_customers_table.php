@@ -18,7 +18,7 @@ return new class extends Migration
             $table->mediumText('fullname');
             $table->char('email', 100)->unique();
             $table->boolean('is_active')->default(false);
-            $table->foreignId('address_id')->nullable()->constrained('addresses')->onDelete('set null');
+            $table->unsignedBigInteger('active_address_id')->nullable();
             $table->timestamps();
         });
     }

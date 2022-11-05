@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->char('phone', 20);
+            $table->foreignId('store_id')->nullable()->constrained('stores', 'id')->onDelete('cascade');
+            $table->foreignId('customer_id')->nullable()->constrained('customers', 'id')->onDelete('cascade');
             $table->text('postal_code')->nullable();
             $table->text('street')->nullable();
             $table->text('city')->nullable();

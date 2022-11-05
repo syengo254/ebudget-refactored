@@ -10,4 +10,14 @@ class OrderDeliveryAddress extends Model
     use HasFactory;
 
     protected $fillable = ['address_id', 'order_id'];
+
+    public function customerOrder()
+    {
+        return $this->belongsTo(CustomerOrder::class, 'order_id');
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'address_id');
+    }
 }

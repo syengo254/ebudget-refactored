@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('product_categories', 'id');
             $table->bigInteger('price')->default(0);
             $table->boolean('published')->default(false);
+            $table->foreignId('store_id')->constrained('stores', 'id');
             $table->timestamps();
         });
     }

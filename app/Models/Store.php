@@ -11,6 +11,24 @@ class Store extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'password', 'logo', 'email', 'address_id'];
+    protected $fillable = ['name', 'password', 'logo', 'email', 'active_address_id'];
     protected $hidden = ['password'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'store_id', 'id');
+    }
+
+    public function getActiveAddress()
+    {
+        if ($this->active_address_id) {
+            return Address::find($this->active_address_id);
+        }
+        return null;
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 }

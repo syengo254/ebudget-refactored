@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products', 'id');
             $table->char('sku', 255);
             $table->integer('in_stock');
-            $table->foreignId('store_id')->constrained('stores', 'id');
             $table->timestamps();
         });
     }
