@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Attribute;
+use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,6 +15,13 @@ class Store extends Authenticatable
 
     protected $fillable = ['name', 'password', 'logo', 'email', 'active_address_id'];
     protected $hidden = ['password'];
+
+    protected function logo(): CastsAttribute
+    {
+        return CastsAttribute::make(
+            get: fn ($value) => asset('storage/' . $value),
+        );
+    }
 
     public function products()
     {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Customers\CustomerController;
+use App\Http\Controllers\Stores\StoreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/csrf', [CustomerController::class, 'csrf'])->middleware('web')->name('api.csrf');
+Route::get('/csrf', function (Request $request) {
+    return [
+        "token" => csrf_token(),
+    ];
+})->middleware('web')->name('api.csrf');
 
 Route::prefix('customers')->group(function () {
 
@@ -32,6 +37,26 @@ Route::prefix('customers')->group(function () {
                 Route::get('/logout', 'logout');
 
                 Route::get('/{customer}', 'show');
+            });
+        });
+    });
+});
+
+Route::prefix('stores')->group(function () {
+
+    Route::controller(StoreController::class)->group(function () {
+
+        Route::middleware(['web'])->group(function () {
+
+            Route::post('/register', 'register');
+
+            Route::post('/login', 'login');
+
+            Route::middleware(['auth:store'])->group(function () {
+
+                Route::get('/logout', 'logout');
+
+                Route::get('/{store}', 'show');
             });
         });
     });

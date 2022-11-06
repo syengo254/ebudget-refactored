@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Customers;
+namespace App\Http\Controllers\Stores;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginFormRequest;
-use App\Http\Requests\Customers\CustomerFormRequest;
-use App\Models\Customer;
+use App\Http\Requests\Stores\StoreRegisterFormRequest;
+use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class CustomerController extends Controller
+class StoreController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,13 +29,7 @@ class CustomerController extends Controller
     public function login(LoginFormRequest $request)
     {
         $validated = $request->validated();
-        $exists = false;
-        $closure = function ($customer) use (&$exists) {
-            $exists = true;
-            return $customer->is_active;
-        };
-        $authenticated = Auth::guard('web')->attemptWhen($validated, $closure);
-        if ($authenticated) {
+        if (Auth::guard('store')->attempt($validated)) {
             $request->session()->regenerate();
             return [
                 "success" => true,
@@ -43,7 +37,7 @@ class CustomerController extends Controller
         } else {
             return [
                 "success" => false,
-                "message" => $exists ? 'Your account is not activated' : 'Login attempt failed.'
+                "message" => 'Login attempt failed.'
             ];
         }
     }
@@ -55,7 +49,7 @@ class CustomerController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::guard('store')->logout();
 
         $request->session()->invalidate();
 
@@ -73,48 +67,53 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(CustomerFormRequest $request)
+    public function register(StoreRegisterFormRequest $request)
     {
         $validated = $request->validated();
         $validated["password"] = bcrypt($validated["password"]);
-        $customer = Customer::create($validated + ["is_active" => true]);
-        // todo: activating user account
-        if ($customer) {
+
+        // upload logo first
+        $path = $request->file('logo')->store('logos', 'public');
+        $validated["logo"] = $path;
+
+        $store = Store::create($validated);
+        // todo: activating store account
+        if ($store) {
             return [
                 "success" => true,
-                "customer" => $customer,
+                "store" => $store,
             ];
         }
         return [
             "success" => false,
-            "message" => "Failed to create your user account. Try again later."
+            "message" => "Failed to create your store account. Try again later."
         ];
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  Request  $request
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, Customer $customer)
+    public function show(Request $request, Store $store)
     {
-        if ($request->user()->id !== $customer->id) {
+        if ($request->user()->id !== $store->id) {
             return [
                 "message" => "Unauthorized access",
             ];
         }
-        return $customer ?? null;
+        return $store ?? null;
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, Store $store)
     {
         //
     }
@@ -122,10 +121,10 @@ class CustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Customer  $customer
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy(Store $store)
     {
         //
     }
