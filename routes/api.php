@@ -31,7 +31,7 @@ Route::prefix('customers')->group(function () {
 
                 Route::get('/logout', 'logout');
 
-                Route::get('/customer', 'show');
+                Route::get('/{customer}', 'show');
             });
         });
     });

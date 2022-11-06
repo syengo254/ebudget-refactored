@@ -109,11 +109,14 @@ class CustomerController extends Controller
      * @param  Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show(Request  $request)
+    public function show(Request $request, Customer  $customer)
     {
-        return [
-            "customer" => $request->user() ?? null,
-        ];
+        if ($request->user()->id !== $customer->id) {
+            return [
+                "message" => "Unauthorized access",
+            ];
+        }
+        return $customer ?? null;
     }
 
     /**
