@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->string('title', 10);
             $table->mediumText('fullname');
             $table->char('email', 100)->unique();
             $table->boolean('is_active')->default(false);

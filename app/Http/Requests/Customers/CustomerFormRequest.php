@@ -27,6 +27,7 @@ class CustomerFormRequest extends FormRequest
             "fullname" => 'required|string|min:8',
             "email" => 'required|email|unique:customers,email|max:100|min:8',
             "password" => 'required|confirmed|min:8|max:20',
+            "title" => 'required|max:6',
         ];
     }
 }

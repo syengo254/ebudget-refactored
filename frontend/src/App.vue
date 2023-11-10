@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// import HelloWorld from './components/HelloWorld.vue'
+import SignupPage from './pages/signup/SignupPage.vue';
 </script>
 
 <template>
-  <span>Hello Vue Vite TS</span>
+  <signup-page />
 </template>
