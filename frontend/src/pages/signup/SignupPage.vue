@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CustomerForm from './components/CustomerForm.vue';
+import VendorForm from './components/VendorForm.vue';
 </script>
 
 <template>
@@ -28,6 +29,9 @@ import CustomerForm from './components/CustomerForm.vue';
       <!-- customer sign up form -->
       <CustomerForm />
 
+      <!-- vendor sign up form -->
+      <VendorForm />
+
     </div>
 
   </main>
@@ -35,6 +39,8 @@ import CustomerForm from './components/CustomerForm.vue';
 
 <style scoped>
 header {
+  z-index: 1;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   padding: .5rem 1rem;
@@ -54,5 +60,16 @@ nav>a {
   color: white;
   text-decoration: none;
   font-size: 1rem;
+}
+
+div.forms {
+  display: flex;
+  width: fit-content;
+  margin-inline: auto;
+  gap: 1rem;
+}
+
+main {
+  margin-top: calc(60px + 1rem);
 }
 </style>

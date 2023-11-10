@@ -3,25 +3,14 @@ const error: boolean = false;
 </script>
 
 <template>
-  <div class="customer-signup">
-    <h5>Customer Signup</h5>
-    <span class="info-text text-center">Sign up here if you are a customer.</span>
+  <div class="vendor-signup">
+    <h5>Vendor Signup</h5>
+    <span class="info-text text-center">Sign up here if you are a vendor.</span>
 
     <form>
 
       <div class="form-group">
-        <label for="">Title</label>
-        <select name="fullname" class="form-select" id="fullname" required>
-          <option value="">Select title</option>
-          <option value="Mr.">Mr.</option>
-          <option value="Mrs.">Mrs.</option>
-          <option value="Ms.">Ms.</option>
-        </select>
-        <span class="muted-text error"></span>
-      </div>
-
-      <div class="form-group">
-        <label for="">Fullname</label>
+        <label for="">Vendor name</label>
         <input type="text" class="form-input" name="fullname" id="fullname" required />
         <span class="muted-text error"></span>
       </div>
@@ -61,7 +50,7 @@ const error: boolean = false;
 </template>
 
 <style scoped>
-div.customer-signup {
+div.vendor-signup {
   position: relative;
   width: 400px;
   border: 1px solid rgb(180, 180, 180);
@@ -70,7 +59,7 @@ div.customer-signup {
   border-radius: 3.5px;
 }
 
-div.customer-signup>h5 {
+div.vendor-signup>h5 {
   margin: 0.5rem 0;
   text-align: center;
   font-size: 1.4rem;
@@ -102,3 +91,4 @@ label {
   font-size: .9rem;
 }
 </style>
+

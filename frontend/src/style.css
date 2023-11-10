@@ -90,3 +90,30 @@ select.form-select {
   background: green;
   border: 1px solid rgb(200, 200, 200);
 }
+
+.info-text {
+  color: rgba(0, 0, 0, .80);
+  font-size: .9rem;
+  font-style: italic;
+  margin-bottom: .2rem;
+  display: inline-block;
+}
+
+span.info-text.text-center {
+  text-align: center;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  overflow: hidden;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+
+div.block {
+  width: 100%;
+  max-width: 100%;
+}
