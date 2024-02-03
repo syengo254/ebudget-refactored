@@ -70,6 +70,7 @@ select.form-select {
   border-radius: 3.5px;
   border: 1px solid rgb(200, 200, 200);
   transition: 0.5s;
+  font-weight: bold;
 }
 
 .btn.block {
@@ -79,6 +80,7 @@ select.form-select {
 .btn-primary {
   background: #0055ff;
   border: 1px solid rgb(200, 200, 200);
+  color: white;
 }
 
 .btn-secondary {
