@@ -16,13 +16,13 @@ const error: boolean = false;
 
             <div class="form-group">
                 <label for="user-password">Password</label>
-                <input type="password" class="form-input" name="password" id="user-password" autocomplete="new-password"
+                <input type="password" class="form-input" name="password" id="user-password" autocomplete="password"
                     placeholder="password" required />
                 <span class="muted-text error"></span>
             </div>
 
             <div class="submit-btns">
-                <button type="submit" class="btn block btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary">Login</button>
             </div>
 
             <div v-show="error" class="alert error mt-1 block">
@@ -33,4 +33,15 @@ const error: boolean = false;
 </template>
 
 <style scoped>
+div#signin {
+    position: relative;
+    max-width: 320px;
+    margin-inline: auto;
+}
+
+button[type="submit"]:hover {
+    background-color: rgba(0, 0, blue, 0.6);
+    color: white;
+    border: 1px solid blue;
+}
 </style>

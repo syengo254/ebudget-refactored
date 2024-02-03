@@ -71,6 +71,7 @@ select.form-select {
   border: 1px solid rgb(200, 200, 200);
   transition: 0.5s;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .btn.block {
@@ -94,7 +95,7 @@ select.form-select {
 }
 
 .info-text {
-  color: rgba(0, 0, 0, .80);
+  color: rgba(0, 0, 0, .90);
   font-size: .9rem;
   font-style: italic;
   margin-bottom: .2rem;
@@ -118,4 +119,8 @@ header {
 div.block {
   width: 100%;
   max-width: 100%;
+}
+
+a:visited {
+  color: #0000ee;
 }

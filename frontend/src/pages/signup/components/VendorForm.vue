@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { RouterLink } from 'vue-router';
+
 const error: boolean = false;
 </script>
 
@@ -38,7 +40,7 @@ const error: boolean = false;
       <div class="submit-btns">
         <button type="submit" class="btn block">Sign up</button>
         <p style="margin: .5rem 0;">
-          Already registered? Click here to <a href="http://">Sign in.</a>
+          Already registered? Click here to <RouterLink to="/signin">Sign in.</RouterLink>
         </p>
       </div>
 
