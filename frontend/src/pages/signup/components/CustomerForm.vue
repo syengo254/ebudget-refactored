@@ -10,8 +10,8 @@ const error: boolean = false;
     <form>
 
       <div class="form-group">
-        <label for="">Title</label>
-        <select name="fullname" class="form-select" id="fullname" required>
+        <label for="customer-title">Title</label>
+        <select name="fullname" class="form-select" id="customer-title" required>
           <option value="">Select title</option>
           <option value="Mr.">Mr.</option>
           <option value="Mrs.">Mrs.</option>
@@ -21,26 +21,28 @@ const error: boolean = false;
       </div>
 
       <div class="form-group">
-        <label for="">Fullname</label>
-        <input type="text" class="form-input" name="fullname" id="fullname" required />
+        <label for="customer-fullname">Fullname</label>
+        <input type="text" class="form-input" name="fullname" id="customer-fullname" required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" class="form-input" name="email" id="email" required />
+        <label for="customer-email">Email Address</label>
+        <input type="email" class="form-input" name="email" id="customer-email" autocomplete="email" required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
-        <label for="password1">Password</label>
-        <input type="text" class="form-input" name="password1" id="password1" required />
+        <label for="customer-password1">Password</label>
+        <input type="password" class="form-input" name="password1" id="customer-password1" autocomplete="new-password"
+          required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
-        <label for="password2">Confirm password</label>
-        <input type="text" class="form-input" name="password2" id="password2" required />
+        <label for="customer-password2">Confirm password</label>
+        <input type="password" class="form-input" name="password2" id="customer-password2" autocomplete="new-password"
+          required />
         <span class="muted-text error"></span>
       </div>
 

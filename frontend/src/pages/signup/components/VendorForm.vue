@@ -10,26 +10,28 @@ const error: boolean = false;
     <form>
 
       <div class="form-group">
-        <label for="">Vendor name</label>
-        <input type="text" class="form-input" name="fullname" id="fullname" required />
+        <label for="vendor-fullname">Vendor name</label>
+        <input type="text" class="form-input" name="fullname" id="vendor-fullname" autocomplete="name" required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" class="form-input" name="email" id="email" required />
+        <label for="vendor-email">Email Address</label>
+        <input type="email" class="form-input" name="email" id="vendor-email" autocomplete="email" required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
-        <label for="password1">Password</label>
-        <input type="text" class="form-input" name="password1" id="password1" required />
+        <label for="vendor-password1">Password</label>
+        <input type="password" class="form-input" name="password1" id="vendor-password1" autocomplete="new-password"
+          required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
-        <label for="password2">Confirm password</label>
-        <input type="text" class="form-input" name="password2" id="password2" required />
+        <label for="vendor-password2">Confirm password</label>
+        <input type="password" class="form-input" name="password2" id="pvendor-assword2" autocomplete="new-password"
+          required />
         <span class="muted-text error"></span>
       </div>
 

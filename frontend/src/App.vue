@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import SignupPage from './pages/signup/SignupPage.vue';
+import DefaultLayout from "./layouts/DefaultLayout.vue";
 </script>
 
 <template>
-  <signup-page />
+  <DefaultLayout>
+    <router-view></router-view>
+  </DefaultLayout>
 </template>
