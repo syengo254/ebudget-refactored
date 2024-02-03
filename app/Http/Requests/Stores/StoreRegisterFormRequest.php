@@ -27,7 +27,7 @@ class StoreRegisterFormRequest extends FormRequest
             "name" => 'required|string|min:8',
             "email" => 'required|email|unique:stores,email|max:100|min:8',
             "password" => 'required|confirmed|min:8|max:20',
-            "logo" => 'required|file|mimes:jpg,bmp,png|max:1024',
+            "logo" => 'file|mimes:jpg,bmp,png|max:1024',
         ];
     }
 }

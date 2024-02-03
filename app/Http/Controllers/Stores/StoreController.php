@@ -73,6 +73,7 @@ class StoreController extends Controller
         $validated["password"] = bcrypt($validated["password"]);
 
         // upload logo first
+        // TODO: Logo should be uploaded later after signup, in the profile section
         $path = $request->file('logo')->store('logos', 'public');
         $validated["logo"] = $path;
 
