@@ -13,13 +13,15 @@ const error: boolean = false;
 
       <div class="form-group">
         <label for="vendor-fullname">Vendor name</label>
-        <input type="text" class="form-input" name="fullname" id="vendor-fullname" autocomplete="name" required />
+        <input type="text" class="form-input" name="fullname" id="vendor-fullname" autocomplete="name"
+          placeholder="My Example Store Limited" required />
         <span class="muted-text error"></span>
       </div>
 
       <div class="form-group">
         <label for="vendor-email">Email Address</label>
-        <input type="email" class="form-input" name="email" id="vendor-email" autocomplete="email" required />
+        <input type="email" class="form-input" name="email" id="vendor-email" placeholder="user@example.com"
+          autocomplete="email" required />
         <span class="muted-text error"></span>
       </div>
 

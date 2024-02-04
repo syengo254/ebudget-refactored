@@ -30,7 +30,8 @@ const error: boolean = false;
 
       <div class="form-group">
         <label for="customer-email">Email Address</label>
-        <input type="email" class="form-input" name="email" id="customer-email" autocomplete="email" required />
+        <input type="email" class="form-input" name="email" id="customer-email" placeholder="user@example.com"
+          autocomplete="email" required />
         <span class="muted-text error"></span>
       </div>
 

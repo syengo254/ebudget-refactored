@@ -23,6 +23,9 @@ const error: boolean = false;
 
             <div class="submit-btns">
                 <button type="submit" class="btn btn-primary">Login</button>
+                <p style="margin: .5rem 0;">
+                    Not registered? Click here to <RouterLink to="/signup">Register.</RouterLink>
+                </p>
             </div>
 
             <div v-show="error" class="alert error mt-1 block">

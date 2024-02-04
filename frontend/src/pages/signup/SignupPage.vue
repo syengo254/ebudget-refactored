@@ -26,7 +26,8 @@ div.forms {
   display: flex;
   width: fit-content;
   margin-inline: auto;
-  gap: 1rem;
+  column-gap: 10rem;
+  row-gap: 2rem;
 }
 
 @media screen and (max-width: 600px) {
