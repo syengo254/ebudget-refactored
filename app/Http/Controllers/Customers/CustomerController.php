@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Customers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginFormRequest;
 use App\Http\Requests\Customers\CustomerFormRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class CustomerController extends Controller
 {
@@ -21,51 +21,6 @@ class CustomerController extends Controller
         //
     }
 
-    /**
-     * Login a member.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function login(LoginFormRequest $request)
-    {
-        $validated = $request->validated();
-        $exists = false;
-        $closure = function ($customer) use (&$exists) {
-            $exists = true;
-            return $customer->is_active;
-        };
-        $authenticated = Auth::guard('web')->attemptWhen($validated, $closure);
-        if ($authenticated) {
-            $request->session()->regenerate();
-            return [
-                "success" => true,
-            ];
-        } else {
-            return [
-                "success" => false,
-                "message" => $exists ? 'Your account is not activated' : 'Login attempt failed.'
-            ];
-        }
-    }
-
-    /**
-     * Login a member.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function logout(Request $request)
-    {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return [
-            "success" => true,
-            "message" => 'logged out'
-        ];
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -73,11 +28,13 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(CustomerFormRequest $request)
+    public function store(CustomerFormRequest $request)
     {
         $validated = $request->validated();
-        $validated["password"] = bcrypt($validated["password"]);
-        $customer = Customer::create($validated + ["is_active" => true]);
+        $validated["password"] = Hash::make($validated["password"]);
+        $validated["is_active"] = true;
+        
+        $customer = Customer::create($validated);
         // todo: activating user account
         if ($customer) {
             return [

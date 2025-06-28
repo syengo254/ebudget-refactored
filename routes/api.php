@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\Customers\CustomerController;
+use App\Http\Controllers\Customers\SessionController as CustomerSessionController;
+use App\Http\Controllers\Stores\SessionController as StoreSessionController;
 use App\Http\Controllers\Stores\StoreController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,45 +17,47 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/csrf', function (Request $request) {
+Route::get("/", function(){
+    return "OKe";
+});
+
+Route::get('/csrf', function () {
     return [
         "token" => csrf_token(),
     ];
 })->middleware('web')->name('api.csrf');
 
+
+// ===================================== Customers Routes =========================================================
+
 Route::prefix('customers')->group(function () {
+   
+    Route::post('/login', [CustomerSessionController::class, "store"])->middleware(["web", "guest"]);
+    Route::post('/logout', [CustomerSessionController::class, "destroy"])->middleware("auth:web");
 
-    Route::controller(CustomerController::class)->group(function () {
-
-        Route::middleware(['web'])->group(function () {
-
-            Route::post('/register', 'register');
-
-            Route::post('/login', 'login');
-
-            Route::middleware(['auth:web'])->group(function () {
-
-                Route::get('/logout', 'logout');
-
-                Route::get('/{customer}', 'show');
-            });
-        });
-    });
+    Route::post('/', [CustomerController::class, "store"])->middleware("guest:web");
+    Route::get('/{customer}', [CustomerController::class, "show"])->middleware("auth:web");
 });
 
+// ================================================================================================================
+
+
+// =========================================== Stores Routes ======================================================
+
 Route::prefix('stores')->group(function () {
+
+    Route::middleware(['web', 'auth:store'])->group(function () {
+        Route::post('/login', [StoreSessionController::class, "create"]);
+        Route::post('/logout', [StoreSessionController::class, "destroy"]);
+    });
 
     Route::controller(StoreController::class)->group(function () {
 
         Route::middleware(['web'])->group(function () {
 
-            Route::post('/register', 'register');
-
-            Route::post('/login', 'login');
+            Route::post('/', 'store');
 
             Route::middleware(['auth:store'])->group(function () {
-
-                Route::get('/logout', 'logout');
 
                 Route::get('/{store}', 'show');
             });
@@ -62,7 +65,10 @@ Route::prefix('stores')->group(function () {
     });
 });
 
-Route::get('/public', function (Request $request) {
+// =================================================================================================================
+
+
+Route::get('/public', function () {
     // todo: redirect to frontend login page.
     return ["message" => "you are not logged in"];
 })->middleware('web')->name('login');

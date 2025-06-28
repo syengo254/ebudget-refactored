@@ -12,7 +12,7 @@ class Customer extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    protected $fillable = ['fullname', 'email', 'password', 'is_active', 'active_address_id'];
+    protected $fillable = ['fullname', 'email', 'password', 'title', 'is_active', 'active_address_id'];
     protected $hidden = ['password'];
 
     public function getActiveAddress()
