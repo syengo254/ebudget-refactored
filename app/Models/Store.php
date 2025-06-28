@@ -5,6 +5,8 @@ namespace App\Models;
 use Attribute;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -14,8 +16,12 @@ class Store extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    protected $fillable = ['name', 'password', 'logo', 'email', 'active_address_id'];
-    protected $hidden = ['password'];
+    protected $fillable = [
+        'user_id',
+        'name', 
+        'logo', 
+    ];
+    
 
     protected function logo(): CastsAttribute
     {
@@ -24,21 +30,13 @@ class Store extends Authenticatable
         );
     }
 
-    public function products()
+    public function products(): HasMany
     {
-        return $this->hasMany(Product::class, 'store_id', 'id');
+        return $this->hasMany(Product::class);
     }
 
-    public function getActiveAddress()
+    public function user(): BelongsTo
     {
-        if ($this->active_address_id) {
-            return Address::find($this->active_address_id);
-        }
-        return null;
-    }
-
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
+        return $this->belongsTo(User::class);
     }
 }

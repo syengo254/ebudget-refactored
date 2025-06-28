@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Customers\CustomerController;
-use App\Http\Controllers\Stores\StoreController;
+use App\Http\Controllers\Users\SessionController;
+use App\Http\Controllers\Users\UserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,53 +17,39 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/csrf', function (Request $request) {
-    return [
-        "token" => csrf_token(),
-    ];
-})->middleware('web')->name('api.csrf');
 
-Route::prefix('customers')->group(function () {
+// auth
+Route::get("/login", function(){
+    return redirect(env("UI_APP_URL" . "/login", env("APP_URL"))); // SPA's login page
+})->name("login");
 
-    Route::controller(CustomerController::class)->group(function () {
+Route::post("/login", [SessionController::class, "store"]);
+Route::post("/logout", [SessionController::class, "destroy"])->middleware("auth:sanctum");
 
-        Route::middleware(['web'])->group(function () {
 
-            Route::post('/register', 'register');
+// users
+Route::post("/users", [UserController::class, "store"])->middleware("guest");
 
-            Route::post('/login', 'login');
+Route::middleware(["auth:sanctum", "verified"])->get("/users", [UserController::class, "index"]);
+Route::middleware("auth:sanctum")->get("/users/{user}", [UserController::class, "show"]);
 
-            Route::middleware(['auth:web'])->group(function () {
 
-                Route::get('/logout', 'logout');
+// email verification URLs
+Route::get('/email/verify', function () {
+    return redirect(env("UI_APP_URL" . "/verify_email"));
+})->middleware('auth')->name('verification.notice');
 
-                Route::get('/{customer}', 'show');
-            });
-        });
-    });
-});
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+ 
+    return redirect(env("UI_APP_URL"));
+})->middleware(['auth', 'signed'])->name('verification.verify');
 
-Route::prefix('stores')->group(function () {
-
-    Route::controller(StoreController::class)->group(function () {
-
-        Route::middleware(['web'])->group(function () {
-
-            Route::post('/register', 'register');
-
-            Route::post('/login', 'login');
-
-            Route::middleware(['auth:store'])->group(function () {
-
-                Route::get('/logout', 'logout');
-
-                Route::get('/{store}', 'show');
-            });
-        });
-    });
-});
-
-Route::get('/public', function (Request $request) {
-    // todo: redirect to frontend login page.
-    return ["message" => "you are not logged in"];
-})->middleware('web')->name('login');
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+ 
+    return response() ->json([
+        "success" => true,
+        "message" => "Verification link sent!",
+    ]);
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');

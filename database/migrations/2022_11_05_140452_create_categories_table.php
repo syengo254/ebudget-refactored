@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('order_id')->constrained('customer_orders', 'id');
-            $table->foreignId('product_id')->constrained('products', 'id');
-            $table->smallInteger('quantity')->default(1);
-            $table->bigInteger('price_at_order');
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('product_categories');
     }
 };

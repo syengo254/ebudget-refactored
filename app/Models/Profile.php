@@ -6,20 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Product extends Model
+class Profile extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'category_id', 
-        'name', 
-        'price', 
-        'store_id', 
-        'stock_amount'
+        'user_id',
+        'phone',
+        'active_address_id',
     ];
 
-    public function category(): BelongsTo
+    public function user() : BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(User::class);
     }
 }

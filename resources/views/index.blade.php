@@ -6,6 +6,6 @@
     <title>E-Budget Refactored</title>
 </head>
 <body>
-    <h1>OK</h1>
+    <h1>Backend OK</h1>
 </body>
 </html>

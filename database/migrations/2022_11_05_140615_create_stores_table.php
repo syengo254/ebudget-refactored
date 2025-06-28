@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +16,10 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class);
             $table->mediumText('name');
-            $table->char('email', 100)->unique();
             $table->text('logo')->nullable();
-            $table->unsignedBigInteger('active_address_id')->nullable();
+            $table->rememberToken();
             $table->timestamps();
         });
     }
