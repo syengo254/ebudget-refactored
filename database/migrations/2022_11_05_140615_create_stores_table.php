@@ -17,8 +17,12 @@ return new class extends Migration
             $table->id();
             $table->mediumText('name');
             $table->char('email', 100)->unique();
+            $table->string('password');
             $table->text('logo')->nullable();
+            $table->text('phone_number')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->unsignedBigInteger('active_address_id')->nullable();
+            $table->rememberToken();
             $table->timestamps();
         });
     }

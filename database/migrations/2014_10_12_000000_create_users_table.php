@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
+        // This will be the customers table, from now on call them users.
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->text('phone_number')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->unsignedBigInteger('active_address_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

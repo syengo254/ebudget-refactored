@@ -9,15 +9,11 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'name', 'price', 'published', 'store_id'];
-
-    public function inventory()
-    {
-        return $this->hasOne(Inventory::class, 'product_id');
-    }
-
-    public function inStock(): bool
-    {
-        return $this->inventory()->in_stock > 0;
-    }
+    protected $fillable = [
+        'category_id', 
+        'name', 
+        'price', 
+        'store_id', 
+        'stock_amount'
+    ];
 }

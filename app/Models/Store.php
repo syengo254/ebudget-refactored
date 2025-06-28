@@ -14,8 +14,26 @@ class Store extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    protected $fillable = ['name', 'password', 'logo', 'email', 'active_address_id'];
-    protected $hidden = ['password'];
+    protected $fillable = [
+        'name',
+        'email', 
+        'password', 
+        'logo', 
+        'phone_number',
+        'active_address_id'
+    ];
+    protected $hidden = ['password', 'remember_token'];
+
+    
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
 
     protected function logo(): CastsAttribute
     {
@@ -27,18 +45,5 @@ class Store extends Authenticatable
     public function products()
     {
         return $this->hasMany(Product::class, 'store_id', 'id');
-    }
-
-    public function getActiveAddress()
-    {
-        if ($this->active_address_id) {
-            return Address::find($this->active_address_id);
-        }
-        return null;
-    }
-
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
     }
 }
