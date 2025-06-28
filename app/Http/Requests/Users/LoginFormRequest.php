@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Stores;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 
-class StoreRegisterFormRequest extends FormRequest
+class LoginFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +15,7 @@ class StoreRegisterFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::guard("web")->guest();
     }
 
     /**
@@ -24,10 +26,8 @@ class StoreRegisterFormRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => 'required|string|min:8',
-            "email" => 'required|email|unique:stores,email|max:100|min:8',
-            "password" => 'required|confirmed|min:8|max:20',
-            "logo" => 'file|mimes:jpg,bmp,png|max:1024',
+            "email" => "required|email|min:8",
+            "password" => Password::defaults()->min(6)->symbols()->numbers()->mixedCase(),
         ];
     }
 }

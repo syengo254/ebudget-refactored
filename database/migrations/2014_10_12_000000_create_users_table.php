@@ -13,7 +13,6 @@ return new class extends Migration
      */
     public function up()
     {
-        // This will be the customers table, from now on call them users.
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -22,6 +21,7 @@ return new class extends Migration
             $table->text('phone_number')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->unsignedBigInteger('active_address_id')->nullable();
+            $table->boolean('has_store')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

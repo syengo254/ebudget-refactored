@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Password;
 
-class LoginFormRequest extends FormRequest
+class UserFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +13,7 @@ class LoginFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard("web")->guest();
+        return true;
     }
 
     /**
@@ -26,8 +24,9 @@ class LoginFormRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => "required|email|min:8",
-            "password" => Password::defaults()->min(6)->symbols()->numbers()->mixedCase(),
+            "name" => 'required|string|min:8',
+            "email" => 'required|email|unique:users,email',
+            "password" => 'required|confirmed|min:8|max:20',
         ];
     }
 }
