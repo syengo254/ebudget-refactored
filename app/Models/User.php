@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -17,9 +17,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone_number',
         'has_store',
-        'active_address_id',
     ];
 
     protected $hidden = [
@@ -34,6 +32,15 @@ class User extends Authenticatable
     
     public function store(): HasOne
     {
+        // if(! $this->has_Store){
+        //     return NULL;
+        // }
+
         return $this->hasOne(Store::class);
+    }
+
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\LoginFormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Hash;
 
 class SessionController extends Controller
 {
@@ -17,6 +18,10 @@ class SessionController extends Controller
         );
         
         if ($authenticated) {
+            // check if password rehash
+            // if (Hash::needsRehash()) {
+            //     $hashed = Hash::make('plain-text');
+            // }
             request()->session()->regenerate();
 
             return response()->json([
@@ -30,11 +35,6 @@ class SessionController extends Controller
         }
     }
 
-    /**
-     * Logout a member.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $request)
     {
         Auth::logout();

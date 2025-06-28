@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\UserFormRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,12 +22,14 @@ class UserController extends Controller
         $validated = $request->validated();
         $validated["password"] = Hash::make($validated["password"]);
         
-        $customer = User::create($validated);
-        // todo: email verification
-        if ($customer) {
+        $user = User::create($validated);
+        
+        if ($user) {
+            // send verify email
+            event(new Registered($user));
             return [
                 "success" => true,
-                "customer" => $customer,
+                "customer" => $user,
             ];
         }
         return [
@@ -46,12 +49,12 @@ class UserController extends Controller
         return $user;
     }
 
-    public function update(Request $request, User $customer)
+    public function update(Request $request, User $user)
     {
         //
     }
 
-    public function destroy(User $customer)
+    public function destroy(User $user)
     {
         //
     }
