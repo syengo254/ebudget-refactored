@@ -27,6 +27,10 @@ class UserController extends Controller
         if ($user) {
             // send verify email
             event(new Registered($user));
+            
+            // login user
+            Auth::login($user);
+
             return [
                 "success" => true,
                 "customer" => $user,

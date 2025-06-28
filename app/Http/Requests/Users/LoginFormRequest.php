@@ -27,7 +27,7 @@ class LoginFormRequest extends FormRequest
     {
         return [
             "email" => "required|email|min:8",
-            "password" => Password::defaults()->min(6)->symbols()->numbers()->mixedCase(),
+            "password" => Password::defaults(),
         ];
     }
 }

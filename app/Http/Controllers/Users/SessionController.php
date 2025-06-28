@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
+
     public function store(LoginFormRequest $request)
     {
-        $authenticated = Auth::attemptWhen(
-            $request->validated(),
-            fn($user) => $user->email_verified_at != null
+        $authenticated = Auth::attempt(
+            $request->validated()
         );
         
         if ($authenticated) {
