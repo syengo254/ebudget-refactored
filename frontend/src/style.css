@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,700&display=swap');
 
-
 :root {
   font-family: 'Roboto', sans-serif;
 
@@ -30,9 +29,9 @@ body {
   max-width: fit-content;
 }
 
-.alert>p {
+.alert > p {
   font-size: 1rem;
-  margin: .6rem 1.2rem;
+  margin: 0.6rem 1.2rem;
   text-wrap: wrap;
 }
 
@@ -51,19 +50,19 @@ div.form-group {
 
 input.form-input,
 select.form-select {
-  padding: .5rem .8rem;
+  padding: 0.5rem 0.8rem;
   font-family: inherit;
   font-size: 1rem;
   border: 1px solid grey;
   border-radius: 3.5px;
-  margin: .4rem 0;
+  margin: 0.4rem 0;
 }
 
 .btn {
-  margin-block: .5rem;
+  margin-block: 0.5rem;
   font-size: 1rem;
   width: fit-content;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   background: rgb(240, 240, 240);
   color: rgb(56, 56, 56);
   outline: none;
@@ -80,7 +79,7 @@ select.form-select {
 
 .btn-primary {
   background: #0055ff;
-  border: 1px solid rgb(200, 200, 200);
+  /* border: 1px solid #0d378d; */
   color: white;
 }
 
@@ -95,11 +94,16 @@ select.form-select {
 }
 
 .info-text {
-  color: rgba(0, 0, 0, .90);
-  font-size: .9rem;
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 0.9rem;
   font-style: italic;
-  margin-bottom: .2rem;
+  margin-bottom: 0.2rem;
   display: inline-block;
+}
+
+.muted-text {
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
 }
 
 span.info-text.text-center {
@@ -114,6 +118,10 @@ header {
 
 .mt-1 {
   margin-top: 1rem;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
 }
 
 div.block {

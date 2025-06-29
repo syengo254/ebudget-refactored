@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { RouterLink } from 'vue-router';
+import { RouterLink } from 'vue-router'
 
-const error: boolean = false;
+const error: boolean = false
 </script>
 
 <template>
@@ -10,48 +10,71 @@ const error: boolean = false;
     <span class="info-text text-center">Sign up here if you are a vendor.</span>
 
     <form>
-
       <div class="form-group">
         <label for="vendor-fullname">Vendor name</label>
-        <input type="text" class="form-input" name="fullname" id="vendor-fullname" autocomplete="name"
-          placeholder="My Example Store Limited" required />
-        <span class="muted-text error"></span>
+        <input
+          id="vendor-fullname"
+          type="text"
+          class="form-input"
+          name="name"
+          autocomplete="name"
+          placeholder="My Example Store Limited"
+          required
+        />
+        <span class="muted-text error" />
       </div>
 
       <div class="form-group">
         <label for="vendor-email">Email Address</label>
-        <input type="email" class="form-input" name="email" id="vendor-email" placeholder="user@example.com"
-          autocomplete="email" required />
-        <span class="muted-text error"></span>
+        <input
+          id="vendor-email"
+          type="email"
+          class="form-input"
+          name="email"
+          placeholder="user@example.com"
+          autocomplete="email"
+          required
+        />
+        <span class="muted-text error" />
       </div>
 
       <div class="form-group">
         <label for="vendor-password1">Password</label>
-        <input type="password" class="form-input" name="password1" id="vendor-password1" autocomplete="new-password"
-          required />
-        <span class="muted-text error"></span>
+        <input
+          id="vendor-password1"
+          type="password"
+          class="form-input"
+          name="password1"
+          autocomplete="new-password"
+          placeholder="Password"
+          required
+        />
+        <span class="muted-text error" />
       </div>
 
       <div class="form-group">
         <label for="vendor-password2">Confirm password</label>
-        <input type="password" class="form-input" name="password2" id="pvendor-assword2" autocomplete="new-password"
-          required />
-        <span class="muted-text error"></span>
+        <input
+          id="pvendor-assword2"
+          type="password"
+          class="form-input"
+          name="password2"
+          autocomplete="new-password"
+          placeholder="Password"
+          required
+        />
+        <span class="muted-text error" />
       </div>
 
       <div class="submit-btns">
         <button type="submit" class="btn block">Sign up</button>
-        <p style="margin: .5rem 0;">
-          Already registered? Click here to <RouterLink to="/signin">Sign in.</RouterLink>
-        </p>
+        <p style="margin: 0.5rem 0">Already registered? Click here to <RouterLink to="/signin">Sign in.</RouterLink></p>
       </div>
 
       <div v-show="error" class="alert error mt-1 block">
         <p>Messages here</p>
       </div>
-
     </form>
-
   </div>
 </template>
 
@@ -65,7 +88,7 @@ div.vendor-signup {
   border-radius: 3.5px;
 }
 
-div.vendor-signup>h5 {
+div.vendor-signup > h5 {
   margin: 0.5rem 0;
   text-align: center;
   font-size: 1.4rem;
@@ -79,7 +102,7 @@ div.submit-btns {
   margin-top: 1rem;
 }
 
-div.submit-btns button[type="submit"] {
+div.submit-btns button[type='submit'] {
   background-color: blue;
   color: white;
   border: 1px solid blue;
@@ -87,14 +110,13 @@ div.submit-btns button[type="submit"] {
   font-weight: 600;
 }
 
-div.submit-btns button[type="submit"]:hover {
+div.submit-btns button[type='submit']:hover {
   background-color: rgb(2, 2, 173);
 }
 
 label {
   color: rgba(0, 0, 0, 0.85);
-  margin-top: .5rem;
-  font-size: .9rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
 }
 </style>
-

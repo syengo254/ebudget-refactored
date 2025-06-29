@@ -1,34 +1,67 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:vue/vue3-essential"
-    ],
-    "overrides": [
-        {
-            "env": {
-                "node": true
-            },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
-            "parserOptions": {
-                "sourceType": "script"
-            }
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:vue/vue3-recommended",
+    "plugin:prettier/recommended"
+  ],
+  "overrides": [
+    {
+      "env": {
+        "node": true
+      },
+      "files": [".eslintrc.{js,cjs}"],
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    }
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "parser": "@typescript-eslint/parser",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "vue", "prettier"],
+  "rules": {
+    "vue/multi-word-component-names": "off", // Often useful to turn off for root components like 'Home', 'About'
+    "vue/component-api-style": ["error", ["script-setup", "composition"]], // Enforce Composition API with script setup
+    "vue/no-unused-vars": "warn", // You might want a warning instead of error for unused Vue variables
+    "vue/html-self-closing": [
+      "error",
+      {
+        "html": {
+          "void": "always",
+          "normal": "always",
+          "component": "always"
         }
+      }
     ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "parser": "@typescript-eslint/parser",
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint",
-        "vue"
-    ],
-    "rules": {}
+    "vue/require-prop-types": "warn",
+    // --- Airbnb overrides ---
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ], // Ensure 2-space indent for all code, including switch cases
+    "max-len": [
+      "warn",
+      {
+        "code": 120,
+        "ignoreComments": true,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ], // Adjust max line length
+    "no-console": "warn", // Warn for console logs in development, error in production
+    "no-debugger": "warn", // Warn for debugger in development, error in production
+    "prettier/prettier": "error"
+  }
 }

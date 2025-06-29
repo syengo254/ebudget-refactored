@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import CustomerForm from './components/CustomerForm.vue';
-import VendorForm from './components/VendorForm.vue';
+import CustomerForm from './components/CustomerForm.vue'
+import VendorForm from './components/VendorForm.vue'
 </script>
 
 <template>
@@ -11,12 +11,11 @@ import VendorForm from './components/VendorForm.vue';
 
     <!-- vendor sign up form -->
     <VendorForm />
-
   </div>
 </template>
 
 <style scoped>
-nav>a {
+nav > a {
   color: white;
   text-decoration: none;
   font-size: 1rem;
