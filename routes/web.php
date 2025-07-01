@@ -22,7 +22,9 @@ Route::get('/', function () {
 // home for redirects
 Route::get("/home", function(){
     return response()->json([
-        "message" => "You are laready logged in.",
+        "message" => "You are already logged in.",
+    ], headers: [
+        "Access-Control-Allow-Origin" => "*",
     ]); 
 })->name("home");
 

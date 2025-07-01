@@ -19,6 +19,14 @@ body {
   margin: 0;
 }
 
+.semibold {
+  font-weight: 500;
+}
+
+.bold {
+  font-weight: 600;
+}
+
 .error {
   color: orangered;
 }
@@ -104,6 +112,18 @@ select.form-select {
 .muted-text {
   font-size: 0.8rem;
   margin-bottom: 0.75rem;
+}
+
+p.muted-text {
+  font-size: 0.8rem;
+  margin: 0;
+  margin-bottom: 0.75rem;
+}
+
+p.muted-text > ul {
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
 }
 
 span.info-text.text-center {

@@ -31,9 +31,11 @@ import imgSrc from '../../assets/colgate-toothpaste.jpg'
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 0.8em;
-  place-items: center;
+  gap: 1rem;
   margin-bottom: 5rem;
+  width: fit-content;
+  margin-inline: auto;
+  align-items: center;
 }
 .product-card {
   position: relative;

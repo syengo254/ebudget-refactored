@@ -1,8 +1,35 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { computed } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
+import { useUserStore } from '../stores/useUserStore'
+import useAuth from '../composables/useAuth'
+
+const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
+const auth = useAuth()
+
+const routeName = computed(() => route.name)
+
+const showLogin = computed(() => !userStore.isLoggedIn)
+const showCategoriesBar = computed(() => !['register', 'login'].includes(routeName.value as string))
+
+// handlers
+const handleLogout = async () => {
+  const success = await auth.logout()
+  if (success) {
+    // empty user store & navigate to /login
+    userStore.$reset()
+
+    router.push({
+      path: '/login',
+      replace: true,
+    })
+  }
+}
 
 // const categories = [
 //   {
@@ -32,16 +59,21 @@ import MenuBar from '../assets/menu-bar.png'
         </form>
       </div>
       <div class="navigation-links">
-        <nav><RouterLink to="/signin">Login</RouterLink> | <RouterLink to="/signup">Register</RouterLink></nav>
+        <nav v-if="!showLogin">
+          <RouterLink to="/login">Login</RouterLink> | <RouterLink to="register">Register</RouterLink>
+        </nav>
+        <nav v-else>
+          <button class="btn btn-sm" @click="handleLogout">Logout</button>
+        </nav>
         <ul class="small-nav">
           <li>
             <RouterLink to="/">Home</RouterLink>
           </li>
-          <li>
-            <RouterLink to="/signin">Login</RouterLink>
+          <li v-if="!showLogin">
+            <RouterLink to="/login">Login</RouterLink>
           </li>
-          <li>
-            <RouterLink to="/signup">Signup</RouterLink>
+          <li v-if="!showLogin">
+            <RouterLink to="/register">Signup</RouterLink>
           </li>
           <li>
             <RouterLink to="/about">About</RouterLink>
@@ -50,7 +82,7 @@ import MenuBar from '../assets/menu-bar.png'
       </div>
     </header>
   </div>
-  <section id="categories-bar">
+  <section v-if="showCategoriesBar" id="categories-bar">
     <img class="menu-icon" :src="MenuBar" alt="menu-bar" />
     <span>All</span>
     <nav>
