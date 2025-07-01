@@ -152,3 +152,14 @@ div.block {
 a:visited {
   color: #0000ee;
 }
+
+.text-sm {
+  font-size: 0.8rem;
+}
+
+.text-white {
+  color: white;
+}
+.decoration-none {
+  text-decoration: none;
+}

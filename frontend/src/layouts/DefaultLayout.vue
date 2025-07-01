@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
 import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
@@ -9,17 +9,16 @@ import useAuth from '../composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
-const userStore = useUserStore()
-const auth = useAuth()
 
-const routeName = computed(() => route.name)
+const userStore = useUserStore()
+const { logout } = useAuth()
 
 const showLogin = computed(() => !userStore.isLoggedIn)
-const showCategoriesBar = computed(() => !['register', 'login'].includes(routeName.value as string))
+const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
 
 // handlers
 const handleLogout = async () => {
-  const success = await auth.logout()
+  const success = await logout()
   if (success) {
     // empty user store & navigate to /login
     userStore.$reset()
@@ -59,34 +58,53 @@ const handleLogout = async () => {
         </form>
       </div>
       <div class="navigation-links">
-        <nav v-if="!showLogin">
-          <RouterLink to="/login">Login</RouterLink> | <RouterLink to="register">Register</RouterLink>
-        </nav>
-        <nav v-else>
-          <button class="btn btn-sm" @click="handleLogout">Logout</button>
-        </nav>
-        <ul class="small-nav">
-          <li>
-            <RouterLink to="/">Home</RouterLink>
-          </li>
-          <li v-if="!showLogin">
+        <div
+          v-if="!showLogin"
+          style="
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            column-gap: 3rem;
+            row-gap: 1rem;
+          "
+        >
+          <p class="text-sm">
+            <a href="#" class="text-white decoration-none">Hello, {{ userStore.user?.name }}</a>
+          </p>
+          <a class="btn btn-sm" @click.prevent="handleLogout">Logout</a>
+        </div>
+        <div v-else>
+          <nav>
             <RouterLink to="/login">Login</RouterLink>
-          </li>
-          <li v-if="!showLogin">
-            <RouterLink to="/register">Signup</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/about">About</RouterLink>
-          </li>
-        </ul>
+            <RouterLink to="register">Register</RouterLink>
+          </nav>
+          <ul class="small-nav">
+            <li>
+              <RouterLink to="/">Home</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/login">Login</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/register">Signup</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/about">About</RouterLink>
+            </li>
+          </ul>
+        </div>
       </div>
     </header>
   </div>
   <section v-if="showCategoriesBar" id="categories-bar">
-    <img class="menu-icon" :src="MenuBar" alt="menu-bar" />
-    <span>All</span>
+    <a href="">
+      <img class="menu-icon" :src="MenuBar" alt="menu-bar" />
+      <span>All</span>
+    </a>
     <nav>
-      <RouterLink to="/">Home</RouterLink> |
+      <RouterLink to="/">Today's Deals</RouterLink>
+      <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
     </nav>
   </section>
@@ -125,6 +143,12 @@ header .tagline {
   font-weight: bold;
 }
 
+nav {
+  display: inline-flex;
+  flex-wrap: wrap;
+  column-gap: 2rem;
+}
+
 nav > a,
 ul.small-nav > li > a {
   color: white;
@@ -133,7 +157,6 @@ ul.small-nav > li > a {
 }
 
 nav > a {
-  width: 70px;
   display: inline-block;
   text-align: center;
 }
@@ -184,14 +207,12 @@ ul.small-nav > li > a:hover {
 
 div.search-box {
   position: relative;
+  max-width: 700px;
   flex-grow: 1;
-  margin-inline: 0.5rem;
 }
 
 div.search-box > form > div.search-inputs {
   position: relative;
-  flex: 1;
-  margin-inline: 8em;
   display: flex;
   align-items: center;
 }
@@ -248,13 +269,36 @@ div.search-icon > img {
   gap: 0.5rem;
 }
 
-#categories-bar > img.menu-icon {
+#categories-bar a {
+  text-decoration: none;
+  padding: 0.5rem 0.5rem;
+  display: block;
+  box-sizing: content-box;
+  border: 1px solid transparent;
+}
+
+#categories-bar a:hover {
+  text-decoration: none;
+  border: 1px solid white;
+}
+
+#categories-bar > a:first-of-type {
+  display: flex;
+  column-gap: 0.5rem;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  outline: none;
+}
+
+#categories-bar > a > img.menu-icon {
   width: 24px;
   height: 24px;
   cursor: pointer;
 }
 
-#categories-bar > span {
+#categories-bar > a > span {
+  margin-right: 1rem;
   font-weight: bold;
 }
 

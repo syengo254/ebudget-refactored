@@ -40,21 +40,25 @@ import imgSrc from '../../assets/colgate-toothpaste.jpg'
 .product-card {
   position: relative;
   background-color: rgb(248, 248, 248);
-  width: 220px;
+  width: 240px;
   height: 400px;
   border: 1px solid rgb(237, 237, 237);
   cursor: pointer;
 }
 
+.product-card:hover {
+  box-shadow: 1px 1px 3px 1px rgb(209, 209, 209);
+}
+
 .product-card > .product-image {
   position: relative;
   background-color: rgb(240, 240, 240);
-  max-height: 218px;
+  max-height: 238px;
 }
 
 .product-card > .product-image > img {
   position: relative;
-  max-width: 218px;
+  max-width: 238px;
   object-fit: cover;
 }
 

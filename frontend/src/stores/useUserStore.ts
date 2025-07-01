@@ -11,8 +11,9 @@ export const useUserStore = defineStore('user', {
     return { user: null, isLoggedIn: false }
   },
   actions: {
-    setUser(user: UserType) {
+    setUser(user: UserType, isLoggedIn?: boolean) {
       this.user = user
+      if (isLoggedIn) this.isLoggedIn = isLoggedIn
     },
   },
 })

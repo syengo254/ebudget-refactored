@@ -19,7 +19,7 @@ const handleLogin = async () => {
 
   if (success.value) {
     // add user to pinia store
-    userStore.setUser(user.value as UserType)
+    userStore.setUser(user.value as UserType, true)
 
     // navigate to home
     router.push({
@@ -72,7 +72,9 @@ const handleLogin = async () => {
       </div>
 
       <div class="submit-btns">
-        <button type="submit" class="btn btn-primary">{{ loading ? 'Loggin in...' : 'Login' }}</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">
+          {{ loading ? 'Loggin in...' : 'Login' }}
+        </button>
         <p style="margin: 0.5rem 0">
           Not registered? Click here to
           <RouterLink to="/register">Register.</RouterLink>

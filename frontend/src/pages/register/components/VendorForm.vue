@@ -68,7 +68,7 @@ const error: boolean = false
 
       <div class="submit-btns">
         <button type="submit" class="btn block">Sign up</button>
-        <p style="margin: 0.5rem 0">Already registered? Click here to <RouterLink to="/signin">Sign in.</RouterLink></p>
+        <p style="margin: 0.5rem 0">Already registered? Click here to <RouterLink to="/login">Sign in.</RouterLink></p>
       </div>
 
       <div v-show="error" class="alert error mt-1 block">
