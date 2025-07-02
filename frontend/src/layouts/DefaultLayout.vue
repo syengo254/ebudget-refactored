@@ -4,24 +4,24 @@ import { RouterLink, useRouter, useRoute } from 'vue-router'
 import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
-import { useUserStore } from '../stores/useUserStore'
+import { useAuthStore } from '../stores/authStore'
 import useAuth from '../composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const { logout } = useAuth()
 
-const showLogin = computed(() => !userStore.isLoggedIn)
 const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
+const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // handlers
 const handleLogout = async () => {
   const success = await logout()
   if (success) {
     // empty user store & navigate to /login
-    userStore.$reset()
+    authStore.$reset()
 
     router.push({
       path: '/login',
@@ -47,7 +47,6 @@ const handleLogout = async () => {
     <header>
       <div class="logo">
         <RouterLink to="/"><img :src="Logo" alt="" class="logo-img" /></RouterLink>
-        <!-- <span class="tagline">Shop online, let us budget and deliver!</span> -->
       </div>
       <div class="search-box">
         <form>
@@ -59,7 +58,7 @@ const handleLogout = async () => {
       </div>
       <div class="navigation-links">
         <div
-          v-if="!showLogin"
+          v-if="isLoggedIn"
           style="
             display: flex;
             flex-direction: row;
@@ -70,7 +69,7 @@ const handleLogout = async () => {
           "
         >
           <p class="text-sm">
-            <a href="#" class="text-white decoration-none">Hello, {{ userStore.user?.name }}</a>
+            <a href="#" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</a>
           </p>
           <a class="btn btn-sm" @click.prevent="handleLogout">Logout</a>
         </div>
@@ -98,10 +97,10 @@ const handleLogout = async () => {
     </header>
   </div>
   <section v-if="showCategoriesBar" id="categories-bar">
-    <a href="">
+    <RouterLink to="/">
       <img class="menu-icon" :src="MenuBar" alt="menu-bar" />
       <span>All</span>
-    </a>
+    </RouterLink>
     <nav>
       <RouterLink to="/">Today's Deals</RouterLink>
       <RouterLink to="/">Home</RouterLink>

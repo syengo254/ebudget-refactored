@@ -114,13 +114,13 @@ select.form-select {
   margin-bottom: 0.75rem;
 }
 
-p.muted-text {
+div.muted-text {
   font-size: 0.8rem;
   margin: 0;
   margin-bottom: 0.75rem;
 }
 
-p.muted-text > ul {
+.muted-text > ul {
   margin: 0;
   padding: 0;
   list-style-position: inside;

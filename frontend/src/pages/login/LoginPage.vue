@@ -1,26 +1,35 @@
 <!-- eslint-disable no-console -->
 <script lang="ts" setup>
 import { ref } from 'vue'
-import useLogin from '../../composables/useLogin'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '../../stores/useUserStore'
-import { UserType } from '../../types'
+import { useAuthStore } from '../../stores/authStore'
 
 const email = ref('')
 const password = ref('')
+const loading = ref(false)
+const validationErrors = ref<{
+  email: string[]
+  password: string[]
+} | null>(null)
+const loginError = ref<null | boolean | string>(null)
 
 const router = useRouter()
-const userStore = useUserStore()
-
-const { user, success, error, loading, login, formErrors } = useLogin()
+const authStore = useAuthStore()
 
 const handleLogin = async () => {
-  await login({ email: email.value, password: password.value })
+  const { success, error, loading: loginLoading, formErrors } = await authStore.authLogin(email.value, password.value)
+
+  loading.value = loginLoading.value
+
+  if (error.value) {
+    loginError.value = error.value
+  }
+
+  if (formErrors.value !== null) {
+    validationErrors.value = formErrors.value
+  }
 
   if (success.value) {
-    // add user to pinia store
-    userStore.setUser(user.value as UserType, true)
-
     // navigate to home
     router.push({
       path: '/',
@@ -45,9 +54,9 @@ const handleLogin = async () => {
           placeholder="user@example.com"
           required
         />
-        <div :v-if="formErrors !== null" class="muted-text error">
+        <div :v-if="validationErrors !== null" class="muted-text error">
           <ul>
-            <li v-for="emailErr in formErrors?.email" :key="emailErr">{{ emailErr }}</li>
+            <li v-for="emailErr in validationErrors?.email" :key="emailErr">{{ emailErr }}</li>
           </ul>
         </div>
       </div>
@@ -64,9 +73,9 @@ const handleLogin = async () => {
           placeholder="Password"
           required
         />
-        <div v-if="formErrors !== null" class="muted-text error">
+        <div v-if="validationErrors !== null" class="muted-text error">
           <ul>
-            <li v-for="passwdErr in formErrors?.password" :key="passwdErr">{{ passwdErr }}</li>
+            <li v-for="passwdErr in validationErrors?.password" :key="passwdErr">{{ passwdErr }}</li>
           </ul>
         </div>
       </div>
@@ -81,8 +90,8 @@ const handleLogin = async () => {
         </p>
       </div>
 
-      <div v-show="error && !formErrors" class="alert error mt-1 block semibold">
-        <p>{{ error }}</p>
+      <div v-show="loginError && !validationErrors" class="alert error mt-1 block semibold">
+        <p>{{ loginError }}</p>
       </div>
     </form>
   </div>

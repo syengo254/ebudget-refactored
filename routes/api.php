@@ -25,7 +25,7 @@ Route::get("/login", function(){
 Route::get("/authenticated", [SessionController::class, "authCheck"])->name("auth-check");
 
 Route::post("/login", [SessionController::class, "store"])->middleware(["guest:sanctum", "throttle:login-attempts"]);
-Route::post("/logout", [SessionController::class, "destroy"])->middleware("auth:sanctum");
+Route::post("/logout", [SessionController::class, "destroy"]);
 
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class UserFormRequest extends FormRequest
@@ -14,7 +15,7 @@ class UserFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::guard("web")->guest();;
     }
 
     /**
@@ -28,6 +29,7 @@ class UserFormRequest extends FormRequest
             "name" => 'required|string|min:8',
             "email" => 'required|email|unique:users,email',
             "password" => Password::defaults()->min(6)->symbols()->numbers()->mixedCase(),
+            "has_store" => "sometimes|boolean"
         ];
     }
 }

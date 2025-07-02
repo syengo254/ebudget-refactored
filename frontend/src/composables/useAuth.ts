@@ -1,3 +1,4 @@
+import { UserType } from '../types.ts'
 import axios from '../utils/axios.ts'
 
 function useAuth() {
@@ -7,12 +8,14 @@ function useAuth() {
     if (response.status == 200) {
       return response.data.success
     }
+    return false
   }
 
   async function checkAuth() {
-    let error = null
+    let error: Error | null = null
 
     try {
+      // eslint-disable-next-line no-console
       console.log('checking auth...')
       await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
 
@@ -20,9 +23,9 @@ function useAuth() {
 
       if (response.status == 200) {
         return {
-          isLoggedIn: response.data.authenticated,
-          user: response.data.user,
-          error: null,
+          isLoggedIn: response.data.authenticated as boolean,
+          user: response.data.user as UserType | null,
+          error: null as string | null,
         }
       }
     } catch (err) {
@@ -33,9 +36,9 @@ function useAuth() {
     }
 
     return {
-      isLogged: false,
+      isLoggedIn: false,
       user: null,
-      error: error?.message,
+      error: error?.message as string | null,
     }
   }
 

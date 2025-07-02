@@ -1,16 +1,15 @@
 <script lang="ts" setup>
-import CustomerForm from './components/CustomerForm.vue'
-import VendorForm from './components/VendorForm.vue'
+import RegisterForm from './components/RegisterForm.vue'
 </script>
 
 <template>
   <!-- forms -->
   <div class="forms">
     <!-- customer sign up form -->
-    <CustomerForm />
+    <RegisterForm form-title="Customer" />
 
     <!-- vendor sign up form -->
-    <VendorForm />
+    <RegisterForm form-title="Vendor" />
   </div>
 </template>
 

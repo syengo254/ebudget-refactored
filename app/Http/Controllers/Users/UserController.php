@@ -33,7 +33,7 @@ class UserController extends Controller
 
             return [
                 "success" => true,
-                "customer" => $user,
+                "user" => $user,
             ];
         }
         return [
