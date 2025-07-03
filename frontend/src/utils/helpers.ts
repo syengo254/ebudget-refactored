@@ -39,3 +39,10 @@ export function useLocalStorage<T>(key: string, defaultValue: T) {
 export function isElapsed(value: number) {
   return value < Date.now()
 }
+
+export function getFormattedNumber(num: number): string {
+  return Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'KES',
+  }).format(num)
+}

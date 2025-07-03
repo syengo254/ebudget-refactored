@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Users\SessionController;
@@ -36,7 +37,7 @@ Route::middleware(["auth:sanctum", "verified"])->get("/users", [UserController::
 Route::middleware("auth:sanctum")->get("/users/{user}", [UserController::class, "show"]);
 
 
-// // csrf
-// Route::get('/sanctum/csrf-cookie', function(Request $request){
-//     return ["_token" => urldecode($request->session()->token())];
-// });
+// products
+Route::get("/products", [ProductController::class, "index"]);
+Route::get("/products/{product}", [ProductController::class, "show"]);
+

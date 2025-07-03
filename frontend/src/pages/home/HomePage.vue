@@ -1,22 +1,35 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import imgSrc from '../../assets/colgate-toothpaste.jpg'
+import { getAllProducts } from '../../services/products'
+import { ProductType } from '../../types'
+import { getFormattedNumber } from '../../utils/helpers'
+
+const products = ref<ProductType[]>([])
+
+getAllProducts().then((data) => {
+  products.value = data
+})
 </script>
 
 <template>
   <h4>Our products</h4>
 
   <div id="products-root">
-    <div v-for="n in 28" :key="n" class="product-card">
+    <div v-for="product in products" :key="product.name + product.id" class="product-card">
       <div class="product-image">
-        <img :src="imgSrc" alt="" />
+        <img :src="imgSrc" :alt="product.name + '-image'" />
+        <!-- :src="product.image" -->
       </div>
       <div class="product-info">
         <div class="product-desc">
-          <p><RouterLink to="#">Colgate fresh toothpaste 300ml</RouterLink></p>
+          <p>
+            <RouterLink :to="'/products/' + product.id">{{ product.name }}</RouterLink>
+          </p>
         </div>
-        <div class="product-price">KES 120.00/=</div>
+        <div class="product-price">{{ getFormattedNumber(product.price) }}/=</div>
         <div class="buy-btn">
           <button class="add-cart-btn">Add to cart</button>
         </div>
