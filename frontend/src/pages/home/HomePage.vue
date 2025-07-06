@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import imgSrc from '../../assets/colgate-toothpaste.jpg'
@@ -9,8 +9,10 @@ import { getFormattedNumber } from '../../utils/helpers'
 
 const products = ref<ProductType[]>([])
 
-getAllProducts().then((data) => {
-  products.value = data
+onMounted(() => {
+  getAllProducts().then((data) => {
+    products.value = data
+  })
 })
 </script>
 
