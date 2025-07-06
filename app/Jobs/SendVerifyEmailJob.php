@@ -32,6 +32,6 @@ class SendVerifyEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->user->notify(new VerifyEmail);;
+        $this->user->notify(new VerifyEmail);
     }
 }

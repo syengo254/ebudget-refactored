@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductViewResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,9 +13,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(int $page = 1, int $limit = 8)
     {
-        return Product::latest()->get();
+        $limit = request()->limit ?? $limit;
+        return ProductViewResource::collection(Product::with("store", "category")->latest()->paginate($limit));
     }
 
     /**

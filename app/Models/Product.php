@@ -19,8 +19,17 @@ class Product extends Model
         'image',
     ];
 
+    protected $hidden = [
+        "remember_token",
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function store() 
+    {
+        return $this->belongsTo(Store::class);
     }
 }

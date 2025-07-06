@@ -14,6 +14,10 @@ onErrorCaptured((err, instance, info) => {
   // Return false to stop the error from propagating further
   return false
 })
+
+function reload() {
+  window.location.reload()
+}
 </script>
 
 <template>
@@ -23,8 +27,14 @@ onErrorCaptured((err, instance, info) => {
     <h5>More Details:</h5>
     <p>{{ errorMessage }}</p>
     <div>
-      <button>Reload</button>
+      <button @click="reload">Reload</button>
     </div>
   </div>
   <slot v-else />
 </template>
+
+<style scoped>
+div {
+  text-align: center;
+}
+</style>

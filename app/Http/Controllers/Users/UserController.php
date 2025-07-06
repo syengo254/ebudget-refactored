@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\UserFormRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -25,15 +26,16 @@ class UserController extends Controller
         $user = User::create($validated);
         
         if ($user) {
-            // send verify email
-            event(new Registered($user));
             
             // login user
             Auth::login($user);
-
+            
+            // send verify email
+            $user->sendEmailVerificationNotification();
+            
             return [
                 "success" => true,
-                "user" => $user,
+                "user" => new UserResource($user),
             ];
         }
         return [
