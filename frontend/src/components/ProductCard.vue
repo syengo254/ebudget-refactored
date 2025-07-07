@@ -19,9 +19,13 @@ defineProps({
   <div class="product-card">
     <div class="product-image">
       <img :src="imgSrc" :alt="product.name + '-image'" />
+      <img class="store-icon" :src="product.store?.logo ?? imgSrc" alt="store-logo" />
     </div>
     <div class="product-info">
       <div class="product-desc">
+        <span class="muted-text" style="margin-bottom: 0.5rem; display: block"
+          ><a href="#" class="decoration-none" :data-id="product.category?.name">{{ product.category?.name }}</a></span
+        >
         <p>
           <RouterLink :to="'/products/' + product.id">{{ product.name }}</RouterLink>
         </p>
@@ -63,6 +67,18 @@ defineProps({
   max-height: 238px;
 }
 
+.product-card > .product-image > img.store-icon {
+  position: absolute;
+  height: 48px;
+  width: 48px;
+  object-fit: cover;
+  border: 1px solid rgb(234, 234, 234);
+  z-index: 3;
+  right: calc(0 - 48px);
+  top: -1px;
+  right: -1px;
+}
+
 .product-card > .product-image > img {
   position: relative;
   max-width: 238px;
@@ -78,7 +94,7 @@ defineProps({
 }
 
 .product-info > .product-desc {
-  max-height: 70px;
+  max-height: fit-content;
 }
 
 .product-info > .product-desc > p {
@@ -117,6 +133,7 @@ button.add-cart-btn {
 .product-price {
   font-size: 1.5rem;
   font-weight: bold;
+  display: block;
 }
 
 .store-info > p {

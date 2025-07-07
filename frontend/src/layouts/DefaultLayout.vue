@@ -68,7 +68,7 @@ const handleLogout = async () => {
             row-gap: 1rem;
           "
         >
-          <p class="text-sm">
+          <p class="text-md">
             <a href="#" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</a>
           </p>
           <a class="btn btn-sm" @click.prevent="handleLogout">Logout</a>

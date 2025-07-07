@@ -1,8 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import axios from '../../../utils/axios'
+
 import { getFormattedNumber } from '../../../utils/helpers'
+import { CategoryType } from '../../../types'
+import { CATEGORIES_LIST_SUMMARY_COUNT } from '../../../config'
 
 const priceFilter = ref(120000)
+const categories = ref<CategoryType[]>([{ name: 'Loading...', id: -1 }])
+const displayCount = ref(CATEGORIES_LIST_SUMMARY_COUNT)
+
+const categoriesToShow = computed(() => {
+  return categories.value.slice(0, displayCount.value)
+})
+
+function toggleListCount(e: MouseEvent) {
+  e.preventDefault()
+  displayCount.value =
+    displayCount.value == CATEGORIES_LIST_SUMMARY_COUNT ? categories.value.length : CATEGORIES_LIST_SUMMARY_COUNT
+}
+
+onMounted(() => {
+  axios.get('/categories').then((response) => {
+    categories.value = response.data as CategoryType[]
+  })
+})
 </script>
 
 <template>
@@ -11,22 +33,15 @@ const priceFilter = ref(120000)
       <h4 class="category-heading">Popular categories</h4>
       <div class="category-body">
         <ul>
-          <li>
-            <a href="#">Furniture</a>
-          </li>
-          <li>
-            <a href="#">Furniture</a>
-          </li>
-          <li>
-            <a href="#">Furniture</a>
-          </li>
-          <li>
-            <a href="#">Furniture</a>
+          <li v-for="category in categoriesToShow" :key="'category-list-' + category.name">
+            <a href="#" :data-id="category.id">{{ category.name }}</a>
           </li>
         </ul>
       </div>
       <div class="category-footer">
-        <a href="#">See more</a>
+        <a href="#" @click="toggleListCount">{{
+          displayCount == CATEGORIES_LIST_SUMMARY_COUNT ? 'See more' : 'See less'
+        }}</a>
       </div>
     </section>
 
@@ -75,7 +90,7 @@ h4.category-heading {
 }
 
 .category-body ul > li {
-  padding-block: 0.1rem;
+  padding-block: 0.15rem;
 }
 
 .category-body a {
@@ -90,7 +105,7 @@ h4.category-heading {
 .category-footer a {
   text-decoration: none;
   transition: color linear 100ms;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   display: block;
 }
 

@@ -138,10 +138,12 @@ header {
 
 .mt-1 {
   margin-top: 1rem;
+  display: block;
 }
 
 .mb-1 {
   margin-bottom: 1rem;
+  display: block;
 }
 
 div.block {
@@ -158,8 +160,9 @@ a:visited {
 }
 
 .text-white {
-  color: white;
+  color: white !important;
 }
+
 .decoration-none {
   text-decoration: none;
 }
