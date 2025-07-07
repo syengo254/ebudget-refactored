@@ -1,36 +1,33 @@
 <script setup lang="ts">
 import ProductCard from '../../../components/ProductCard.vue'
 import Pagination from '../../../components/Pagination.vue'
-import { PropType } from 'vue'
-import { ProductType } from '../../../types'
+import useProducts from '../../../composables/useProducts'
+import LoadingComponent from '../../../components/LoadingComponent.vue'
+import ErrorComponent from '../../../components/ErrorComponent.vue'
 
-const props = defineProps({
-  pagination: {
-    type: Object,
-    required: true,
-  },
-  refetch: {
-    type: Function,
-    required: true,
-  },
-  products: {
-    type: Array as PropType<ProductType[]>,
-    required: true,
-  },
-})
+const { products, refetch, loading, error, pagination } = useProducts()
 
 async function handler(page: number = 1) {
-  await props.refetch(page)
+  await refetch(page)
+
+  window.scrollTo(0, 0)
 }
 </script>
 
 <template>
-  <div class="product-panel">
-    <Pagination :pagination-handler="handler" :meta="pagination.meta" />
+  <LoadingComponent v-if="loading && !error" />
+  <ErrorComponent v-if="error" :error="error" :action="refetch" />
+
+  <div v-if="!loading && !error" class="product-panel">
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between">
+      <h4>Our products</h4>
+      <Pagination :pagination-handler="handler" :meta="pagination.meta" />
+    </div>
 
     <div id="products-root">
       <ProductCard v-for="product in products" :key="product.id + product.name" :product="product" />
     </div>
+    <Pagination :pagination-handler="handler" :meta="pagination.meta" />
   </div>
 </template>
 

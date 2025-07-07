@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import useProducts from '../../composables/useProducts'
+import CategoriesPanel from './components/CategoriesPanel.vue'
 import ProductsPanel from './components/ProductsPanel.vue'
-
-const { products, refetch, loading, error, pagination } = useProducts()
 </script>
 
 <template>
-  <h4>Our products</h4>
-  <div v-if="loading">Loading products, please wait...</div>
-  <div v-if="error">
-    An error occured whilst fetching products: {{ error.message }}
-
-    <button type="button" @click="() => refetch()">Refetch</button>
-  </div>
-  <ProductsPanel v-if="!loading && !error" :pagination :products :refetch />
+  <section class="main">
+    <CategoriesPanel />
+    <ProductsPanel />
+  </section>
 </template>
+
+<style scoped>
+section.main {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+}
+</style>

@@ -7,7 +7,7 @@ import { useAuthStore } from './stores/authStore'
 import { redirectIfLoggedIn } from './utils/helpers'
 
 import DefaultLayout from './layouts/DefaultLayout.vue'
-import PageErrorBoundary from './components/PageError.vue'
+import ErrorBoundary from './components/ErrorBoundary.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -38,9 +38,9 @@ authStore.$subscribe(
 </script>
 
 <template>
-  <PageErrorBoundary>
+  <ErrorBoundary>
     <DefaultLayout v-if="isReady">
       <router-view />
     </DefaultLayout>
-  </PageErrorBoundary>
+  </ErrorBoundary>
 </template>
