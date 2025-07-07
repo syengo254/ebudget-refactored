@@ -47,8 +47,7 @@ const handlePageLink = (page: number) => {
 .pagination {
   display: inline-flex;
   column-gap: 0.3rem;
-  margin-block: 1rem;
-  width: 100%;
+  margin-block: 0.5rem;
   align-items: center;
   justify-content: flex-end;
   padding-inline: 0.5rem;
