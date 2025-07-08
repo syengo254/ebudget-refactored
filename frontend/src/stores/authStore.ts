@@ -8,8 +8,9 @@ import { ref } from 'vue'
 import { isElapsed, useLocalStorage } from '../utils/helpers'
 import { AUTH_CHECK_INTERVAL, LS_USER_SESSION_KEY } from '../config'
 
+type UserStateType = UserType | null
 interface UserStoreType {
-  user: UserType | null
+  user: UserStateType
   isLoggedIn: boolean
   nextAuthCheck: number
 }
@@ -19,7 +20,7 @@ export const useAuthStore = defineStore('auth', {
     return { user: null, isLoggedIn: false, nextAuthCheck: Date.now() }
   },
   getters: {
-    getUser(): UserType | null {
+    getUser(): UserStateType {
       return this.user
     },
     loggedIn(): boolean {
@@ -27,7 +28,7 @@ export const useAuthStore = defineStore('auth', {
     },
   },
   actions: {
-    setUser(user: UserType, isLoggedIn: boolean) {
+    setUser(user: UserStateType, isLoggedIn: boolean) {
       this.user = user
       this.isLoggedIn = isLoggedIn
       this.nextAuthCheck = Date.now() + AUTH_CHECK_INTERVAL
@@ -36,10 +37,11 @@ export const useAuthStore = defineStore('auth', {
       const localSession = useLocalStorage(LS_USER_SESSION_KEY, this.$state)
       const { checkAuth } = useAuth()
 
-      if (isElapsed(this.nextAuthCheck) || localSession.value.isLoggedIn == false) {
+      if (!localSession.value.isLoggedIn || isElapsed(localSession.value.nextAuthCheck)) {
         const { isLoggedIn, user, error } = await checkAuth()
-        if (!error && user) {
-          this.$patch({ user, isLoggedIn })
+        if (!error) {
+          this.setUser(user, isLoggedIn)
+          localSession.value = this.$state
           return true
         }
         return error
@@ -99,10 +101,6 @@ export const useAuthStore = defineStore('auth', {
       await logout()
       this.nextAuthCheck = 0
       this.$reset()
-    },
-
-    updateLocalSessionStorage() {
-      return useLocalStorage(LS_USER_SESSION_KEY, this.$state)
     },
   },
 })

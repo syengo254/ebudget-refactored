@@ -28,13 +28,6 @@ const routeName = computed(() => route.name)
 watchEffect(() => {
   redirectIfLoggedIn(router, routeName.value as string | undefined | null, isSignedIn.value)
 })
-
-authStore.$subscribe(
-  () => {
-    return authStore.updateLocalSessionStorage()
-  },
-  { flush: 'sync' },
-)
 </script>
 
 <template>
