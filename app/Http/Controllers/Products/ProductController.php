@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Products;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductViewResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
