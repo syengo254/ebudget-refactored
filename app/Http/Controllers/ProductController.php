@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductViewResource;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,10 +14,27 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(int $page = 1, int $limit = 8)
+    public function index(Request $request, int $page = 1, int $limit = 8)
     {
         $limit = request()->limit ?? $limit;
-        return ProductViewResource::collection(Product::with("store", "category")->latest()->paginate($limit));
+
+        if (!(request()->category || request()->price || request()->store)) {
+            return ProductViewResource::collection(Product::with("store", "category")->latest()->paginate($limit));
+        }
+
+        $products = Product::query();
+
+        $request->category && $products->whereHas("category", function (Builder $query) use ($request) {
+            $query->where("name", "LIKE", "%{$request->category}%");
+        });
+
+        $request->store && $products->whereHas("store", function (Builder $query) use ($request) {
+            $query->where("name", "LIKE", "%{$request->store}%");
+        });
+
+        $request->price && $products->where("price", "<=", intval($request->price));
+
+        return ProductViewResource::collection($products->paginate($limit));
     }
 
     /**
