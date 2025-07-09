@@ -50,6 +50,13 @@ body {
   border-radius: 3.5px;
 }
 
+.alert.success {
+  border: 1px solid rgb(9, 231, 135);
+  background: rgb(194, 252, 206);
+  color: rgb(17, 102, 33);
+  border-radius: 3.5px;
+}
+
 div.form-group {
   position: relative;
   display: flex;

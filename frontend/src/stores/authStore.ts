@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import axiosRoot from 'axios'
+import axiosRoot, { AxiosError } from 'axios'
 
-import { UserType } from '../types'
+import { UserType, UserUpdateType } from '../types'
 import useAuth from '../composables/useAuth'
 import useLogin from '../composables/useLogin'
 import { ref } from 'vue'
@@ -104,6 +104,41 @@ export const useAuthStore = defineStore('auth', {
       this.$reset()
       localSession.value = this.$state
       return res
+    },
+
+    async updateUser(userDetails: UserUpdateType) {
+      const { patchUser } = useAuth()
+
+      const success = ref(false)
+      const loading = ref(true)
+      const error = ref<string | null>(null)
+      const errors = ref<{
+        password?: string[]
+        password_confirmation?: string[]
+        name?: string[]
+        logo?: string[]
+      } | null>(null)
+
+      const { data, isValidationError, formErrors } = await patchUser(this.user ? this.user?.id : -1, userDetails)
+      loading.value = false
+
+      if (data instanceof AxiosError) {
+        if (isValidationError) {
+          errors.value = formErrors
+        } else {
+          error.value = data.response?.data.message
+        }
+      } else {
+        success.value = true
+        this.setUser(data.user, true)
+      }
+
+      return {
+        success,
+        errors,
+        loading,
+        error,
+      }
     },
   },
 })

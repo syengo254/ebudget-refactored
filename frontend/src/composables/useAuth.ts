@@ -1,4 +1,5 @@
-import { UserType } from '../types.ts'
+import { UserType, UserUpdateType } from '../types.ts'
+import axiosRoot, { AxiosError } from 'axios'
 import axios from '../utils/axios.ts'
 
 function useAuth() {
@@ -42,9 +43,33 @@ function useAuth() {
     }
   }
 
+  async function patchUser(userId: number, details: UserUpdateType) {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.patch(`/users/${userId}`, details)
+
+      return {
+        data: response.data,
+        isValidationError: null,
+        formErrors: null,
+      }
+    } catch (error) {
+      let formErrors = null
+      if (axiosRoot.isAxiosError(error)) {
+        formErrors = error.response?.data.errors ?? error
+      }
+      return {
+        data: error as AxiosError,
+        isValidationError: axiosRoot.isAxiosError(error) && error.response?.data.errors,
+        formErrors: formErrors,
+      }
+    }
+  }
+
   return {
     logout,
     checkAuth,
+    patchUser,
   }
 }
 

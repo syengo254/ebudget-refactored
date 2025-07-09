@@ -5,35 +5,105 @@ import FormInput from '../../../components/forms/FormInput.vue'
 import SubmitButton from './SubmitButton.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import { useAuthStore } from '../../../stores/authStore'
+import SuccessAlert from '../../../components/SuccessAlert.vue'
 
 const authStore = useAuthStore()
 
 const name = ref(authStore.user?.name)
-const email = ref(authStore.user?.email)
-const logo = ref(authStore.user?.store?.logo)
+const logo = ref('')
 const password = ref('')
 const password_confirmation = ref('')
-const loading = ref(false)
+const showChangePassword = ref(false)
+const updating = ref(false)
+const success = ref(false)
 
 const personalDisabled = ref(true)
 
 const updateError = ref<null | boolean | string>(null)
 
 const validationErrors = ref<{
-  email: string[]
-  password: string[]
-  password_confirmation: string[]
-  name: string[]
+  password?: string[]
+  password_confirmation?: string[]
+  name?: string[]
   logo?: string[]
 } | null>(null)
 
-function togglePersonalForm() {
+function togglePersonalForm(src: 'cancel' | 'edit' = 'edit') {
   personalDisabled.value = !personalDisabled.value
+
+  if (src == 'cancel') {
+    name.value = authStore.user?.name
+    password.value = ''
+    password_confirmation.value = ''
+    validationErrors.value = null
+    updateError.value = null
+    showChangePassword.value = false
+  }
+}
+
+async function handleSubmit() {
+  if (name.value == '') {
+    validationErrors.value = {
+      name: ['Name cannot be empty'],
+    }
+    return
+  }
+
+  if (showChangePassword.value && (password.value as string).length > 0) {
+    if ((name.value as string).length < 8) {
+      validationErrors.value = {
+        name: ['Minimum  of 8 characters required'],
+      }
+      return
+    }
+
+    if ((password.value as string).length < 6) {
+      validationErrors.value = {
+        name: ['Minimum 6 characters for password'],
+      }
+      return
+    }
+
+    if (password.value !== password_confirmation.value) {
+      validationErrors.value = {
+        password: ['Passwords do not match!'],
+      }
+      return
+    }
+  }
+
+  updating.value = true
+  const {
+    success: done,
+    loading,
+    error,
+    errors,
+  } = await authStore.updateUser({
+    ...(name.value ? { name: name.value } : {}),
+    ...(showChangePassword.value
+      ? { password: password.value, password_confirmation: password_confirmation.value }
+      : {}),
+  })
+
+  // console.log(done.value, error.value, errors.value)
+
+  if (done.value) {
+    // show alert success
+    success.value = done.value
+    updating.value = loading.value
+  } else if (errors.value !== null) {
+    validationErrors.value = errors.value
+  } else {
+    updateError.value = error.value
+    // console.log(updateError.value)
+  }
+
+  togglePersonalForm('cancel')
 }
 </script>
 
 <template>
-  <form action="/profile" method="post" autocomplete="off">
+  <form action="/profile" method="post" autocomplete="off" @submit.prevent="handleSubmit">
     <fieldset>
       <legend><h4>Personal Information</h4></legend>
       <div class="form-group">
@@ -48,19 +118,6 @@ function togglePersonalForm() {
           <Error :form-errors="validationErrors?.name" />
         </FormInput>
       </div>
-      <div class="form-group">
-        <FormInput
-          v-model="email"
-          type="email"
-          name="email"
-          label="Email address"
-          placeholder="email@example.com"
-          :disabled="personalDisabled"
-          :required="true"
-        >
-          <Error :form-errors="validationErrors?.email" />
-        </FormInput>
-      </div>
       <div v-show="authStore.user?.hasStore" class="form-group">
         <FormInput
           v-model="logo"
@@ -73,41 +130,59 @@ function togglePersonalForm() {
           <Error :form-errors="validationErrors?.logo" />
         </FormInput>
       </div>
-      <div class="form-group">
-        <FormInput
-          v-model="password"
-          type="password"
-          name="password"
-          label="Password"
-          :disabled="personalDisabled"
-          :required="true"
-        >
-          <Error :form-errors="validationErrors?.password" />
-        </FormInput>
+      <div v-if="showChangePassword">
+        <div class="form-group">
+          <FormInput
+            v-model="password"
+            type="password"
+            name="password"
+            label="Password"
+            :disabled="personalDisabled"
+            :required="false"
+          >
+            <Error :form-errors="validationErrors?.password" />
+          </FormInput>
+        </div>
+        <div class="form-group">
+          <FormInput
+            v-model="password_confirmation"
+            type="password"
+            name="password_confirmation"
+            label="Confirm Password"
+            :disabled="personalDisabled"
+            :required="false"
+          >
+            <Error :form-errors="validationErrors?.password_confirmation" />
+          </FormInput>
+        </div>
       </div>
-      <div class="form-group">
-        <FormInput
-          v-model="password_confirmation"
-          type="password"
-          name="password_confirmation"
-          label="Confirm Password"
-          :disabled="personalDisabled"
-          :required="true"
+      <div v-else>
+        <SubmitButton
+          type="button"
+          @click="
+            () => {
+              showChangePassword = !showChangePassword
+              togglePersonalForm()
+            }
+          "
+          >Change Password</SubmitButton
         >
-          <Error :form-errors="validationErrors?.password_confirmation" />
-        </FormInput>
       </div>
       <div class="submit-btns">
-        <button v-if="!personalDisabled" type="button" class="btn btn-cancel" @click="togglePersonalForm">
+        <button v-if="!personalDisabled" type="button" class="btn btn-cancel" @click="togglePersonalForm('cancel')">
           Cancel
         </button>
-        <SubmitButton v-if="!personalDisabled" type="submit" :disabled="loading">
-          {{ loading ? 'Saving' : 'Save' }}
+        <SubmitButton v-if="!personalDisabled" type="submit" :disabled="updating">
+          {{ updating ? 'Saving' : 'Save' }}
         </SubmitButton>
         <SubmitButton v-if="personalDisabled" type="button" @click="togglePersonalForm"> Edit </SubmitButton>
       </div>
 
-      <ErrorAlert :show="!!updateError && !validationErrors" :msg="updateError?.toString() ?? ''" />
+      <ErrorAlert :show="!success && !!updateError" :msg="updateError?.toString() ?? ''" />
+      <SuccessAlert
+        msg="Account details updated. You will need to login again if you changed your password"
+        :show="success"
+      />
     </fieldset>
   </form>
 </template>

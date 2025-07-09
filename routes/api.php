@@ -34,6 +34,7 @@ Route::post("/logout", [SessionController::class, "destroy"]);
 // users
 Route::post("/users", [UserController::class, "store"])->middleware("guest");
 Route::get("/users/{user}", [UserController::class, "show"])->middleware("auth:sanctum");
+Route::patch("/users/{user}", [UserController::class, "update"])->middleware("auth:sanctum");
 
 Route::middleware(["auth:sanctum", "verified"])->get("/users", [UserController::class, "index"]);
 Route::middleware("auth:sanctum")->get("/users/{user}", [UserController::class, "show"]);

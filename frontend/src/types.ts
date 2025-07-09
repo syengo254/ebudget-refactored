@@ -24,6 +24,10 @@ export type UserRegistrationType = {
   name: string
 }
 
+export type UserUpdateType = {
+  [Property in keyof Omit<UserRegistrationType, 'has_store' | 'email'>]?: UserRegistrationType[Property]
+}
+
 export type CategoryType = {
   id: number
   name: string
