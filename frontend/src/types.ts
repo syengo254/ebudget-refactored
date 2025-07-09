@@ -38,4 +38,4 @@ export type ProductsFiltersType = {
   category?: string
   price?: number
   store?: string
-} & Record<string, string>
+}

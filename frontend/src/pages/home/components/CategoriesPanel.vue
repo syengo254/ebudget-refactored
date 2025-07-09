@@ -1,29 +1,34 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import axios from '../../../utils/axios'
 
 import { getFormattedNumber } from '../../../utils/helpers'
-import { CategoryType } from '../../../types'
 import { CATEGORIES_LIST_SUMMARY_COUNT } from '../../../config'
+import { useProductStore } from '../../../stores/productStore'
 
+const productStore = useProductStore()
 const priceFilter = ref(120000)
-const categories = ref<CategoryType[]>([{ name: 'Loading...', id: -1 }])
 const displayCount = ref(CATEGORIES_LIST_SUMMARY_COUNT)
 
 const categoriesToShow = computed(() => {
-  return categories.value.slice(0, displayCount.value)
+  return productStore.categories.slice(0, displayCount.value)
 })
 
 function toggleListCount(e: MouseEvent) {
   e.preventDefault()
   displayCount.value =
-    displayCount.value == CATEGORIES_LIST_SUMMARY_COUNT ? categories.value.length : CATEGORIES_LIST_SUMMARY_COUNT
+    displayCount.value == CATEGORIES_LIST_SUMMARY_COUNT ? productStore.categories.length : CATEGORIES_LIST_SUMMARY_COUNT
+}
+
+function handleCategoryFilter(val: string) {
+  productStore.addFilter('category', val)
+}
+
+function handlePriceFilter() {
+  productStore.addFilter('price', priceFilter.value)
 }
 
 onMounted(() => {
-  axios.get('/categories').then((response) => {
-    categories.value = response.data as CategoryType[]
-  })
+  productStore.fetchCategories().then()
 })
 </script>
 
@@ -34,7 +39,7 @@ onMounted(() => {
       <div class="category-body">
         <ul>
           <li v-for="category in categoriesToShow" :key="'category-list-' + category.name">
-            <a href="#" :data-id="category.id">{{ category.name }}</a>
+            <a href="#" @click.prevent="handleCategoryFilter(category.name)">{{ category.name }}</a>
           </li>
         </ul>
       </div>
@@ -50,7 +55,7 @@ onMounted(() => {
       <div class="range-value semibold">{{ getFormattedNumber(100) }} - {{ getFormattedNumber(priceFilter) }}</div>
       <div class="range-input">
         <input v-model="priceFilter" type="range" name="price" min="100" max="1000000" step="200" />
-        <button class="btn go-btn">Go</button>
+        <button class="btn go-btn" @click="handlePriceFilter">Go</button>
       </div>
     </section>
   </div>

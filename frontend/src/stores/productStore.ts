@@ -28,11 +28,19 @@ export const useProductStore = defineStore('products', {
   },
 
   getters: {
-    getProducts(): ProductType[] {
-      return this.products
+    getProducts(state): ProductType[] {
+      return state.products
     },
-    getCategories(): CategoryType[] {
-      return this.categories
+    getCategories(state): CategoryType[] {
+      return state.categories
+    },
+    getFilters(state) {
+      return Object.entries(state.filters).map(([key, value]) => {
+        return {
+          name: key,
+          value,
+        }
+      })
     },
   },
 
@@ -81,6 +89,39 @@ export const useProductStore = defineStore('products', {
     async refetch() {
       if (this.error) this.error = null
       await this.fetchProducts()
+    },
+
+    async fetchCategories() {
+      const { fetchCategories: fetch } = useProducts()
+
+      const response = await fetch()
+
+      if (response instanceof Error) {
+        this.categories = [
+          {
+            id: -1,
+            name: 'Failed to fetch categories, please reload the page. More details: ' + response.message,
+          },
+        ]
+      } else {
+        this.categories = response
+      }
+    },
+
+    clearFilter(filterName: keyof ProductsFiltersType) {
+      const filters = this.filters
+      delete filters[filterName]
+      this.filters = filters
+      ;(async () => {
+        await this.fetchProducts(1)
+      })()
+    },
+
+    addFilter(filterName: keyof ProductsFiltersType, filterValue: ProductsFiltersType[keyof ProductsFiltersType]) {
+      this.filters[filterName] = filterValue as never
+      ;(async () => {
+        await this.fetchProducts(1)
+      })()
     },
   },
 })
