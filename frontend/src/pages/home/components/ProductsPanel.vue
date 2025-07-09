@@ -17,7 +17,7 @@ onMounted(async () => {
 })
 
 async function handler(page: number = 1) {
-  await productStore.fetchProducts(page)
+  await productStore.fetchProducts(false, page)
 
   window.scrollTo(0, 0)
 }

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '../pages/home/HomePage.vue'
 import AboutPage from '../pages/about/AboutPage.vue'
+import UserProfilePage from '../pages/profile/UserProfilePage.vue'
 
 const routes = [
   {
@@ -10,6 +11,16 @@ const routes = [
     name: 'home',
     meta: {
       title: 'Home | E-budget.com | Best Online Shoping Experience',
+    },
+  },
+  {
+    path: '/profile',
+    component: UserProfilePage,
+    name: 'profile',
+    meta: {
+      title: 'User Profile | Edit your information | E-budget.com | Best Online Shoping Experience',
+      requiresAuth: true,
+      forceCheckServerAuth: true, // ignore local storage data
     },
   },
   {
@@ -49,10 +60,6 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
-
-router.beforeEach((to) => {
-  document.title = to.meta.title ?? 'E-budget.com | Best Online Shoping Experience'
 })
 
 export default router

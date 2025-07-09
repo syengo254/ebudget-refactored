@@ -45,19 +45,19 @@ export const useProductStore = defineStore('products', {
   },
 
   actions: {
-    async fetchProducts(page?: number) {
+    async fetchProducts(noCache: boolean = false, page?: number) {
       const { fetch } = useProducts()
 
       if (page && this.page !== page) {
         this.page = page
+      }
 
-        if (this.cachedProducts[page]) {
-          this.loading = true
-          this.products = this.cachedProducts[page].data
-          this.pagination = this.cachedProducts[page].pagination
-          this.loading = false
-          return
-        }
+      if (!noCache && this.cachedProducts[this.page]) {
+        this.loading = true
+        this.products = this.cachedProducts[this.page].data
+        this.pagination = this.cachedProducts[this.page].pagination
+        this.loading = false
+        return
       }
 
       this.loading = true
@@ -91,7 +91,8 @@ export const useProductStore = defineStore('products', {
       await this.fetchProducts()
     },
 
-    async fetchCategories() {
+    async fetchCategories(noCache: boolean = false) {
+      if (!noCache || this.categories.length > 1) return
       const { fetchCategories: fetch } = useProducts()
 
       const response = await fetch()
@@ -113,14 +114,14 @@ export const useProductStore = defineStore('products', {
       delete filters[filterName]
       this.filters = filters
       ;(async () => {
-        await this.fetchProducts(1)
+        await this.fetchProducts(true, 1)
       })()
     },
 
     addFilter(filterName: keyof ProductsFiltersType, filterValue: ProductsFiltersType[keyof ProductsFiltersType]) {
       this.filters[filterName] = filterValue as never
       ;(async () => {
-        await this.fetchProducts(1)
+        await this.fetchProducts(true, 1)
       })()
     },
   },

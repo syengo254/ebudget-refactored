@@ -28,7 +28,7 @@ function handlePriceFilter() {
 }
 
 onMounted(() => {
-  productStore.fetchCategories().then()
+  productStore.fetchCategories(true).then()
 })
 </script>
 

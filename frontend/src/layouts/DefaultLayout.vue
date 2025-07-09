@@ -5,41 +5,25 @@ import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
 import { useAuthStore } from '../stores/authStore'
-import useAuth from '../composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
 
 const authStore = useAuthStore()
-const { logout } = useAuth()
 
 const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // handlers
 const handleLogout = async () => {
-  const success = await logout()
+  const success = await authStore.authLogout()
   if (success) {
-    // empty user store & navigate to /login
-    authStore.$reset()
-
     router.push({
       path: '/login',
       replace: true,
     })
   }
 }
-
-// const categories = [
-//   {
-//     id: 1,
-//     name: 'furniture',
-//   },
-//   {
-//     id: 1,
-//     name: 'electronics',
-//   },
-// ]
 </script>
 
 <template>
@@ -59,7 +43,7 @@ const handleLogout = async () => {
       <div class="navigation-links">
         <div v-if="isLoggedIn" class="user-links">
           <p class="text-md">
-            <a href="#" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</a>
+            <RouterLink to="/profile" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</RouterLink>
           </p>
           <a class="btn btn-sm" @click.prevent="handleLogout">Logout</a>
         </div>

@@ -33,11 +33,11 @@ export const useAuthStore = defineStore('auth', {
       this.isLoggedIn = isLoggedIn
       this.nextAuthCheck = Date.now() + AUTH_CHECK_INTERVAL
     },
-    async checkSessionAuthenticated() {
+    async checkSessionAuthenticated(checkServer = false) {
       const localSession = useLocalStorage(LS_USER_SESSION_KEY, this.$state)
       const { checkAuth } = useAuth()
 
-      if (!localSession.value.isLoggedIn || isElapsed(localSession.value.nextAuthCheck)) {
+      if (checkServer || !localSession.value.isLoggedIn || isElapsed(localSession.value.nextAuthCheck)) {
         const { isLoggedIn, user, error } = await checkAuth()
         if (!error) {
           this.setUser(user, isLoggedIn)
@@ -98,9 +98,12 @@ export const useAuthStore = defineStore('auth', {
 
     async authLogout() {
       const { logout } = useAuth()
-      await logout()
+      const localSession = useLocalStorage(LS_USER_SESSION_KEY, this.$state)
+      const res = await logout()
       this.nextAuthCheck = 0
       this.$reset()
+      localSession.value = this.$state
+      return res
     },
   },
 })
