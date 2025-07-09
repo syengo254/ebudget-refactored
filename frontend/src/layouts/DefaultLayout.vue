@@ -11,7 +11,7 @@ const route = useRoute()
 
 const authStore = useAuthStore()
 
-const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
+const showCategoriesBar = computed(() => !['register', 'login', 'profile'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // handlers

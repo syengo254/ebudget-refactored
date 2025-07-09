@@ -16,11 +16,13 @@ router.beforeEach(async (to, from, next) => {
     const { isLoggedIn } = storeToRefs(authStore)
 
     if (!isLoggedIn.value) {
-      return next('login')
+      next('login')
+    } else {
+      next()
     }
+  } else {
+    next()
   }
-
-  return next()
 })
 </script>
 

@@ -57,6 +57,7 @@ div.form-group {
 }
 
 input.form-input,
+textarea.form-input,
 select.form-select {
   padding: 0.5rem 0.8rem;
   font-family: inherit;
@@ -165,4 +166,30 @@ a:visited {
 
 .decoration-none {
   text-decoration: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+.gap-2 {
+  gap: 1rem;
+}
+.gap-3 {
+  gap: 1rem;
 }
