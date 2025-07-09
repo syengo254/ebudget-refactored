@@ -109,10 +109,15 @@ export const useProductStore = defineStore('products', {
       }
     },
 
+    invalidateCaches() {
+      this.cachedProducts = {}
+    },
+
     clearFilter(filterName: keyof ProductsFiltersType) {
       const filters = this.filters
       delete filters[filterName]
       this.filters = filters
+      this.invalidateCaches()
       ;(async () => {
         await this.fetchProducts(true, 1)
       })()
