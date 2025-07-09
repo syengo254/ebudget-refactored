@@ -29,7 +29,7 @@ class Profile extends Model
 
     public function getActiveAddress()
     {
-        if(! $this->active_address_id) return;
+        if(! $this->active_address_id) return NULL;
 
         return Address::find($this->active_address_id);
     }

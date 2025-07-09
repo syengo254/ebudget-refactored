@@ -6,16 +6,16 @@ import SubmitButton from './SubmitButton.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import { useAuthStore } from '../../../stores/authStore'
 
-const personalDisabled = ref(true)
+const authStore = useAuthStore()
 
-const name = ref('David Syengo')
+const name = ref(authStore.user?.name)
+const email = ref(authStore.user?.email)
+const logo = ref(authStore.user?.store?.logo)
 const password = ref('')
 const password_confirmation = ref('')
-const logo = ref('')
-const email = ref('')
 const loading = ref(false)
 
-const authStore = useAuthStore()
+const personalDisabled = ref(true)
 
 const updateError = ref<null | boolean | string>(null)
 
@@ -104,10 +104,10 @@ function togglePersonalForm() {
         <SubmitButton v-if="!personalDisabled" type="submit" :disabled="loading">
           {{ loading ? 'Saving' : 'Save' }}
         </SubmitButton>
-        <SubmitButton v-show="personalDisabled" type="button" @click="togglePersonalForm"> Edit </SubmitButton>
+        <SubmitButton v-if="personalDisabled" type="button" @click="togglePersonalForm"> Edit </SubmitButton>
       </div>
 
-      <ErrorAlert :show="(updateError as boolean) && !validationErrors" :msg="updateError as string" />
+      <ErrorAlert :show="!!updateError && !validationErrors" :msg="updateError?.toString() ?? ''" />
     </fieldset>
   </form>
 </template>

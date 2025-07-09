@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import FormInput from '../../../components/forms/FormInput.vue'
 import Error from '../../../components/forms/Error.vue'
 import SubmitButton from './SubmitButton.vue'
+import ErrorAlert from '../../../components/ErrorAlert.vue'
 
 const phone = ref('')
 const city = ref('')
@@ -111,7 +112,7 @@ function toggleAddressForm() {
         <SubmitButton v-if="addressDisabled" type="button" @click="toggleAddressForm">Edit</SubmitButton>
       </div>
 
-      <ErrorAlert :show="(updateError as boolean) && !validationErrors" :msg="updateError as string" />
+      <ErrorAlert :show="!!updateError && !validationErrors" :msg="updateError?.toString() ?? ''" />
     </fieldset>
   </form>
 </template>

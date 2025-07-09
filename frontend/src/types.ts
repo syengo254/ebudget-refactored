@@ -3,6 +3,17 @@ export type UserType = {
   name: string
   email: string
   hasStore: boolean
+  store?: StoreType
+  address?: AddressType
+}
+
+export type AddressType = {
+  phone?: string
+  city?: string
+  town?: string
+  building?: string
+  floor?: string
+  additionalInfo?: string
 }
 
 export type UserRegistrationType = {

@@ -4,7 +4,7 @@ const modelValue = defineModel<string>()
 defineProps({
   type: {
     type: String,
-    required: true,
+    required: false,
     default: 'text',
   },
   name: {
@@ -28,7 +28,8 @@ defineProps({
   },
   disabled: {
     type: Boolean,
-    required: true,
+    required: false,
+    default: false,
   },
   required: {
     type: Boolean,

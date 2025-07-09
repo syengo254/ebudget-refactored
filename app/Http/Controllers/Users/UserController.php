@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\UserFormRequest;
+use App\Http\Resources\ProfileResource;
 use App\Http\Resources\UserResource;
+use App\Models\Profile;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,17 +24,33 @@ class UserController extends Controller
     {
         $validated = $request->validated();
         $validated["password"] = Hash::make($validated["password"]);
-        
+
         $user = User::create($validated);
-        
+
         if ($user) {
-            
+            // create profile entry
+            Profile::create([
+                'user_id' => $user->id,
+                'phone' => NULL,
+                'active_address_id' => NULL,
+            ]);
+
+            // if has_store create store entry
+            if($user->has_store)
+            {
+                Store::create([
+                    "user_id" => $user->id,
+                    "logo" => NULL,
+                    "name" => $user->name,
+                ]);
+            }
+
             // login user
             Auth::login($user);
-            
+
             // send verify email
             $user->sendEmailVerificationNotification();
-            
+
             return [
                 "success" => true,
                 "user" => new UserResource($user),
@@ -45,13 +64,9 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        if (Auth::guest() || !$user->is(Auth::user())) {
-            return response()->json([
-                "message" => "Unauthorized access",
-            ], 401);
-        }
-
-        return $user;
+        if(Auth::user()->isNot($user)) abort(401);
+        
+        return UserResource::make($user);
     }
 
     public function update(Request $request, User $user)
