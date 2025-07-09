@@ -1,39 +1,53 @@
 <script setup lang="ts">
 import ProductCard from '../../../components/ProductCard.vue'
 import Pagination from '../../../components/Pagination.vue'
-import useProducts from '../../../composables/useProducts'
 import LoadingComponent from '../../../components/LoadingComponent.vue'
 import ErrorComponent from '../../../components/ErrorComponent.vue'
+import { useProductStore } from '../../../stores/productStore'
+import { onMounted } from 'vue'
 
-const { products, refetch, loading, error, pagination } = useProducts()
+const productStore = useProductStore()
+
+onMounted(async () => {
+  await productStore.fetchProducts()
+})
 
 async function handler(page: number = 1) {
-  await refetch(page)
+  await productStore.fetchProducts(page)
 
   window.scrollTo(0, 0)
 }
 </script>
 
 <template>
-  <LoadingComponent v-if="loading && !error" />
-  <ErrorComponent v-if="error" :error="error" :action="refetch" />
+  <LoadingComponent v-if="productStore.loading && !productStore.error" />
+  <ErrorComponent
+    v-if="productStore.error"
+    :error="productStore.error"
+    :action="
+      async () => {
+        await productStore.refetch()
+      }
+    "
+  />
 
-  <div v-if="!loading && !error" class="product-panel">
-    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between">
-      <h4>Our products</h4>
-      <Pagination :pagination-handler="handler" :meta="pagination.meta" />
+  <div v-if="!productStore.loading && !productStore.error" class="product-panel">
+    <div style="display: flex; flex-direction: column; margin-bottom: 1rem">
+      <h4 style="margin-bottom: 0.5rem">Our products</h4>
+      <Pagination :pagination-handler="handler" :meta="productStore.pagination" />
     </div>
 
     <div id="products-root">
-      <ProductCard v-for="product in products" :key="product.id + product.name" :product="product" />
+      <ProductCard v-for="product in productStore.products" :key="product.id + product.name" :product="product" />
     </div>
-    <Pagination :pagination-handler="handler" :meta="pagination.meta" />
+    <Pagination style="margin-bottom: 2rem" :pagination-handler="handler" :meta="productStore.pagination" />
   </div>
 </template>
 
 <style scoped>
 div.product-panel {
   max-width: 1400px;
+  width: 100%;
   --max-items: 4;
   max-width: calc(var(--max-items) * 238px + var(--max-items) * 1rem);
 }

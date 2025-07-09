@@ -5,8 +5,6 @@ import { RouterLink } from 'vue-router'
 import { ProductType } from '../types'
 import { getFormattedNumber } from '../utils/helpers'
 
-import imgSrc from '@/assets/colgate-toothpaste.jpg'
-
 defineProps({
   product: {
     required: true,
@@ -18,8 +16,8 @@ defineProps({
 <template>
   <div class="product-card">
     <div class="product-image">
-      <img :src="imgSrc" :alt="product.name + '-image'" />
-      <img class="store-icon" :src="product.store?.logo ?? imgSrc" alt="store-logo" />
+      <img :src="product.image" :alt="product.name + '-image'" class="image" />
+      <img class="store-icon" :src="product.store?.logo" alt="store-logo" />
     </div>
     <div class="product-info">
       <div class="product-desc">
@@ -69,20 +67,24 @@ defineProps({
 
 .product-card > .product-image > img.store-icon {
   position: absolute;
-  height: 48px;
-  width: 48px;
-  object-fit: cover;
+  height: 64px;
+  width: 64px;
+  object-fit: scale-down;
   border: 1px solid rgb(234, 234, 234);
   z-index: 3;
   right: calc(0 - 48px);
   top: -1px;
   right: -1px;
+  background: white;
+  opacity: 0.9;
 }
 
-.product-card > .product-image > img {
+.product-card > .product-image > img.image {
   position: relative;
-  max-width: 238px;
-  object-fit: cover;
+  width: 238px;
+  height: 238px;
+  object-fit: fill;
+  padding: 0.5rem;
 }
 
 .product-info {

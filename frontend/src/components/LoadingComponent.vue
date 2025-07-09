@@ -10,7 +10,7 @@
 .loader-wrapper {
   position: fixed;
   left: 50%;
-  top: 50%;
+  top: 30%;
 }
 /* HTML: <div class="loader"></div> */
 .loader {

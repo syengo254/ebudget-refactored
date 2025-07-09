@@ -15,7 +15,7 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, int $page = 1, int $limit = 8)
+    public function index(Request $request, int $page = 1, int $limit = 12)
     {
         $limit = request()->limit ?? $limit;
 

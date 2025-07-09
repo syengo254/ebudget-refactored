@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,5 +32,12 @@ class Product extends Model
     public function store() 
     {
         return $this->belongsTo(Store::class);
+    }
+
+    protected function image(): CastsAttribute
+    {
+        return CastsAttribute::make(
+            get: fn ($value) => asset('storage/' . $value),
+        );
     }
 }

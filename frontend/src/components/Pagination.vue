@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const props = defineProps({
   paginationHandler: { required: true, type: Function },
   meta: { required: true, type: Object },
 })
 
+const maxIterations = computed(() => (props.meta.last_page > 15 ? 15 : props.meta.last_page))
+const currentPage = computed(() => props.meta.current_page)
+const lastPage = computed(() => props.meta.last_page)
+
 const handlePageLink = (page: number) => {
-  if (page == props.meta.current_page || page < 1 || page > props.meta.last_page) return
+  if (page == currentPage.value || page < 1 || page > lastPage.value) return
   props.paginationHandler(page)
 }
 </script>
@@ -15,47 +21,43 @@ const handlePageLink = (page: number) => {
     <div class="summary">Showing {{ meta.from }} - {{ meta.to }} of {{ meta.total }} items</div>
     <a id="first" href="#" class="pagination-link" @click.prevent="handlePageLink(1)">|&lt;</a>
     <a
-      v-if="meta.current_page > 1"
+      v-if="currentPage > 1"
       id="previous"
       href="#"
       class="pagination-link"
-      @click.prevent="handlePageLink(meta.current_page - 1)"
+      @click.prevent="handlePageLink(currentPage - 1)"
       >&lt;&lt;</a
     >
     <a
-      v-for="n in meta.last_page"
+      v-for="n in maxIterations"
       id="current"
       :key="'page-link' + n"
       href="#"
-      :class="'pagination-link' + (n == meta.current_page ? ' active' : '')"
+      :class="'pagination-link' + (n == currentPage ? ' active' : '')"
       @click.prevent="handlePageLink(n)"
       >{{ n }}</a
     >
     <a
-      v-if="meta.current_page < meta.last_page"
+      v-if="currentPage < lastPage"
       id="next"
       href="#"
       class="pagination-link"
-      @click.prevent="handlePageLink(meta.current_page + 1)"
+      @click.prevent="handlePageLink(currentPage + 1)"
       >&gt;&gt;</a
     >
-    <a id="last" href="#" class="pagination-link" @click.prevent="handlePageLink(meta.last_page)">>|</a>
+    <a id="last" href="#" class="pagination-link" @click.prevent="handlePageLink(lastPage)">>|</a>
   </div>
 </template>
 
 <style scoped>
 .pagination {
   display: inline-flex;
-  column-gap: 0.3rem;
-  margin-block: 0.5rem;
+  column-gap: 0.5rem;
   align-items: center;
-  justify-content: flex-end;
-  padding-inline: 0.5rem;
 }
 
 .pagination > div.summary {
   font-size: 0.9rem;
-  margin-inline: 0.5rem;
 }
 
 a.pagination-link {

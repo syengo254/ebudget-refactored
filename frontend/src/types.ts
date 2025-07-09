@@ -33,3 +33,9 @@ export interface ProductType {
   stock_amount: number
   image: string
 }
+
+export type ProductsFiltersType = {
+  category?: string
+  price?: number
+  store?: string
+} & Record<string, string>

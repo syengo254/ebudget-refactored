@@ -133,7 +133,7 @@ header {
   background: rgb(30, 45, 125);
   color: white;
   align-items: center;
-  z-index: 2;
+  z-index: 100;
 }
 
 header .tagline {
