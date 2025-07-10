@@ -292,6 +292,12 @@ div.search-icon > img {
   }
 }
 
+@media screen and (max-width: 500px) {
+  main {
+    margin-inline: 0;
+  }
+}
+
 @media screen and (max-width: 800px) {
   /* 
     add styles as required later

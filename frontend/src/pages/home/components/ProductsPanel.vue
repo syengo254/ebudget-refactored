@@ -62,7 +62,6 @@ function removeFilter(filterName: keyof ProductsFiltersType) {
 
 <style scoped>
 div.product-panel {
-  max-width: 1400px;
   width: 100%;
   --max-items: 4;
   max-width: calc(var(--max-items) * 238px + var(--max-items) * 1rem);
@@ -78,14 +77,20 @@ div.product-panel {
   align-items: stretch;
   /* margin-inline: auto; */
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 420px) {
   #products-root {
-    max-width: 210px;
+    width: 100vw;
     margin-inline: none;
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
     gap: 0px;
     row-gap: 1rem;
+  }
+  div.product-panel {
+    width: 98vw;
+    max-width: 100vw;
+    margin-inline: 0.5rem;
   }
 }
 

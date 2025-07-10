@@ -12,7 +12,7 @@ const validationErrors = ref<{
   email: string[]
   password: string[]
 } | null>(null)
-const loginError = ref<null | boolean | string>(null)
+const loginError = ref<null | string>(null)
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -85,7 +85,11 @@ const handleLogin = async () => {
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Loggin in...' : 'Login' }}
         </button>
-        <ErrorAlert :show="(loginError && !validationErrors) as boolean" class="mt-1" :msg="loginError as string" />
+        <ErrorAlert
+          :show="!!loginError && !validationErrors"
+          class="mt-1"
+          :msg="loginError !== null ? loginError : ''"
+        />
         <div>
           <p class="mt-1">
             <RouterLink to="/reset-password">Forgot your password? Reset here</RouterLink>

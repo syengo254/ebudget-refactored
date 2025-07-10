@@ -15,6 +15,7 @@ section.main {
   position: relative;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   margin: 0;
   padding: 0;
 }

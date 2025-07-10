@@ -40,7 +40,7 @@ const routes = [
     name: 'register',
     meta: {
       title: 'Register | E-budget.com | Best Online Shoping Experience',
-      guest: true,
+      requiresGuest: true,
     },
   },
   {
@@ -49,7 +49,7 @@ const routes = [
     name: 'login',
     meta: {
       title: 'Login | E-budget.com | Best Online Shoping Experience',
-      guest: true,
+      requiresGuest: true,
     },
   },
   {
@@ -58,7 +58,7 @@ const routes = [
     name: 'reset-password',
     meta: {
       title: 'Reset your password | E-budget.com | Best Online Shoping Experience',
-      guest: true,
+      requiresGuest: true,
     },
   },
   {

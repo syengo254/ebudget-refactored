@@ -156,12 +156,13 @@ button.add-cart-btn:hover {
   background-color: rgb(52, 76, 212);
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 420px) {
   .product-card {
     position: relative;
     background-color: rgb(248, 248, 248);
-    width: 200px;
-    height: fit-content;
+    flex-grow: 1;
+    width: 98vw;
+    /* height: fit-content; */
     border: 1px solid rgb(237, 237, 237);
     cursor: pointer;
     padding-bottom: 0.65rem;
@@ -169,13 +170,13 @@ button.add-cart-btn:hover {
   .product-card > .product-image {
     position: relative;
     background-color: rgb(240, 240, 240);
-    max-height: 198px;
+    width: calc(98vw - 1rem);
   }
 
   .product-card > .product-image > img {
     position: relative;
-    max-width: 198px;
-    object-fit: cover;
+    width: calc(98vw - 2 * 6rem);
+    object-fit: fill;
   }
 }
 </style>

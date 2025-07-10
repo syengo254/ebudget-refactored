@@ -74,4 +74,12 @@ a.pagination-link {
 a.pagination-link.active {
   background-color: rgb(52, 76, 212);
 }
+
+/* @media screen and (max-width: 450px) {
+  .pagination {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+} */
 </style>

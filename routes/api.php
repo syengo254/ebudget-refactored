@@ -21,15 +21,19 @@ use App\Http\Controllers\Users\UserController;
 
 
 // auth
-Route::get("/login", function(){
+Route::get("/authenticated", [SessionController::class, "authCheck"])->name("auth-check");
+Route::get("/login", function () {
     return redirect(env("UI_APP_URL" . "/login", env("APP_URL"))); // SPA's login page
 })->name("login");
-
-Route::get("/authenticated", [SessionController::class, "authCheck"])->name("auth-check");
-
 Route::post("/login", [SessionController::class, "store"])->middleware(["guest:sanctum", "throttle:login-attempts"]);
 Route::post("/logout", [SessionController::class, "destroy"]);
 
+// password reset
+Route::post('/forgot-password', [SessionController::class, "sendResetEmail"])->middleware("guest");
+Route::post('/reset-password/{token}', [
+    SessionController::class,
+    "resetPassword"
+])->middleware("guest")->name('password.reset');
 
 
 // users
@@ -48,4 +52,3 @@ Route::get("/products/{product}", [ProductController::class, "show"]);
 
 // categories
 Route::get("/categories", [CategoryController::class, "index"]);
-
