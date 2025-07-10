@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../pages/home/HomePage.vue'
 import AboutPage from '../pages/about/AboutPage.vue'
 import UserProfilePage from '../pages/profile/UserProfilePage.vue'
+import DashboardPage from '../pages/dashboard/DashboardPage.vue'
 
 const routes = [
   {
@@ -24,11 +25,22 @@ const routes = [
     },
   },
   {
+    path: '/dashboard',
+    component: DashboardPage,
+    name: 'dashboard',
+    meta: {
+      title: 'Dashboard | E-budget.com | Best Online Shoping Experience',
+      requiresAuth: true,
+      forceCheckServerAuth: true, // ignore local storage data
+    },
+  },
+  {
     path: '/register',
     component: () => import('../pages/register/RegisterPage.vue'),
     name: 'register',
     meta: {
       title: 'Register | E-budget.com | Best Online Shoping Experience',
+      guest: true,
     },
   },
   {
@@ -37,6 +49,16 @@ const routes = [
     name: 'login',
     meta: {
       title: 'Login | E-budget.com | Best Online Shoping Experience',
+      guest: true,
+    },
+  },
+  {
+    path: '/reset-password',
+    component: () => import('../pages/reset-password/ResetPasswordPage.vue'),
+    name: 'reset-password',
+    meta: {
+      title: 'Reset your password | E-budget.com | Best Online Shoping Experience',
+      guest: true,
     },
   },
   {
