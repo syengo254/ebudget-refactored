@@ -46,9 +46,9 @@ const handleRegister = async () => {
     <span class="info-text text-center">Sign up here if you are a {{ props.formTitle }}.</span>
     <form action="/register" method="post" @submit.prevent="handleRegister">
       <div class="form-group">
-        <label for="fullname">{{ props.formTitle }} Name</label>
+        <label :for="`fullname-${props.formTitle}`">{{ props.formTitle }} Name</label>
         <input
-          id="fullname"
+          :id="`fullname-${props.formTitle}`"
           v-model="name"
           type="text"
           class="form-input"
@@ -60,9 +60,9 @@ const handleRegister = async () => {
       </div>
 
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label :for="'email-' + formTitle">Email Address</label>
         <input
-          id="email"
+          :id="'email-' + formTitle"
           v-model="email"
           type="email"
           class="form-input"
@@ -74,9 +74,9 @@ const handleRegister = async () => {
       </div>
 
       <div class="form-group">
-        <label for="customer-password1">Password</label>
+        <label :for="'customer-password1' + formTitle">Password</label>
         <input
-          id="customer-password1"
+          :id="'customer-password1' + formTitle"
           v-model="password"
           type="password"
           class="form-input"
@@ -88,9 +88,9 @@ const handleRegister = async () => {
       </div>
 
       <div class="form-group">
-        <label for="customer-password2">Confirm password</label>
+        <label :for="'customer-password2' + formTitle">Confirm password</label>
         <input
-          id="customer-password2"
+          :id="'customer-password2' + formTitle"
           v-model="password_confirmation"
           type="password"
           class="form-input"
@@ -107,7 +107,10 @@ const handleRegister = async () => {
       </div>
 
       <div v-show="error" class="alert error mt-1 block">
-        <p>Messages here</p>
+        <p>
+          <!-- Messages here -->
+          {{ error }}
+        </p>
       </div>
     </form>
   </div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SendVerifyEmailJob;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'has_store',
+        'remember_token',
     ];
 
     protected $hidden = [
@@ -51,5 +53,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        SendVerifyEmailJob::dispatch($this);
     }
 }

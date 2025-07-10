@@ -5,41 +5,25 @@ import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
 import { useAuthStore } from '../stores/authStore'
-import useAuth from '../composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
 
 const authStore = useAuthStore()
-const { logout } = useAuth()
 
-const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
+const showCategoriesBar = computed(() => !['register', 'login', 'profile'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // handlers
 const handleLogout = async () => {
-  const success = await logout()
+  const success = await authStore.authLogout()
   if (success) {
-    // empty user store & navigate to /login
-    authStore.$reset()
-
     router.push({
       path: '/login',
       replace: true,
     })
   }
 }
-
-// const categories = [
-//   {
-//     id: 1,
-//     name: 'furniture',
-//   },
-//   {
-//     id: 1,
-//     name: 'electronics',
-//   },
-// ]
 </script>
 
 <template>
@@ -57,19 +41,9 @@ const handleLogout = async () => {
         </form>
       </div>
       <div class="navigation-links">
-        <div
-          v-if="isLoggedIn"
-          style="
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
-            column-gap: 3rem;
-            row-gap: 1rem;
-          "
-        >
-          <p class="text-sm">
-            <a href="#" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</a>
+        <div v-if="isLoggedIn" class="user-links">
+          <p class="text-md">
+            <RouterLink to="/profile" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</RouterLink>
           </p>
           <a class="btn btn-sm" @click.prevent="handleLogout">Logout</a>
         </div>
@@ -133,13 +107,23 @@ header {
   background: rgb(30, 45, 125);
   color: white;
   align-items: center;
-  z-index: 2;
+  z-index: 100;
 }
 
 header .tagline {
   font-size: 0.8rem;
   text-decoration: underline;
   font-weight: bold;
+}
+
+div.user-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 2rem;
+  row-gap: 1rem;
+  padding-inline: 0.5rem;
 }
 
 nav {
@@ -223,7 +207,7 @@ input[type='search'] {
   font-size: 1rem;
   border: 1px solid blue;
   border-radius: 3.5px 0px 0px 3.5px;
-  min-width: 400px;
+  min-width: 200px;
   letter-spacing: 0.1px;
   outline: none;
   flex: 1;
@@ -302,13 +286,13 @@ div.search-icon > img {
 }
 
 /* media queries */
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 700px) {
   ul.small-nav {
     display: none;
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   /* 
     add styles as required later
     } */

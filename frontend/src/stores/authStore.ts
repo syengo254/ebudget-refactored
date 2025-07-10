@@ -1,15 +1,16 @@
 import { defineStore } from 'pinia'
-import axiosRoot from 'axios'
+import axiosRoot, { AxiosError } from 'axios'
 
-import { UserType } from '../types'
+import { UserType, UserUpdateType } from '../types'
 import useAuth from '../composables/useAuth'
 import useLogin from '../composables/useLogin'
 import { ref } from 'vue'
 import { isElapsed, useLocalStorage } from '../utils/helpers'
 import { AUTH_CHECK_INTERVAL, LS_USER_SESSION_KEY } from '../config'
 
+type UserStateType = UserType | null
 interface UserStoreType {
-  user: UserType | null
+  user: UserStateType
   isLoggedIn: boolean
   nextAuthCheck: number
 }
@@ -19,7 +20,7 @@ export const useAuthStore = defineStore('auth', {
     return { user: null, isLoggedIn: false, nextAuthCheck: Date.now() }
   },
   getters: {
-    getUser(): UserType | null {
+    getUser(): UserStateType {
       return this.user
     },
     loggedIn(): boolean {
@@ -27,19 +28,20 @@ export const useAuthStore = defineStore('auth', {
     },
   },
   actions: {
-    setUser(user: UserType, isLoggedIn: boolean) {
+    setUser(user: UserStateType, isLoggedIn: boolean) {
       this.user = user
       this.isLoggedIn = isLoggedIn
       this.nextAuthCheck = Date.now() + AUTH_CHECK_INTERVAL
     },
-    async checkSessionAuthenticated() {
+    async checkSessionAuthenticated(checkServer = false) {
       const localSession = useLocalStorage(LS_USER_SESSION_KEY, this.$state)
       const { checkAuth } = useAuth()
 
-      if (isElapsed(this.nextAuthCheck) || localSession.value.isLoggedIn == false) {
+      if (checkServer || !localSession.value.isLoggedIn || isElapsed(localSession.value.nextAuthCheck)) {
         const { isLoggedIn, user, error } = await checkAuth()
-        if (!error && user) {
-          this.$patch({ user, isLoggedIn })
+        if (!error) {
+          this.setUser(user, isLoggedIn)
+          localSession.value = this.$state
           return true
         }
         return error
@@ -96,13 +98,47 @@ export const useAuthStore = defineStore('auth', {
 
     async authLogout() {
       const { logout } = useAuth()
-      await logout()
+      const localSession = useLocalStorage(LS_USER_SESSION_KEY, this.$state)
+      const res = await logout()
       this.nextAuthCheck = 0
       this.$reset()
+      localSession.value = this.$state
+      return res
     },
 
-    updateLocalSessionStorage() {
-      return useLocalStorage(LS_USER_SESSION_KEY, this.$state)
+    async updateUser(userDetails: UserUpdateType | FormData) {
+      const { patchUser } = useAuth()
+
+      const success = ref(false)
+      const loading = ref(true)
+      const error = ref<string | null>(null)
+      const errors = ref<{
+        password?: string[]
+        password_confirmation?: string[]
+        name?: string[]
+        logo?: string[]
+      } | null>(null)
+
+      const { data, isValidationError, formErrors } = await patchUser(this.user ? this.user?.id : -1, userDetails)
+      loading.value = false
+
+      if (data instanceof AxiosError) {
+        if (isValidationError) {
+          errors.value = formErrors
+        } else {
+          error.value = data.response?.data.message
+        }
+      } else {
+        success.value = true
+        this.setUser(data.user, true)
+      }
+
+      return {
+        success,
+        errors,
+        loading,
+        error,
+      }
     },
   },
 })

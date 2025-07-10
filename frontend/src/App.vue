@@ -7,11 +7,13 @@ import { useAuthStore } from './stores/authStore'
 import { redirectIfLoggedIn } from './utils/helpers'
 
 import DefaultLayout from './layouts/DefaultLayout.vue'
+import ErrorBoundary from './components/ErrorBoundary.vue'
+import RouterGuard from './router/RouterGuard.vue'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
-const { isLoggedIn: isSignedIn } = storeToRefs(authStore)
+const { isLoggedIn } = storeToRefs(authStore)
 
 const isReady = ref(false)
 
@@ -25,21 +27,16 @@ onBeforeMount(async () => {
 const routeName = computed(() => route.name)
 
 watchEffect(() => {
-  redirectIfLoggedIn(router, routeName.value as string | undefined | null, isSignedIn.value)
+  redirectIfLoggedIn(router, routeName.value as string | undefined | null, isLoggedIn.value)
 })
-
-authStore.$subscribe(
-  () => {
-    return authStore.updateLocalSessionStorage()
-  },
-  { flush: 'sync' },
-)
 </script>
 
 <template>
-  <div v-if="isReady">
-    <DefaultLayout>
-      <router-view />
-    </DefaultLayout>
-  </div>
+  <ErrorBoundary>
+    <RouterGuard>
+      <DefaultLayout v-if="isReady">
+        <router-view />
+      </DefaultLayout>
+    </RouterGuard>
+  </ErrorBoundary>
 </template>
