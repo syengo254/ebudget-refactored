@@ -5,6 +5,13 @@ export type UserType = {
   hasStore: boolean
   store?: StoreType
   address?: AddressType
+  profile?: ProfileType
+}
+
+export type ProfileType = {
+  id?: number
+  phone?: string
+  active_address_id?: number
 }
 
 export type AddressType = {
@@ -13,7 +20,7 @@ export type AddressType = {
   town?: string
   building?: string
   floor?: string
-  additionalInfo?: string
+  additional_info?: string
 }
 
 export type UserRegistrationType = {

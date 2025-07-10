@@ -16,6 +16,7 @@ class Address extends Model
         'building',
         'floor',
         'additional_info',
+        'profile_id'
     ];
 
     public function profile(): BelongsTo

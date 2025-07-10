@@ -20,7 +20,7 @@ export async function getProducts(page?: number, filters?: ProductsFiltersType) 
 
     if (filterKeys.length > 0) {
       filterKeys.forEach((key) => {
-        url += `&${key}=${filters[key]}`
+        url += `&${key}=${filters[key as keyof ProductsFiltersType]}`
       })
     }
   }

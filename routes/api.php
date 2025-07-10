@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Products\CategoryController;
 use App\Http\Controllers\Products\ProductController;
+use App\Http\Controllers\Users\ProfileController;
 use App\Http\Controllers\Users\SessionController;
 use App\Http\Controllers\Users\UserController;
 
@@ -35,6 +36,7 @@ Route::post("/logout", [SessionController::class, "destroy"]);
 Route::post("/users", [UserController::class, "store"])->middleware("guest");
 Route::get("/users/{user}", [UserController::class, "show"])->middleware("auth:sanctum");
 Route::patch("/users/{user}", [UserController::class, "update"])->middleware("auth:sanctum");
+Route::post("/profiles", [ProfileController::class, "store"])->middleware("auth:sanctum");
 
 Route::middleware(["auth:sanctum", "verified"])->get("/users", [UserController::class, "index"]);
 Route::middleware("auth:sanctum")->get("/users/{user}", [UserController::class, "show"]);

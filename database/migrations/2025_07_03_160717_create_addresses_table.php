@@ -17,11 +17,11 @@ return new class extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Profile::class);
-            $table->string("city");
-            $table->string("town");
-            $table->string("building");
-            $table->string("floor");
-            $table->string("additional_info");
+            $table->string("city")->nullable();
+            $table->string("town")->nullable();
+            $table->string("building")->nullable();
+            $table->string("floor")->nullable();
+            $table->string("additional_info")->nullable();
             $table->timestamps();
         });
     }

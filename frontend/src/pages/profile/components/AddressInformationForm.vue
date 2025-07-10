@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
 import FormInput from '../../../components/forms/FormInput.vue'
 import Error from '../../../components/forms/Error.vue'
 import SubmitButton from './SubmitButton.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
+import useProfile from '../../../composables/useProfile'
+import { useAuthStore } from '../../../stores/authStore'
+import SuccessAlert from '../../../components/SuccessAlert.vue'
 
-const phone = ref('')
-const city = ref('')
-const town = ref('')
-const building = ref('')
-const floor = ref('')
-const additional_info = ref('')
+const authStore = useAuthStore()
+const { addUserAddress, apiData, apiError, formErrors, apiLoading, apiSuccess } = useProfile()
 
-const loading = ref(false)
+const phone = ref(authStore.user?.profile?.phone ?? '')
+const city = ref(authStore.user?.address?.city ?? '')
+const town = ref(authStore.user?.address?.town ?? '')
+const building = ref(authStore.user?.address?.building ?? '')
+const floor = ref(authStore.user?.address?.floor ?? '')
+const additional_info = ref(authStore.user?.address?.additional_info ?? '')
 const addressDisabled = ref(true)
 
 const validationErrors = ref<{
@@ -23,17 +28,52 @@ const validationErrors = ref<{
   floor: string[]
   additional_info: string[]
 } | null>(null)
-const updateError = ref<null | boolean | string>(null)
 
 // handlers
 
-function toggleAddressForm() {
+async function handleSubmit() {
+  await addUserAddress({
+    phone: phone.value,
+    city: city.value,
+    town: town.value,
+    building: building.value,
+    floor: floor.value,
+    additional_info: additional_info.value,
+  })
+
+  if (apiSuccess.value) {
+    if (apiData.value?.success && apiData.value?.user) {
+      authStore.setUser(apiData.value?.user, true)
+    }
+    toggleAddressForm('cancel')
+  } else {
+    if (formErrors.value) {
+      validationErrors.value = formErrors.value
+    }
+  }
+}
+
+function toggleAddressForm(src: 'edit' | 'cancel' = 'edit') {
   addressDisabled.value = !addressDisabled.value
+
+  if (src == 'cancel') {
+    resetFormValues()
+  }
+}
+
+function resetFormValues() {
+  phone.value = authStore.user?.profile?.phone ?? ''
+  city.value = authStore.user?.address?.city ?? ''
+  town.value = authStore.user?.address?.town ?? ''
+  building.value = authStore.user?.address?.building ?? ''
+  floor.value = authStore.user?.address?.floor ?? ''
+  additional_info.value = authStore.user?.address?.additional_info ?? ''
+  validationErrors.value = null
 }
 </script>
 
 <template>
-  <form action="/profile" method="post">
+  <form action="/profiles" method="post" enctype="application/x-www-form-urlencoded" @submit.prevent="handleSubmit">
     <fieldset>
       <legend><h4>Addressing & Contact Information</h4></legend>
       <div class="form-group">
@@ -105,14 +145,17 @@ function toggleAddressForm() {
       </div>
 
       <div class="submit-btns">
-        <button v-if="!addressDisabled" type="button" class="btn btn-cancel" @click="toggleAddressForm">Cancel</button>
-        <SubmitButton v-if="!addressDisabled" :disabled="loading">
-          {{ loading ? 'Saving' : 'Save' }}
+        <button v-if="!addressDisabled" type="button" class="btn btn-cancel" @click="toggleAddressForm('cancel')">
+          Cancel
+        </button>
+        <SubmitButton v-if="!addressDisabled" :disabled="apiLoading">
+          {{ apiLoading ? 'Saving' : 'Save' }}
         </SubmitButton>
         <SubmitButton v-if="addressDisabled" type="button" @click="toggleAddressForm">Edit</SubmitButton>
       </div>
 
-      <ErrorAlert :show="!!updateError && !validationErrors" :msg="updateError?.toString() ?? ''" />
+      <SuccessAlert msg="Account details updated." :show="apiSuccess" />
+      <ErrorAlert :show="!!apiError && !validationErrors" :msg="apiError?.message ?? ''" />
     </fieldset>
   </form>
 </template>
