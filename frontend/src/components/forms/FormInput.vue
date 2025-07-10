@@ -37,11 +37,16 @@ defineProps({
     required: false,
     default: false,
   },
+  style: {
+    type: String,
+    required: false,
+    default: '',
+  },
 })
 </script>
 
 <template>
-  <label v-if="label !== ''" :for="name">{{ label }}</label>
+  <label v-if="label !== ''" :style="style" :for="name">{{ label }}</label>
   <input
     :id="name"
     v-model="modelValue"
@@ -51,6 +56,7 @@ defineProps({
     :placeholder="placeholder"
     :disabled="disabled"
     :required="required"
+    :style="style"
     @change="$emit('file-changed', name)"
   />
   <slot>
