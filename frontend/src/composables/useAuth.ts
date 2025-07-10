@@ -16,8 +16,6 @@ function useAuth() {
     let error: Error | null = null
 
     try {
-      // eslint-disable-next-line no-console
-      console.log('checking auth...')
       await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
 
       const response = await axios.get('/authenticated')
@@ -30,9 +28,6 @@ function useAuth() {
         }
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
-
       error = err as Error
     }
 
@@ -43,10 +38,14 @@ function useAuth() {
     }
   }
 
-  async function patchUser(userId: number, details: UserUpdateType) {
+  async function patchUser(userId: number, details: UserUpdateType | FormData) {
     try {
       await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
-      const response = await axios.patch(`/users/${userId}`, details)
+      const response = await axios.post(`/users/${userId}?_method=PATCH`, details, {
+        headers: {
+          'Content-Type': details instanceof FormData ? 'multipart/form-data' : 'application/json',
+        },
+      })
 
       return {
         data: response.data,
@@ -61,7 +60,7 @@ function useAuth() {
       return {
         data: error as AxiosError,
         isValidationError: axiosRoot.isAxiosError(error) && error.response?.data.errors,
-        formErrors: formErrors,
+        formErrors,
       }
     }
   }

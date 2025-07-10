@@ -46,3 +46,5 @@ export function getFormattedNumber(num: number): string {
     currency: 'KES',
   }).format(num)
 }
+
+export const getRandomNumber = (max: number = 1000) => Math.random() * max

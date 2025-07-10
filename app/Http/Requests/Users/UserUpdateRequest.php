@@ -4,6 +4,7 @@ namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\File;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -26,8 +27,8 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             "name" => "sometimes|string",
-            "password" => "sometimes|string|confirmed",
-            "logo" => "sometimes|file",
+            "password" => "sometimes|string|confirmed|min:8",
+            "logo" => ["sometimes", File::types(["jpg", "jpeg", "png", "webp", "bmp"])->min(1)->max(1024 * 5)],
         ];
     }
 }

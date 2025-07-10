@@ -74,28 +74,46 @@ class UserController extends Controller
 
         try {
             if (Auth::user()->isNot($user)) abort(401);
+            $passwordChanged = false;
 
-            if (array_key_exists("name", $validated)) {
+            if (array_key_exists("name", $validated) && $validated["name"] !== $user->name) {
                 $user->name = $validated["name"];
+                $user->save();
+
+                if($user->has_store){
+                    $user->store->name = $validated["name"];
+                    $user->store->save();
+                }
+            }
+
+            if (array_key_exists("logo", $validated)) {
+                $path = $request->logo->store('logos');
+                $user->store->logo = $path;
+                $user->store->save();
             }
 
             if (array_key_exists("password", $validated)) {
                 $user->password = Hash::make($validated["password"]);
+                $passwordChanged = true;
             }
 
             $saved = $user->save();
             $user->refresh();
-            Auth::login($user);
-            request()->session()->regenerate();
+            
+            if($passwordChanged){
+                Auth::guard("web")->login($user);
+                request()->session()->regenerate();
+            }
 
             return [
                 "success" => $saved,
-                "user" => $user,
+                "user" => new UserResource($user),
             ];
         } catch (Exception $e) {
             return [
                 "success" => false,
-                "user" => $user,
+                "user" => new UserResource($user),
+                "Exception" => $e->getMessage(),
             ];
         }
     }

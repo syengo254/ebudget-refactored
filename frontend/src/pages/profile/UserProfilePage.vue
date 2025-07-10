@@ -44,9 +44,15 @@ section.main {
 }
 
 .avatar {
-  width: 128px;
-  height: 128px;
+  width: 130px;
+  height: 130px;
   border: 1px solid rgb(83, 83, 83);
   margin-top: 1rem;
+}
+
+.avatar > img {
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
 }
 </style>

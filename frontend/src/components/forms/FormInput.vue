@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+defineEmits(['file-changed'])
 const modelValue = defineModel<string>()
 
 defineProps({
@@ -50,6 +51,7 @@ defineProps({
     :placeholder="placeholder"
     :disabled="disabled"
     :required="required"
+    @change="$emit('file-changed', name)"
   />
   <slot>
     <!-- errors slot -->

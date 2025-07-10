@@ -1,21 +1,26 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import Error from '../../../components/forms/Error.vue'
 import FormInput from '../../../components/forms/FormInput.vue'
 import SubmitButton from './SubmitButton.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import { useAuthStore } from '../../../stores/authStore'
 import SuccessAlert from '../../../components/SuccessAlert.vue'
+import { UserUpdateType } from '../../../types'
+import { getRandomNumber } from '../../../utils/helpers'
 
 const authStore = useAuthStore()
 
 const name = ref(authStore.user?.name)
-const logo = ref('')
+const logo = ref<File | null>(null)
 const password = ref('')
 const password_confirmation = ref('')
 const showChangePassword = ref(false)
+const hasLogo = computed(() => authStore.user?.hasStore && logo.value)
+const passwordChanged = computed(() => showChangePassword.value && (password.value as string).length > 0)
 const updating = ref(false)
 const success = ref(false)
+const randomKey = ref(getRandomNumber(1000))
 
 const personalDisabled = ref(true)
 
@@ -35,9 +40,11 @@ function togglePersonalForm(src: 'cancel' | 'edit' = 'edit') {
     name.value = authStore.user?.name
     password.value = ''
     password_confirmation.value = ''
-    validationErrors.value = null
-    updateError.value = null
     showChangePassword.value = false
+    logo.value = null
+    randomKey.value = getRandomNumber()
+
+    if (validationErrors.value) validationErrors.value = null
   }
 }
 
@@ -49,7 +56,7 @@ async function handleSubmit() {
     return
   }
 
-  if (showChangePassword.value && (password.value as string).length > 0) {
+  if (passwordChanged.value) {
     if ((name.value as string).length < 8) {
       validationErrors.value = {
         name: ['Minimum  of 8 characters required'],
@@ -72,38 +79,65 @@ async function handleSubmit() {
     }
   }
 
-  updating.value = true
-  const {
-    success: done,
-    loading,
-    error,
-    errors,
-  } = await authStore.updateUser({
+  let formData: UserUpdateType | FormData = {
     ...(name.value ? { name: name.value } : {}),
     ...(showChangePassword.value
       ? { password: password.value, password_confirmation: password_confirmation.value }
       : {}),
-  })
+  }
 
-  // console.log(done.value, error.value, errors.value)
+  if (hasLogo.value && logo.value) {
+    formData = new FormData()
+    formData.append('logo', logo.value)
+    formData.append('name', name.value as string)
+    if (passwordChanged.value) {
+      formData.append('password', password.value)
+      formData.append('password_confirmation', password_confirmation.value)
+    }
+  }
+
+  updating.value = true
+  validationErrors.value = null
+  updateError.value = null
+
+  const { success: done, loading, error, errors } = await authStore.updateUser(formData)
 
   if (done.value) {
     // show alert success
     success.value = done.value
-    updating.value = loading.value
+    togglePersonalForm('cancel')
   } else if (errors.value !== null) {
     validationErrors.value = errors.value
   } else {
+    // show error alert
     updateError.value = error.value
-    // console.log(updateError.value)
   }
+  updating.value = loading.value
+}
 
-  togglePersonalForm('cancel')
+function handleFileChange(event: string | undefined) {
+  if (event !== 'logo') return
+
+  const target = document.getElementById(event) as HTMLInputElement
+  if (target && target.files && target.files.length > 0) {
+    logo.value = target.files[0]
+    if (logo.value.size > 1000 * 1000 * 5) {
+      validationErrors.value = {
+        logo: ['File size cannot be more than 5MB'],
+      }
+      logo.value = null
+      randomKey.value = getRandomNumber()
+    } else {
+      if (validationErrors.value) validationErrors.value.logo = []
+    }
+  } else {
+    logo.value = null
+  }
 }
 </script>
 
 <template>
-  <form action="/profile" method="post" autocomplete="off" @submit.prevent="handleSubmit">
+  <form action="/profile" method="post" autocomplete="off" enctype="multipart/form-data" @submit.prevent="handleSubmit">
     <fieldset>
       <legend><h4>Personal Information</h4></legend>
       <div class="form-group">
@@ -120,12 +154,13 @@ async function handleSubmit() {
       </div>
       <div v-show="authStore.user?.hasStore" class="form-group">
         <FormInput
-          v-model="logo"
+          :key="randomKey"
           type="file"
           name="logo"
-          label="Company Logo"
+          label="Company Logo (Square dimensions e.g. 128x128 pixels)"
           :disabled="personalDisabled"
           :required="false"
+          @file-changed="handleFileChange"
         >
           <Error :form-errors="validationErrors?.logo" />
         </FormInput>

@@ -106,7 +106,7 @@ export const useAuthStore = defineStore('auth', {
       return res
     },
 
-    async updateUser(userDetails: UserUpdateType) {
+    async updateUser(userDetails: UserUpdateType | FormData) {
       const { patchUser } = useAuth()
 
       const success = ref(false)
