@@ -44,7 +44,7 @@ function removeFilter(filterName: keyof ProductsFiltersType) {
       <div style="display: flex; flex-direction: column; margin-bottom: 1rem">
         <ul v-if="hasFilters" class="filters-list text-white">
           <li v-for="filter in productStore.getFilters" :key="filter.name">
-            <span>{{ filter.name + ': ' + filter.value }}</span>
+            <span>{{ (filter.name == 'q' ? '' : filter.name + ': ') + filter.value }}</span>
             <button class="text-white" @click="removeFilter(filter.name as keyof ProductsFiltersType)">x</button>
           </li>
         </ul>
@@ -116,7 +116,7 @@ ul.filters-list > li > span {
 }
 
 ul.filters-list > li > button {
-  margin-left: 0.5rem;
+  margin-left: 0.3rem;
   background-color: rgb(30, 45, 125);
   font-size: 0.9rem;
   font-weight: 600;

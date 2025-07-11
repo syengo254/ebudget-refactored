@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
 import { useAuthStore } from '../stores/authStore'
+import { useProductStore } from '../stores/productStore'
 
 const router = useRouter()
 const route = useRoute()
 
+const searchQuery = ref('')
+
 const authStore = useAuthStore()
+const productStore = useProductStore()
 
 const showCategoriesBar = computed(() => !['register', 'login', 'profile'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
@@ -24,6 +28,18 @@ const handleLogout = async () => {
     })
   }
 }
+
+function handleSearchSubmit() {
+  if (searchQuery.value.length > 3) {
+    productStore.addFilter('q', searchQuery.value)
+  }
+}
+
+watch(productStore.filters, (val) => {
+  if ((val.q ?? '').length < 1) {
+    searchQuery.value = ''
+  }
+})
 </script>
 
 <template>
@@ -33,10 +49,10 @@ const handleLogout = async () => {
         <RouterLink to="/"><img :src="Logo" alt="" class="logo-img" /></RouterLink>
       </div>
       <div class="search-box">
-        <form>
+        <form @submit.prevent="handleSearchSubmit">
           <div class="search-inputs">
-            <input id="search" type="search" name="search" placeholder="Search E-budget" />
-            <div class="search-icon"><img :src="SearchIcon" alt="search-icon" /></div>
+            <input id="search" v-model="searchQuery" type="search" name="search" placeholder="Search on E-budget" />
+            <div class="search-icon" @click="handleSearchSubmit"><img :src="SearchIcon" alt="search-icon" /></div>
           </div>
         </form>
       </div>

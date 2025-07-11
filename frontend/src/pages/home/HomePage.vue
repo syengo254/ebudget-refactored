@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import CategoriesPanel from './components/CategoriesPanel.vue'
 import ProductsPanel from './components/ProductsPanel.vue'
+import PromotionsPanel from './components/PromotionsPanel.vue'
 </script>
 
 <template>
   <section class="main">
     <CategoriesPanel />
     <ProductsPanel />
+    <PromotionsPanel />
   </section>
 </template>
 

@@ -60,4 +60,5 @@ export type ProductsFiltersType = {
   category?: string
   price?: number
   store?: string
+  q?: string
 }

@@ -40,7 +40,10 @@ class AppServiceProvider extends ServiceProvider
         // custom reset password link
         ResetPassword::createUrlUsing(function (\App\Models\User $user, string $token) {
             $url = env("UI_APP_URL");
-            return "{$url}/reset-password?token=" . $token . "&email=" . $user->email;
+            $url = "{$url}/reset-password?";
+            $email = $user->email;
+
+            return $url . http_build_query(compact("email", "token"));
         });
     }
 }

@@ -92,7 +92,7 @@ class SessionController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             "email" => "required|email",
             'token' => 'required',
             'password' => 'required|min:8|confirmed',
