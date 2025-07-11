@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
       const localSession = useLocalStorage(LS_USER_SESSION_KEY, this.$state)
       const { checkAuth } = useAuth()
 
-      if (checkServer || !localSession.value.isLoggedIn || isElapsed(localSession.value.nextAuthCheck)) {
+      if (checkServer || isElapsed(localSession.value.nextAuthCheck) || !localSession.value.isLoggedIn) {
         const { isLoggedIn, user, error } = await checkAuth()
         if (!error) {
           this.setUser(user, isLoggedIn)

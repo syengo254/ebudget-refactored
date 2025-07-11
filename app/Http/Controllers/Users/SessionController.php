@@ -5,15 +5,20 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\LoginFormRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 
 class SessionController extends Controller
 {
     public function authCheck()
     {
-        if(Auth::user()){
+        if (Auth::user()) {
             return response()->json([
                 "authenticated" => true,
                 "user" => new UserResource(Auth::user()),
@@ -31,7 +36,7 @@ class SessionController extends Controller
         $authenticated = Auth::attempt(
             $request->validated()
         );
-        
+
         if ($authenticated) {
             // check if password rehash
             // if (Hash::needsRehash()) {
@@ -63,5 +68,58 @@ class SessionController extends Controller
             "success" => true,
             "message" => 'logged out'
         ]);
+    }
+
+    public function sendResetEmail(Request $request)
+    {
+        $validated = $request->validate([
+            "email" => "required|email",
+        ]);
+
+        $status = Password::sendResetLink($validated);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json([
+                "success" => true,
+            ]);
+        } else {
+            return response()->json([
+                "success" => false,
+                "status" => $status,
+            ]);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            "email" => "required|email",
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json([
+                "success" => true,
+            ]);
+        } else {
+            return response()->json([
+                "success" => false,
+                "status" => $status,
+            ]);
+        }
     }
 }

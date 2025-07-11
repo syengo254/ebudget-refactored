@@ -27,3 +27,8 @@ export async function getProducts(page?: number, filters?: ProductsFiltersType) 
 
   return await productsFetch(url)
 }
+
+export async function fetchProductsBy(key: string, name: string) {
+  const url = `/products?${key}=${name}&limit=25`
+  return await productsFetch(url)
+}

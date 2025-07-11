@@ -6,7 +6,7 @@ import { CATEGORIES_LIST_SUMMARY_COUNT } from '../../../config'
 import { useProductStore } from '../../../stores/productStore'
 
 const productStore = useProductStore()
-const priceFilter = ref(120000)
+const priceFilter = ref(1000000)
 const displayCount = ref(CATEGORIES_LIST_SUMMARY_COUNT)
 
 const categoriesToShow = computed(() => {

@@ -8,7 +8,7 @@ import { getFormattedNumber } from '../utils/helpers'
 defineProps({
   product: {
     required: true,
-    type: Object as PropType<ProductType>,
+    type: Object as PropType<Partial<ProductType>>,
   },
 })
 </script>
@@ -17,7 +17,6 @@ defineProps({
   <div class="product-card">
     <div class="product-image">
       <img :src="product.image" :alt="product.name + '-image'" class="image" />
-      <img class="store-icon" :src="product.store?.logo" alt="store-logo" />
     </div>
     <div class="product-info">
       <div class="product-desc">
@@ -28,7 +27,7 @@ defineProps({
           <RouterLink :to="'/products/' + product.id">{{ product.name }}</RouterLink>
         </p>
       </div>
-      <div class="product-price">{{ getFormattedNumber(product.price) }}/=</div>
+      <div class="product-price">From {{ getFormattedNumber(product.price || 0) }}</div>
       <div class="store-info">
         <p class="text-sm">
           Available at:
@@ -37,9 +36,6 @@ defineProps({
           }}</RouterLink>
         </p>
       </div>
-      <div class="buy-btn">
-        <button class="add-cart-btn">Add to cart</button>
-      </div>
     </div>
   </div>
 </template>
@@ -47,51 +43,35 @@ defineProps({
 <style scoped>
 .product-card {
   position: relative;
-  background-color: rgb(248, 248, 248);
-  width: 240px;
+  /* background-color: rgb(248, 248, 248); */
+  width: 210px;
   height: fit-content;
-  border: 1px solid rgb(237, 237, 237);
+  /* border: 1px solid rgb(237, 237, 237); */
   cursor: pointer;
-  padding-bottom: 0.5rem;
-}
-
-.product-card:hover {
-  box-shadow: 1px 1px 3px 1px rgb(209, 209, 209);
+  padding-bottom: 0.2rem;
 }
 
 .product-card > .product-image {
   position: relative;
-  background-color: rgb(240, 240, 240);
-  max-height: 238px;
-}
-
-.product-card > .product-image > img.store-icon {
-  position: absolute;
-  height: 64px;
-  width: 64px;
-  object-fit: scale-down;
-  border: 1px solid rgb(234, 234, 234);
-  z-index: 3;
-  right: calc(0 - 48px);
-  top: -1px;
-  right: -1px;
-  background: white;
-  opacity: 0.9;
+  height: 208px;
 }
 
 .product-card > .product-image > img.image {
   position: relative;
-  width: 238px;
-  height: 238px;
+  width: 208px;
+  height: 208px;
   object-fit: fill;
-  padding: 0.5rem;
+}
+
+.product-card:hover {
+  box-shadow: 1px 1px 4px 2px rgb(209, 209, 209);
 }
 
 .product-info {
   position: relative;
   display: flex;
   flex-direction: column;
-  row-gap: 0.8em;
+  row-gap: 0.5em;
   padding: 0.5rem;
 }
 
@@ -103,10 +83,10 @@ defineProps({
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
-  line-height: 1.5rem;
+  line-height: 1.2rem;
   margin: 0;
 }
 
@@ -122,18 +102,8 @@ defineProps({
   color: rgb(51, 97, 224);
 }
 
-button.add-cart-btn {
-  outline: none;
-  border: none;
-  background-color: rgb(51, 97, 224);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 14px;
-  cursor: pointer;
-}
-
 .product-price {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   display: block;
 }
@@ -150,10 +120,6 @@ button.add-cart-btn {
 
 .store-info > p > a:hover {
   text-decoration: underline;
-}
-
-button.add-cart-btn:hover {
-  background-color: rgb(52, 76, 212);
 }
 
 @media screen and (max-width: 420px) {

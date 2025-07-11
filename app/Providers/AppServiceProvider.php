@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -34,6 +35,15 @@ class AppServiceProvider extends ServiceProvider
                         "message" => "Max login attempts exceeded. Retry after 5 minutes."
                     ], 429, $headers);
                 });
+        });
+
+        // custom reset password link
+        ResetPassword::createUrlUsing(function (\App\Models\User $user, string $token) {
+            $url = env("UI_APP_URL");
+            $url = "{$url}/reset-password?";
+            $email = $user->email;
+
+            return $url . http_build_query(compact("email", "token"));
         });
     }
 }

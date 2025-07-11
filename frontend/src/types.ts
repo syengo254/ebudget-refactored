@@ -60,4 +60,10 @@ export type ProductsFiltersType = {
   category?: string
   price?: number
   store?: string
+  q?: string
+}
+
+export type GroupingType = {
+  key: string
+  name: string
 }

@@ -47,14 +47,14 @@ body {
   border: 1px solid rgb(165, 45, 1);
   background: rgb(255, 197, 176);
   color: darkred;
-  border-radius: 3.5px;
+  border-radius: 7px;
 }
 
 .alert.success {
-  border: 1px solid rgb(9, 231, 135);
-  background: rgb(194, 252, 206);
-  color: rgb(17, 102, 33);
-  border-radius: 3.5px;
+  border: 1px solid rgba(0, 100, 0, 0.6);
+  background: rgb(208, 255, 217);
+  color: darkgreen;
+  border-radius: 7px;
 }
 
 div.form-group {

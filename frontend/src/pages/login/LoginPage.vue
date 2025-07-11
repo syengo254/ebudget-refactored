@@ -3,6 +3,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/authStore'
+import ErrorAlert from '../../components/ErrorAlert.vue'
 
 const email = ref('')
 const password = ref('')
@@ -11,7 +12,7 @@ const validationErrors = ref<{
   email: string[]
   password: string[]
 } | null>(null)
-const loginError = ref<null | boolean | string>(null)
+const loginError = ref<null | string>(null)
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -84,14 +85,20 @@ const handleLogin = async () => {
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Loggin in...' : 'Login' }}
         </button>
-        <p style="margin: 0.5rem 0">
-          Not registered? Click here to
-          <RouterLink to="/register">Register.</RouterLink>
-        </p>
-      </div>
-
-      <div v-show="loginError && !validationErrors" class="alert error mt-1 block semibold">
-        <p>{{ loginError }}</p>
+        <ErrorAlert
+          :show="!!loginError && !validationErrors"
+          class="mt-1"
+          :msg="loginError !== null ? loginError : ''"
+        />
+        <div>
+          <p class="mt-1">
+            <RouterLink to="/reset-password">Forgot your password? Reset here</RouterLink>
+          </p>
+          <p class="mt-1">
+            Not registered?
+            <RouterLink to="/register">Click here to register.</RouterLink>
+          </p>
+        </div>
       </div>
     </form>
   </div>
@@ -100,7 +107,7 @@ const handleLogin = async () => {
 <style scoped>
 div#signin {
   position: relative;
-  max-width: 320px;
+  max-width: 360px;
   margin-inline: auto;
 }
 

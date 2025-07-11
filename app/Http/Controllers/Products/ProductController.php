@@ -19,22 +19,33 @@ class ProductController extends Controller
     {
         $limit = request()->limit ?? $limit;
 
-        if (!(request()->category || request()->price || request()->store)) {
-            return ProductViewResource::collection(Product::with("store", "category")->latest()->paginate($limit));
-        }
+        // if (!(request()->category || request()->price || request()->store )) {
+        //     return ProductViewResource::collection(Product::with("store", "category")->latest()->paginate($limit));
+        // }
 
         $products = Product::query();
 
-        $request->category && $products->whereHas("category", function (Builder $query) use ($request) {
-            $query->where("name", "LIKE", "%{$request->category}%");
-        });
-
-        $request->store && $products->whereHas("store", function (Builder $query) use ($request) {
-            $query->where("name", "LIKE", "%{$request->store}%");
-        });
-
-        $request->price && $products->where("price", "<=", intval($request->price));
-
+        if($request->q){
+            $products->where("name", "LIKE", "%" . $request->q . "%");
+            $products->orWhereHas("category", function (Builder $query) use ($request) {
+                $query->where("name", "LIKE", "%{$request->q}%");
+            });
+            $products->orWhereHas("store", function (Builder $query) use ($request) {
+                $query->where("name", "LIKE", "%{$request->q}%");
+            });
+        } else {
+            $request->category && $products->whereHas("category", function (Builder $query) use ($request) {
+                $query->where("name", "LIKE", "%{$request->category}%");
+            });
+    
+            $request->store && $products->whereHas("store", function (Builder $query) use ($request) {
+                $query->where("name", "LIKE", "%{$request->store}%");
+            });
+    
+            $request->price && $products->where("price", "<=", intval($request->price));
+    
+        }
+        
         return ProductViewResource::collection($products->paginate($limit));
     }
 

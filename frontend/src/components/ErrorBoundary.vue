@@ -7,6 +7,13 @@ const errorMessage = ref('')
 
 const route = useRoute()
 
+defineProps({
+  isPage: {
+    type: Boolean,
+    default: true,
+  },
+})
+
 onErrorCaptured((err, instance, info) => {
   hasError.value = true
   errorMessage.value = err.message // Or a more user-friendly message
@@ -37,7 +44,7 @@ watch(
 
 <template>
   <div v-if="hasError" class="error-boundary">
-    <header>
+    <header v-if="isPage">
       <h2>E-budget.com</h2>
       <nav>
         <a href="/">Home</a>
