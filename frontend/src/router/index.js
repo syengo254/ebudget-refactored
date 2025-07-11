@@ -4,6 +4,7 @@ import HomePage from '../pages/home/HomePage.vue'
 import AboutPage from '../pages/about/AboutPage.vue'
 import UserProfilePage from '../pages/profile/UserProfilePage.vue'
 import DashboardPage from '../pages/dashboard/DashboardPage.vue'
+import AllProductsPage from '../pages/products/AllProductsPage.vue'
 
 const routes = [
   {
@@ -70,12 +71,13 @@ const routes = [
     },
   },
   {
-    path: '/products/store/:id',
+    path: '/products/store',
     name: 'products',
   },
   {
-    path: '/products/:id',
+    path: '/products/',
     name: 'products',
+    component: AllProductsPage,
   },
 ]
 

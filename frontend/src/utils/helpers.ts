@@ -26,4 +26,10 @@ export function getFormattedNumber(num: number): string {
   }).format(num)
 }
 
-export const getRandomNumber = (max: number = 1000) => Math.random() * max
+export const getRandomNumber = (max: number = 1000) => Math.floor(Math.random() * max)
+
+export function formatString(str: string, ...values: string[]) {
+  return str.replace(/{(\d+)}/g, function (match, index) {
+    return typeof values[index] !== 'undefined' ? values[index] : match
+  })
+}

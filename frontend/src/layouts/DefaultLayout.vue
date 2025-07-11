@@ -32,6 +32,9 @@ const handleLogout = async () => {
 function handleSearchSubmit() {
   if (searchQuery.value.length > 3) {
     productStore.addFilter('q', searchQuery.value)
+    if (!['products'].includes(route.name as string)) {
+      router.push('/products')
+    }
   }
 }
 
@@ -92,8 +95,9 @@ watch(productStore.filters, (val) => {
       <span>All</span>
     </RouterLink>
     <nav>
-      <RouterLink to="/">Today's Deals</RouterLink>
       <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/">Today's Deals</RouterLink>
+      <RouterLink to="/products">All Products</RouterLink>
       <RouterLink to="/about">About</RouterLink>
     </nav>
   </section>
@@ -168,7 +172,6 @@ div.forms {
 }
 
 main {
-  padding-inline: 1rem;
   width: auto;
   min-height: calc(100vh - (75px + 2rem));
 }

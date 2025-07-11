@@ -1,24 +1,41 @@
 <script setup lang="ts">
-import CategoriesPanel from './components/CategoriesPanel.vue'
-import ProductsPanel from './components/ProductsPanel.vue'
-import PromotionsPanel from './components/PromotionsPanel.vue'
+import { computed, onMounted, ref } from 'vue'
+import ProductGroupView from '../../components/products/ProductGroupView.vue'
+import { useProductStore } from '../../stores/productStore'
+import { formatString, getRandomNumber } from '../../utils/helpers'
+
+const productStore = useProductStore()
+
+const randomSalutes = [
+  '{0}',
+  'Your favorite {0}',
+  'We have your favorite {0}',
+  'Do not worry about {0}',
+  'You can find {0} here',
+  'Checkout our collection of {0}',
+]
+
+function getRandomSalute() {
+  return randomSalutes[getRandomNumber(randomSalutes.length)]
+}
+onMounted(() => {
+  productStore.fetchCategories(true).then()
+})
+
+const displayCount = ref(5)
+
+const categoriesToShow = computed(() => {
+  return productStore.getCategories.slice(0, displayCount.value)
+})
 </script>
 
 <template>
-  <section class="main">
-    <CategoriesPanel />
-    <ProductsPanel />
-    <PromotionsPanel />
-  </section>
+  <ProductGroupView
+    v-for="category in categoriesToShow"
+    :key="category.name"
+    :heading="formatString(getRandomSalute(), category.name)"
+    :grouping="{ key: 'category', name: category.name }"
+  />
 </template>
 
-<style scoped>
-section.main {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-}
-</style>
+<style scoped></style>

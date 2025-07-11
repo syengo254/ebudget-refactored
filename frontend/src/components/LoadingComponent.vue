@@ -8,7 +8,7 @@
 
 <style scoped>
 .loader-wrapper {
-  position: fixed;
+  position: absolute;
   left: 50%;
   top: 30%;
 }

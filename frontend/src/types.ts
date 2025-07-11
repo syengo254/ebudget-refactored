@@ -62,3 +62,8 @@ export type ProductsFiltersType = {
   store?: string
   q?: string
 }
+
+export type GroupingType = {
+  key: string
+  name: string
+}
