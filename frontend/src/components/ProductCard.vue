@@ -11,6 +11,12 @@ defineProps({
     type: Object as PropType<ProductType>,
   },
 })
+
+const emit = defineEmits(['addToCart'])
+
+function handleAddToCart() {
+  emit('addToCart')
+}
 </script>
 
 <template>
@@ -38,7 +44,7 @@ defineProps({
         </p>
       </div>
       <div class="buy-btn">
-        <button class="add-cart-btn">Add to cart</button>
+        <button class="add-cart-btn" @click="handleAddToCart">Add to cart</button>
       </div>
     </div>
   </div>

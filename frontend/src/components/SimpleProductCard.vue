@@ -14,7 +14,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="product-card">
+  <div class="product-card simple">
     <div class="product-image">
       <img :src="product.image" :alt="product.name + '-image'" class="image" />
     </div>
@@ -41,7 +41,7 @@ defineProps({
 </template>
 
 <style scoped>
-.product-card {
+.simple.product-card {
   position: relative;
   /* background-color: rgb(248, 248, 248); */
   width: 210px;
@@ -51,19 +51,19 @@ defineProps({
   padding-bottom: 0.2rem;
 }
 
-.product-card > .product-image {
+.simple.product-card > .product-image {
   position: relative;
   height: 208px;
 }
 
-.product-card > .product-image > img.image {
+.simple.product-card > .product-image > img.image {
   position: relative;
   width: 208px;
   height: 208px;
   object-fit: fill;
 }
 
-.product-card:hover {
+.simple.product-card:hover {
   box-shadow: 1px 1px 4px 2px rgb(209, 209, 209);
 }
 
@@ -123,7 +123,7 @@ defineProps({
 }
 
 @media screen and (max-width: 420px) {
-  .product-card {
+  .simple.product-card {
     position: relative;
     background-color: rgb(248, 248, 248);
     flex-grow: 1;
@@ -133,13 +133,13 @@ defineProps({
     cursor: pointer;
     padding-bottom: 0.65rem;
   }
-  .product-card > .product-image {
+  .simple.product-card > .product-image {
     position: relative;
     background-color: rgb(240, 240, 240);
     width: calc(98vw - 1rem);
   }
 
-  .product-card > .product-image > img {
+  .simple.product-card > .product-image > img {
     position: relative;
     width: calc(98vw - 2 * 6rem);
     object-fit: fill;

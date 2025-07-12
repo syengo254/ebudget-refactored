@@ -67,3 +67,18 @@ export type GroupingType = {
   key: string
   name: string
 }
+
+export type CartItemType = {
+  product: Partial<ProductType>
+  count: number
+}
+
+export type CartItemsType = {
+  [productId: number | string]: CartItemType
+}
+
+export type ShoppingCartType = {
+  userId?: number
+  maxSize: number
+  items: CartItemsType
+}
