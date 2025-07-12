@@ -28,7 +28,7 @@ onMounted(() => {
       </div>
     </div>
     <div v-show="cartStore.count">
-      <RouterLink to="/shopping-cart" class="text-white cart-link text-md">Checkout</RouterLink>
+      <RouterLink to="/shopping-cart" class="text-white cart-link text-md">Cart</RouterLink>
     </div>
   </div>
 </template>

@@ -18,6 +18,12 @@ export const useCartStore = defineStore('shopping-cart', {
     distinctCount(state) {
       return Object.keys(state.items).length
     },
+    hasItems(state) {
+      return Object.keys(state.items).length > 0
+    },
+    productInCart(state) {
+      return (productId: number | string) => Boolean(state.items[productId])
+    },
   },
   actions: {
     addItem(item: ProductType) {
@@ -32,11 +38,12 @@ export const useCartStore = defineStore('shopping-cart', {
       this.updateLocalStorage()
     },
     removeItems(itemId: number, clear = false) {
-      if (clear) {
+      this.items[itemId].count--
+
+      if (clear || this.items[itemId].count < 1) {
         delete this.items[itemId]
-      } else {
-        this.items[itemId].count--
       }
+
       this.updateLocalStorage()
     },
     clearCart() {
