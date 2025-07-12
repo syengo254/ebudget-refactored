@@ -23,6 +23,10 @@ body {
   font-weight: 500;
 }
 
+.hover-underline:hover {
+  text-decoration: underline;
+}
+
 .bold {
   font-weight: 600;
 }
@@ -77,6 +81,7 @@ select.form-select {
 .btn {
   margin-block: 0.5rem;
   font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
   width: fit-content;
   padding: 0.5rem 1rem;
   background: rgb(240, 240, 240);
@@ -132,6 +137,10 @@ div.muted-text {
   margin: 0;
   padding: 0;
   list-style-position: inside;
+}
+
+.text-center {
+  text-align: center;
 }
 
 span.info-text.text-center {
@@ -199,4 +208,16 @@ a:visited {
 }
 .gap-3 {
   gap: 1rem;
+}
+
+.btn.btn-outlined {
+  border: 1px solid gray;
+  border-radius: 21px;
+  font-weight: 400;
+  font-size: 0.9rem;
+  background: rgb(247, 247, 247);
+}
+
+.btn.btn-outlined:hover {
+  background: rgb(240, 240, 240);
 }

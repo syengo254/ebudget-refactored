@@ -27,18 +27,17 @@ class ProfileController extends Controller
         try {
             $user_profile = Auth::user()->profile;
 
-            if (array_key_exists("phone", $validated)) {
+            if ($request->filled("phone")) {
                 // add phone
                 $user_profile->phone = $validated["phone"];
                 $success = $user_profile->save();
-
-                unset($validated["phone"]);
             }
 
-            if(!empty($validated)){
-                $address = Address::create($validated + [
-                    "profile_id" => $user_profile->id,
-                ]);
+            if ($request->hasAny(["building", "town", "city"])) {
+                $address = Address::updateOrCreate(
+                    ["profile_id" => $user_profile->id], 
+                    $request->except("phone")
+                );
                 $user_profile->active_address_id = $address->id;
                 $success = $user_profile->save();
             }

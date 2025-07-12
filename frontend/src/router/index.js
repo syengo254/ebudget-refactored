@@ -5,6 +5,7 @@ import AboutPage from '../pages/about/AboutPage.vue'
 import UserProfilePage from '../pages/profile/UserProfilePage.vue'
 import DashboardPage from '../pages/dashboard/DashboardPage.vue'
 import AllProductsPage from '../pages/products/AllProductsPage.vue'
+import ShoppingCartPage from '../pages/shopping-cart/ShoppingCartPage.vue'
 
 const routes = [
   {
@@ -75,9 +76,17 @@ const routes = [
     name: 'products',
   },
   {
-    path: '/products/',
+    path: '/products',
     name: 'products',
     component: AllProductsPage,
+  },
+  {
+    path: '/shopping-cart',
+    name: 'shopping-cart',
+    component: ShoppingCartPage,
+    meta: {
+      title: 'Shopping Cart | E-budget.com | Best Online Shoping Experience',
+    },
   },
 ]
 

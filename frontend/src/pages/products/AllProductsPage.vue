@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import CategoriesPanel from '../home/components/CategoriesPanel.vue'
-import ProductsPanel from '../home/components/ProductsPanel.vue'
-import PromotionsPanel from '../home/components/PromotionsPanel.vue'
+import CategoriesPanel from './components/CategoriesPanel.vue'
+import ProductsPanel from './components/ProductsPanel.vue'
+import PromotionsPanel from './components/PromotionsPanel.vue'
 </script>
 
 <template>

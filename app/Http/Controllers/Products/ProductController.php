@@ -25,7 +25,7 @@ class ProductController extends Controller
 
         $products = Product::query();
 
-        if($request->q){
+        if($request->filled('q')){
             $products->where("name", "LIKE", "%" . $request->q . "%");
             $products->orWhereHas("category", function (Builder $query) use ($request) {
                 $query->where("name", "LIKE", "%{$request->q}%");
@@ -34,15 +34,15 @@ class ProductController extends Controller
                 $query->where("name", "LIKE", "%{$request->q}%");
             });
         } else {
-            $request->category && $products->whereHas("category", function (Builder $query) use ($request) {
+            $request->filled('category') && $products->whereHas("category", function (Builder $query) use ($request) {
                 $query->where("name", "LIKE", "%{$request->category}%");
             });
     
-            $request->store && $products->whereHas("store", function (Builder $query) use ($request) {
+            $request->filled('store') && $products->whereHas("store", function (Builder $query) use ($request) {
                 $query->where("name", "LIKE", "%{$request->store}%");
             });
     
-            $request->price && $products->where("price", "<=", intval($request->price));
+            $request->filled('price') && $products->where("price", "<=", intval($request->price));
     
         }
         

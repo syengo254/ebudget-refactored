@@ -6,9 +6,11 @@ import ErrorComponent from '../../../components/ErrorComponent.vue'
 import { useProductStore } from '../../../stores/productStore'
 import { computed, onMounted } from 'vue'
 import ErrorBoundary from '../../../components/ErrorBoundary.vue'
-import { ProductsFiltersType } from '../../../types'
+import { ProductsFiltersType, ProductType } from '../../../types'
+import { useCartStore } from '../../../stores/cartStore'
 
 const productStore = useProductStore()
+const shoppingCart = useCartStore()
 
 const hasFilters = computed(() => Object.keys(productStore.filters).length > 0)
 
@@ -16,10 +18,14 @@ onMounted(async () => {
   await productStore.fetchProducts()
 })
 
-async function handler(page: number = 1) {
+async function handlerPagination(page: number = 1) {
   await productStore.fetchProducts(false, page)
 
   window.scrollTo(0, 0)
+}
+
+function handleAddToCart(product: ProductType) {
+  shoppingCart.addItem(product)
 }
 
 function removeFilter(filterName: keyof ProductsFiltersType) {
@@ -49,13 +55,18 @@ function removeFilter(filterName: keyof ProductsFiltersType) {
           </li>
         </ul>
         <h4 style="margin-bottom: 0.5rem">{{ hasFilters ? 'Filtered products' : 'Our products' }}</h4>
-        <Pagination :pagination-handler="handler" :meta="productStore.pagination" />
+        <Pagination :pagination-handler="handlerPagination" :meta="productStore.pagination" />
       </div>
 
       <div id="products-root">
-        <ProductCard v-for="product in productStore.products" :key="product.id + product.name" :product="product" />
+        <ProductCard
+          v-for="product in productStore.products"
+          :key="product.id + product.name"
+          :product="product"
+          @add-to-cart="handleAddToCart(product)"
+        />
       </div>
-      <Pagination style="margin-bottom: 2rem" :pagination-handler="handler" :meta="productStore.pagination" />
+      <Pagination style="margin-bottom: 2rem" :pagination-handler="handlerPagination" :meta="productStore.pagination" />
     </div>
   </ErrorBoundary>
 </template>

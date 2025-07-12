@@ -6,6 +6,7 @@ import Logo from '../assets/footer_logo.png'
 import MenuBar from '../assets/menu-bar.png'
 import { useAuthStore } from '../stores/authStore'
 import { useProductStore } from '../stores/productStore'
+import CartComponent from '../components/shopping-cart/CartComponent.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -59,6 +60,7 @@ watch(productStore.filters, (val) => {
           </div>
         </form>
       </div>
+      <CartComponent />
       <div class="navigation-links">
         <div v-if="isLoggedIn" class="user-links">
           <p class="text-md">
@@ -319,9 +321,12 @@ div.search-icon > img {
 
 @media screen and (max-width: 800px) {
   /* 
-    add styles as required later
-    } */
+  add styles as required later
+  } */
 
+  div.shopping-cart-container {
+    margin-inline: 2rem;
+  }
   header {
     flex-direction: column;
     height: auto;
