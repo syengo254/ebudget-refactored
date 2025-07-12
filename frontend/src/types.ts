@@ -69,7 +69,7 @@ export type GroupingType = {
 }
 
 export type CartItemType = {
-  product: Partial<ProductType>
+  product: ProductType
   count: number
 }
 

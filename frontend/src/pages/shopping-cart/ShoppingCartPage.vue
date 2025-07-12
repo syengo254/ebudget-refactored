@@ -1,26 +1,36 @@
 <script setup lang="ts">
+import ErrorBoundary from '../../components/ErrorBoundary.vue'
+import { useCartStore } from '../../stores/cartStore'
 import { getFormattedNumber } from '../../utils/helpers'
 import CartProduct from './components/CartProduct.vue'
+
+const cart = useCartStore()
 
 function handleCheckout() {}
 </script>
 
 <template>
-  <section id="main">
-    <div class="page-viewport">
-      <h2>Shopping Cart</h2>
-      <hr />
-      <div class="cart-product-viewport">
-        <CartProduct />
+  <ErrorBoundary :is-page="false">
+    <section id="main">
+      <div class="page-viewport">
+        <h2>Shopping Cart</h2>
+        <hr />
+        <div v-if="cart.hasItems" class="cart-product-viewport">
+          <CartProduct v-for="id in cart.getItemsIds" :key="id + 'in-cart'" :cart-item-id="id" />
+        </div>
+        <div v-else class="cart-product-viewport">
+          <p>Your cart is empty</p>
+          <RouterLink class="decoration-none hover-underline" :to="{ name: 'products' }">Continue shopping</RouterLink>
+        </div>
       </div>
-    </div>
-    <div class="cart-totals text-center">
-      <h3>Subtotal</h3>
-      <div class="sub-total-text">{{ getFormattedNumber(2000) }}</div>
-      <div>({{ 2 }} items)</div>
-      <button @click="handleCheckout">Proceed to checkout</button>
-    </div>
-  </section>
+      <div class="cart-totals text-center">
+        <h3>Subtotal</h3>
+        <div class="sub-total-text">{{ getFormattedNumber(cart.subtotal) }}</div>
+        <div>({{ cart.count }} items)</div>
+        <button @click="handleCheckout">Proceed to checkout</button>
+      </div>
+    </section>
+  </ErrorBoundary>
 </template>
 
 <style scoped>

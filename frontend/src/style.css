@@ -23,6 +23,10 @@ body {
   font-weight: 500;
 }
 
+.hover-underline:hover {
+  text-decoration: underline;
+}
+
 .bold {
   font-weight: 600;
 }

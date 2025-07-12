@@ -1,34 +1,51 @@
 <script setup lang="ts">
-import img from '@/assets/colgate-toothpaste.jpg'
+import { computed, PropType } from 'vue'
+import ErrorBoundary from '../../../components/ErrorBoundary.vue'
+import { getFormattedNumber } from '../../../utils/helpers'
+import { useCartStore } from '../../../stores/cartStore'
+
+const props = defineProps({
+  cartItemId: {
+    required: true,
+    type: Object as PropType<string | number>,
+  },
+})
+
+const cart = useCartStore()
+
+const cartItem = cart.getItemById(props.cartItemId)
+const isStocked = computed(() => cartItem.product.stock_amount > 0)
 </script>
 <template>
-  <div class="cart-product">
-    <div class="image">
-      <img :src="img" alt="" />
-    </div>
-    <div class="description">
-      <div class="name">
-        <p>Kiwi Shoe Polish - 500ml</p>
+  <ErrorBoundary :is-page="false">
+    <div class="cart-product">
+      <div class="image">
+        <img :src="cartItem.product.image" :alt="cartItem.product.name + ' image'" />
       </div>
-      <div class="stock-info green">
-        <span>In Stock</span>
-      </div>
-      <div class="actions">
-        <div class="buttons">
-          <button>-</button>
-          <span>2</span>
-          <button>+</button>
+      <div class="description">
+        <div class="name">
+          <p>{{ cartItem.product.name }}</p>
         </div>
-        <a href="#" class="text-sm decoration-none">Delete</a>
+        <div :class="'stock-info ' + (isStocked ? 'green' : 'red')">
+          <span>{{ isStocked ? 'In Stock' : 'Out Of Stock' }}</span>
+        </div>
+        <div class="actions">
+          <div class="buttons">
+            <button @click="cart.removeItem(cartItemId)">-</button>
+            <span>{{ cartItem.count }}</span>
+            <button @click="cart.addItem(cartItem.product)">+</button>
+          </div>
+          <a href="#" class="text-sm decoration-none" @click.prevent="cart.removeItem(cartItemId, true)">Delete</a>
+        </div>
+      </div>
+      <div class="costing">
+        <div class="total bold">{{ getFormattedNumber(cartItem.count * cartItem.product.price) }}</div>
+        <div class="item-price text-sm">
+          <span>Per item: {{ getFormattedNumber(cartItem.product.price, 'decimal') }}</span>
+        </div>
       </div>
     </div>
-    <div class="costing">
-      <div class="total">KES 2,000.00</div>
-      <div class="item-price text-sm">
-        <span>Per item: 1,000.00</span>
-      </div>
-    </div>
-  </div>
+  </ErrorBoundary>
 </template>
 
 <style scoped>
@@ -43,7 +60,7 @@ import img from '@/assets/colgate-toothpaste.jpg'
 .cart-product > div.image > img {
   height: 200px;
   width: 200px;
-  object-fit: cover;
+  object-fit: fill;
   margin: 0.5rem 1rem 0rem 0rem;
 }
 
@@ -63,6 +80,15 @@ import img from '@/assets/colgate-toothpaste.jpg'
 .name {
   font-size: 1.3rem;
   font-weight: 400;
+}
+
+.total {
+  font-size: 1.2rem;
+}
+
+.item-price {
+  color: rgb(59, 59, 59);
+  margin-top: 0.5rem;
 }
 
 .actions {

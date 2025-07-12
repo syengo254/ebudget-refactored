@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ProductType, ShoppingCartType } from '../types'
+import { CartItemsType, ProductType, ShoppingCartType } from '../types'
 import { useLocalStorage } from '../utils/helpers'
 import { LS_CART_KEY } from '../config'
 
@@ -29,10 +29,17 @@ export const useCartStore = defineStore('shopping-cart', {
         return prev + (state.items[currKey].product.price ?? 0) * state.items[currKey].count
       }, 0)
     },
+    getItemsIds(state) {
+      return Object.keys(state.items)
+    },
+    getItemById(state) {
+      return (itemId: keyof CartItemsType) => state.items[itemId]
+    },
   },
   actions: {
     addItem(item: ProductType) {
       if (this.items[item.id]) {
+        if (this.items[item.id].count == 10) return
         this.items[item.id].count++
       } else {
         this.items[item.id] = {
@@ -42,7 +49,7 @@ export const useCartStore = defineStore('shopping-cart', {
       }
       this.updateLocalStorage()
     },
-    removeItems(itemId: number, clear = false) {
+    removeItem(itemId: keyof CartItemsType, clear = false) {
       this.items[itemId].count--
 
       if (clear || this.items[itemId].count < 1) {

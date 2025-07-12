@@ -19,10 +19,10 @@ export function isElapsed(value: number) {
   return value < Date.now()
 }
 
-export function getFormattedNumber(num: number): string {
+export function getFormattedNumber(num: number, style: 'currency' | 'decimal' = 'currency'): string {
   return Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: 'KES',
+    style,
+    ...(style == 'decimal' ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { currency: 'KES' }),
   }).format(num)
 }
 
