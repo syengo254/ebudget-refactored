@@ -24,6 +24,11 @@ export const useCartStore = defineStore('shopping-cart', {
     productInCart(state) {
       return (productId: number | string) => Boolean(state.items[productId])
     },
+    subtotal(state) {
+      return Object.keys(state.items).reduce((prev, currKey) => {
+        return prev + (state.items[currKey].product.price ?? 0) * state.items[currKey].count
+      }, 0)
+    },
   },
   actions: {
     addItem(item: ProductType) {

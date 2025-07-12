@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../../../stores/cartStore'
+import { getFormattedNumber } from '../../../utils/helpers'
 
 const router = useRouter()
 const shoppingCart = useCartStore()
@@ -13,7 +14,8 @@ function handleGotoCart() {
   <div class="ads-cart-subtotal-viewport">
     <div v-show="shoppingCart.hasItems" class="cart-preview text-center">
       <h4>Subtotal</h4>
-      <div class="sub-total-text">KES 60,071.93</div>
+      <div class="sub-total-text">{{ getFormattedNumber(shoppingCart.subtotal) }}</div>
+      <div class="text-sm">({{ shoppingCart.count }} items)</div>
       <button class="btn btn-outlined" @click="handleGotoCart">Go to Cart</button>
     </div>
     <div id="promotions-panel">
@@ -34,7 +36,7 @@ function handleGotoCart() {
 }
 
 .sub-total-text {
-  color: rgb(255, 132, 0);
+  color: rgb(242, 126, 2);
   font-weight: 700;
   font-size: 1.2rem;
   margin: 0.6rem 0rem 0.8rem 0rem;
