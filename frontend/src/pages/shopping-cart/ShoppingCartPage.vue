@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import ErrorBoundary from '../../components/ErrorBoundary.vue'
 import { useCartStore } from '../../stores/cartStore'
 import { getFormattedNumber } from '../../utils/helpers'
 import CartProduct from './components/CartProduct.vue'
 
 const cart = useCartStore()
-
-function handleCheckout() {}
 </script>
 
 <template>
@@ -27,7 +26,7 @@ function handleCheckout() {}
         <h3>Subtotal</h3>
         <div class="sub-total-text">{{ getFormattedNumber(cart.subtotal) }}</div>
         <div>({{ cart.count }} items)</div>
-        <button @click="handleCheckout">Proceed to checkout</button>
+        <RouterLink :to="{ name: 'checkout' }" class="checkout decoration-none">Proceed to checkout</RouterLink>
       </div>
     </section>
   </ErrorBoundary>
@@ -76,7 +75,8 @@ section#main {
   margin: 0.6rem 0rem 0.8rem 0rem;
 }
 
-div.cart-totals > button {
+div.cart-totals > a.checkout {
+  display: inline-block;
   padding: 0.5rem 2.2rem;
   background: rgb(242, 126, 2);
   color: white;
@@ -88,6 +88,10 @@ div.cart-totals > button {
   outline: none;
   border: 1px solid rgb(242, 126, 2);
   border-radius: 21rem;
+}
+
+div.cart-totals > a.checkout:hover {
+  background: rgb(224, 117, 2);
 }
 /* end cart totals */
 

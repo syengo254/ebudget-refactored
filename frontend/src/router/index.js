@@ -81,6 +81,16 @@ const routes = [
     component: AllProductsPage,
   },
   {
+    path: '/checkout',
+    name: 'checkout',
+    component: () => import('../pages/checkout/Index.vue'),
+    meta: {
+      title: 'Checkout | E-budget.com | Best Online Shoping Experience',
+      requiresAuth: true,
+      forceCheckServerAuth: false, // ignore local storage data
+    },
+  },
+  {
     path: '/shopping-cart',
     name: 'shopping-cart',
     component: ShoppingCartPage,

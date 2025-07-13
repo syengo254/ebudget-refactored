@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { CartItemsType, ProductType, ShoppingCartType } from '../types'
 import { useLocalStorage } from '../utils/helpers'
 import { LS_CART_KEY } from '../config'
+import { useAuthStore } from './authStore'
 
 const emptyCart: ShoppingCartType = {
   items: {},
@@ -70,7 +71,15 @@ export const useCartStore = defineStore('shopping-cart', {
       return useLocalStorage(LS_CART_KEY, emptyCart)
     },
     setStateFromLS() {
+      const authStore = useAuthStore()
       const ls = this.readLocalStrorage()
+
+      if (ls.value.userId && authStore.isLoggedIn) {
+        if (ls.value.userId !== authStore.user?.id) {
+          ls.value = emptyCart
+        }
+      }
+
       this.$patch(ls.value)
     },
     /**
