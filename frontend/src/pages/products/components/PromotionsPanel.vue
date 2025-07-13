@@ -28,6 +28,7 @@ function handleGotoCart() {
 .ads-cart-subtotal-viewport {
   border-left: 1px solid rgb(223, 223, 223);
   padding: 0.5rem 1rem;
+  margin-left: auto;
 }
 
 .cart-preview > h4 {

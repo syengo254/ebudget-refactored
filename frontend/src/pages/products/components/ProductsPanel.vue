@@ -4,7 +4,7 @@ import Pagination from '../../../components/Pagination.vue'
 import LoadingComponent from '../../../components/LoadingComponent.vue'
 import ErrorComponent from '../../../components/ErrorComponent.vue'
 import { useProductStore } from '../../../stores/productStore'
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import ErrorBoundary from '../../../components/ErrorBoundary.vue'
 import { ProductsFiltersType, ProductType } from '../../../types'
 import { useCartStore } from '../../../stores/cartStore'
@@ -14,9 +14,7 @@ const shoppingCart = useCartStore()
 
 const hasFilters = computed(() => Object.keys(productStore.filters).length > 0)
 
-onMounted(async () => {
-  await productStore.fetchProducts()
-})
+await productStore.fetchProducts()
 
 async function handlerPagination(page: number = 1) {
   await productStore.fetchProducts(false, page)

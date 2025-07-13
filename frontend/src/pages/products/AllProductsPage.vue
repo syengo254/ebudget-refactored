@@ -5,11 +5,14 @@ import PromotionsPanel from './components/PromotionsPanel.vue'
 </script>
 
 <template>
-  <section class="main">
-    <CategoriesPanel />
-    <ProductsPanel />
-    <PromotionsPanel />
-  </section>
+  <Suspense>
+    <section class="main">
+      <CategoriesPanel />
+      <ProductsPanel />
+      <PromotionsPanel />
+    </section>
+    <template #fallback> Loading... </template>
+  </Suspense>
 </template>
 
 <style scoped>
