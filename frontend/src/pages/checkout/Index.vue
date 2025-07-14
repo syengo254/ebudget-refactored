@@ -123,8 +123,7 @@ async function handlePlaceOrder() {
     </div>
     <!-- order summary -->
     <div class="order-summary-viewport">
-      <div v-if="!!error || success" class="order-response">
-        <ErrorAlert :show="!!error" :msg="message" />
+      <div v-if="success" class="order-response">
         <SuccessAlert :show="success" :msg="message" :show-tick="true">
           <div class="text-center">
             <RouterLink :to="{ name: 'products' }">Continue shopping</RouterLink>
@@ -156,6 +155,7 @@ async function handlePlaceOrder() {
             >
           </div>
         </div>
+        <ErrorAlert :show="!!error" :msg="message" />
       </div>
     </div>
     <!-- order summary -->
@@ -168,7 +168,7 @@ async function handlePlaceOrder() {
   position: relative;
   background: white;
   margin: 1rem;
-  max-height: 310px;
+  max-height: 360px;
   padding: 1rem;
   min-width: 300px;
   color: rgb(52, 52, 52);

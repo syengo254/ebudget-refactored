@@ -1,8 +1,12 @@
 <?php
 
+use App\Mail\OrderCreated;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,16 +31,20 @@ Route::get('/email/verify', function () {
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
- 
+
     return redirect(env("UI_APP_URL"));
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 
 // resend verify email
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
- 
+
     return response()->json([
         "success" => true,
         "message" => "Verification link sent!",
     ]);
 })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+
+Route::get('/preview', function () {
+    Mail::to(Auth::user()->email)->queue(new OrderCreated(Order::find(28)));
+});

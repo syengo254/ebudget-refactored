@@ -21,7 +21,7 @@ class SessionController extends Controller
         if (Auth::user()) {
             return response()->json([
                 "authenticated" => true,
-                "user" => new UserResource(Auth::user()),
+                "user" => new UserResource(Auth::user()->fresh()),
             ]);
         }
 

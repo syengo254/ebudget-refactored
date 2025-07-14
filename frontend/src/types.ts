@@ -6,6 +6,7 @@ export type UserType = {
   store?: StoreType
   address?: AddressType
   profile?: ProfileType
+  verified: boolean
 }
 
 export type ProfileType = {

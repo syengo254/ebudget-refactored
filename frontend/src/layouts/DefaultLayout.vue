@@ -213,6 +213,7 @@ div.search-box {
   position: relative;
   max-width: 700px;
   flex-grow: 1;
+  margin-left: auto;
 }
 
 div.search-box > form > div.search-inputs {

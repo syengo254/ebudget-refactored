@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Orders;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Orders\OrderRequest;
+use App\Mail\OrderCreated;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -23,6 +25,15 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
+        $response = Gate::inspect('create', new Order);
+
+        if($response->denied()){
+            return [
+                "success" => false,
+                "message" => $response->message(),
+            ];
+        }
+
         $validated = $request->validated();
         $cart_id = $validated["cart_id"];
         $cartInSession = request()->session()->get("latest_cart_id", false);
@@ -31,7 +42,7 @@ class OrderController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Your order has been created.",
-                "order" => Order::find($cartInSession["order_id"]),
+                "order" => $this->orderService->find($cartInSession["order_id"]),
                 "extra" => request()->session()->get("latest_cart_id", false),
             ]);
         }
@@ -45,6 +56,9 @@ class OrderController extends Controller
                 "order_id" => $order->id,
             ]);
 
+            // send email to user
+            Mail::to(Auth::user()->email)->queue(new OrderCreated($order));
+
             return response()->json([
                 "success" => $success,
                 "message" => "Your order has been created.",
@@ -53,7 +67,7 @@ class OrderController extends Controller
         } else {
             return response()->json([
                 "success" => false,
-                "message" => $error ? $error->getMessage() : "Failed to create your order.",
+                "message" => $error->getMessage() ? $error->getMessage() : "Failed to create your order.",
                 "order" => null,
             ]);
         }

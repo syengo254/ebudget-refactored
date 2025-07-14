@@ -38,6 +38,21 @@ function useAuth() {
     }
   }
 
+  async function sendVerifyEmail(): Promise<boolean> {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}email/verification-notification`)
+
+      if (response.data) {
+        return response.data.success
+      } else {
+        return false
+      }
+    } catch (err) {
+      return false
+    }
+  }
+
   async function patchUser(userId: number, details: UserUpdateType | FormData) {
     try {
       await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
@@ -69,6 +84,7 @@ function useAuth() {
     logout,
     checkAuth,
     patchUser,
+    sendVerifyEmail,
   }
 }
 

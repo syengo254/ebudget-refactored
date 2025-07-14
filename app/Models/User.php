@@ -40,6 +40,11 @@ class User extends Authenticatable
         );
     }
 
+    public function isVerified(): bool
+    {
+        return boolval($this->email_verified_at);
+    }
+
     
     public function store(): HasOne
     {

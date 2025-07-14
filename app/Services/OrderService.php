@@ -20,6 +20,11 @@ class OrderService {
         //
     }
 
+    public function find(int $id): Order
+    {
+        return Order::findOrFail($id);
+    }
+
     public function createOrder(array $attributes): array
     {
         $orderCreated = 0;
@@ -30,6 +35,7 @@ class OrderService {
                 'expected_delivery_date' => now()->addDays(random_int(1, 3))->toDateString(),
                 'latest_delivery_date' => now()->addDays(random_int(3, 5))->toDateString(),
                 'actual_delivery_date' => NULL,
+                'address_id' => Auth::user()->profile->active_address_id,
             ]);
 
             $orderCreated = $order->id;
@@ -43,7 +49,7 @@ class OrderService {
             }
 
             // todo: fire new order job
-            logger("ORDER::New customer order create with id: {$order->id} with {$order->orderItems->count()} items");
+            logger("ORDER::New customer order created with id: {$order->id} with {$order->orderItems->count()} items");
 
             return [$order, true, null];
             
@@ -55,6 +61,8 @@ class OrderService {
                 // rollback this order
                 Order::find($orderCreated)->destroy();
             }
+
+            logger($e->__toString());
 
             return [null, false, $e];
         }
