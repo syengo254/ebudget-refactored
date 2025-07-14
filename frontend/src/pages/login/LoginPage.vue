@@ -1,7 +1,7 @@
 <!-- eslint-disable no-console -->
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/authStore'
 import ErrorAlert from '../../components/ErrorAlert.vue'
 
@@ -15,6 +15,7 @@ const validationErrors = ref<{
 const loginError = ref<null | string>(null)
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const handleLogin = async () => {
@@ -32,10 +33,14 @@ const handleLogin = async () => {
 
   if (success.value) {
     // navigate to home
-    router.push({
-      path: '/',
-      replace: true,
-    })
+    if (route.query.redirect) {
+      router.push(route.query.redirect.toString())
+    } else {
+      router.push({
+        path: '/',
+        replace: true,
+      })
+    }
   }
 }
 </script>

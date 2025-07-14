@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,10 +18,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class);
-            $table->string('status', 20);
+            $table->enum('status', array_column(OrderStatus::cases(), "value"))->default(OrderStatus::NEW->value);
             $table->date('expected_delivery_date');
             $table->date('latest_delivery_date');
-            $table->date('actual_delivery_date');
+            $table->date('actual_delivery_date')->nullable();
             $table->decimal('delivery_charge');
             $table->timestamps();
         });

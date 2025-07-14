@@ -78,6 +78,7 @@ export type CartItemsType = {
 }
 
 export type ShoppingCartType = {
+  cart_id: string
   userId?: number
   maxSize: number
   items: CartItemsType

@@ -17,9 +17,9 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Order::class);
+            $table->foreignIdFor(Order::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Product::class);
-            $table->integer('number_ordered');
+            $table->integer('item_count');
             $table->decimal('price_at_order');
             $table->timestamps();
         });

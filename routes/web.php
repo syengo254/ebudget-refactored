@@ -19,15 +19,6 @@ Route::get('/', function () {
     return view('index');
 });
 
-// home for redirects
-Route::get("/home", function(){
-    return response()->json([
-        "message" => "You are already logged in.",
-    ], headers: [
-        "Access-Control-Allow-Origin" => "*",
-    ]); 
-})->name("home");
-
 
 // email verification URLs
 Route::get('/email/verify', function () {

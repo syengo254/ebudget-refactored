@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 enum OrderStatus:string {
+    case NEW = "new";
     case PENDING = "pending";
     case DELIVERING = "delivering";
-    case CANCELLED = "cancelled";
     case DELIVERED = "delivered";
+    case CANCELLED = "cancelled";
 }

@@ -14,7 +14,10 @@ router.beforeEach(async (to, _from, next) => {
     if (authStore.isLoggedIn) {
       next()
     } else {
-      next('login')
+      next({
+        name: 'login',
+        query: { redirect: to.fullPath },
+      })
     }
   } else if (to.meta.requiresGuest) {
     if (authStore.isLoggedIn) {

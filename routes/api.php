@@ -61,3 +61,12 @@ Route::controller(OrderController::class)->middleware("auth:sanctum")->group(fun
     Route::patch("/orders/{order}", "update");
     Route::get("/orders/{order}", "show");
 });
+
+// home for redirects
+Route::get("/home", function(){
+    return response()->json([
+        "message" => "You are already logged in.",
+    ], headers: [
+        "Access-Control-Allow-Origin" => "*",
+    ]); 
+})->name("home");

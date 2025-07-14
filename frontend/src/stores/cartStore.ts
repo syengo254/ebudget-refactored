@@ -1,13 +1,16 @@
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { CartItemsType, ProductType, ShoppingCartType } from '../types'
 import { useLocalStorage } from '../utils/helpers'
 import { LS_CART_KEY } from '../config'
-import { useAuthStore } from './authStore'
+import { OrderService } from '../services/order'
 
 const emptyCart: ShoppingCartType = {
+  cart_id: uuidv4(),
   items: {},
   maxSize: 50,
 }
+
 export const useCartStore = defineStore('shopping-cart', {
   state: (): ShoppingCartType => emptyCart,
   getters: {
@@ -38,6 +41,9 @@ export const useCartStore = defineStore('shopping-cart', {
     },
   },
   actions: {
+    setUserId(userId: number) {
+      this.$state.userId = userId
+    },
     addItem(item: ProductType) {
       if (this.items[item.id]) {
         if (this.items[item.id].count == 10) return
@@ -60,7 +66,8 @@ export const useCartStore = defineStore('shopping-cart', {
       this.updateLocalStorage()
     },
     clearCart() {
-      this.$patch(emptyCart)
+      this.cart_id = uuidv4()
+      this.items = {}
       this.updateLocalStorage()
     },
     updateLocalStorage() {
@@ -71,19 +78,18 @@ export const useCartStore = defineStore('shopping-cart', {
       return useLocalStorage(LS_CART_KEY, emptyCart)
     },
     setStateFromLS() {
-      const authStore = useAuthStore()
       const ls = this.readLocalStrorage()
-
-      if (ls.value.userId && authStore.isLoggedIn) {
-        if (ls.value.userId !== authStore.user?.id) {
-          ls.value = emptyCart
-        }
-      }
 
       this.$patch(ls.value)
     },
-    /**
-     * TODO: place order
-     */
+
+    async placeOrder() {
+      const { data, errors } = await OrderService.make(this.$state)
+
+      return {
+        data,
+        errors,
+      }
+    },
   },
 })
