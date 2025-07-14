@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Jobs\SendVerifyEmailJob;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -39,6 +40,11 @@ class User extends Authenticatable
         );
     }
 
+    public function isVerified(): bool
+    {
+        return boolval($this->email_verified_at);
+    }
+
     
     public function store(): HasOne
     {
@@ -57,5 +63,10 @@ class User extends Authenticatable
     public function sendEmailVerificationNotification()
     {
         SendVerifyEmailJob::dispatch($this);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

@@ -7,6 +7,8 @@ import DashboardPage from '../pages/dashboard/DashboardPage.vue'
 import AllProductsPage from '../pages/products/AllProductsPage.vue'
 import ShoppingCartPage from '../pages/shopping-cart/ShoppingCartPage.vue'
 
+// TODO: laaater, make guards arrays i.e. meta.guards: ["auth", "guest", "verified", etc]
+
 const routes = [
   {
     path: '/',
@@ -81,11 +83,31 @@ const routes = [
     component: AllProductsPage,
   },
   {
+    path: '/checkout',
+    name: 'checkout',
+    component: () => import('../pages/checkout/Index.vue'),
+    meta: {
+      title: 'Checkout | E-budget.com | Best Online Shoping Experience',
+      requiresAuth: true,
+      forceCheckServerAuth: true, // ignore local storage data
+      requiresVerified: true,
+    },
+  },
+  {
     path: '/shopping-cart',
     name: 'shopping-cart',
     component: ShoppingCartPage,
     meta: {
       title: 'Shopping Cart | E-budget.com | Best Online Shoping Experience',
+    },
+  },
+
+  {
+    path: '/verify-account',
+    name: 'verify-account',
+    component: () => import('../components/UnverifiedAccountNotice.vue'),
+    meta: {
+      title: 'Account Verification | E-budget.com | Best Online Shoping Experience',
     },
   },
 ]

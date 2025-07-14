@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Orders\OrderController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Products\CategoryController;
@@ -52,3 +53,20 @@ Route::get("/products/{product}", [ProductController::class, "show"]);
 
 // categories
 Route::get("/categories", [CategoryController::class, "index"]);
+
+// orders
+Route::controller(OrderController::class)->middleware("auth:sanctum")->group(function(){
+    Route::get("/orders", "index");
+    Route::post("/orders", "store");
+    Route::patch("/orders/{order}", "update");
+    Route::get("/orders/{order}", "show");
+});
+
+// home for redirects
+Route::get("/home", function(){
+    return response()->json([
+        "message" => "You are already logged in.",
+    ], headers: [
+        "Access-Control-Allow-Origin" => "*",
+    ]); 
+})->name("home");

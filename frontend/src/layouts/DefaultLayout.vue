@@ -16,7 +16,7 @@ const searchQuery = ref('')
 const authStore = useAuthStore()
 const productStore = useProductStore()
 
-const showCategoriesBar = computed(() => !['register', 'login', 'profile'].includes(route.name as string))
+const showCategoriesBar = computed(() => !['register', 'login', 'profile', 'checkout'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // handlers
@@ -213,6 +213,7 @@ div.search-box {
   position: relative;
   max-width: 700px;
   flex-grow: 1;
+  margin-left: auto;
 }
 
 div.search-box > form > div.search-inputs {

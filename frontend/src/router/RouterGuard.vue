@@ -12,9 +12,19 @@ router.beforeEach(async (to, _from, next) => {
   if (to.meta.requiresAuth) {
     await authStore.checkSessionAuthenticated(to.meta.forceCheckServerAuth ? true : false)
     if (authStore.isLoggedIn) {
-      next()
+      if (to.meta.requiresVerified && !authStore.user?.verified) {
+        next({
+          path: 'verify-account',
+          query: { redirect: to.fullPath },
+        })
+      } else {
+        next()
+      }
     } else {
-      next('login')
+      next({
+        name: 'login',
+        query: { redirect: to.fullPath },
+      })
     }
   } else if (to.meta.requiresGuest) {
     if (authStore.isLoggedIn) {

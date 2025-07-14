@@ -7,7 +7,7 @@ import { useCartStore } from '../../../stores/cartStore'
 const props = defineProps({
   cartItemId: {
     required: true,
-    type: Object as PropType<string | number>,
+    type: String as PropType<string | number>,
   },
 })
 

@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             "phone" => $this->when($this->profile, $this->profile->phone),
             "address" => $this->when($this->profile, $this->profile->getActiveAddress()),
             "store" => $this->when($this->has_store, $this->store),
+            "verified" => boolval($this->email_verified_at)
         ];
     }
 }
