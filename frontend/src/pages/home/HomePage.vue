@@ -18,8 +18,8 @@ const randomSalutes = [
 function getRandomSalute() {
   return randomSalutes[getRandomNumber(randomSalutes.length)]
 }
-onMounted(() => {
-  productStore.fetchCategories(true).then()
+onMounted(async () => {
+  await productStore.fetchCategories(true)
 })
 
 const displayCount = ref(5)
@@ -36,6 +36,7 @@ const categoriesToShow = computed(() => {
     :heading="formatString(getRandomSalute(), category.name)"
     :grouping="{ key: 'category', name: category.name }"
   />
+  <!-- This is the home page -->
 </template>
 
 <style scoped></style>

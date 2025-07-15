@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import FormCheckbox from '../../components/forms/FormCheckbox.vue'
 import Error from '../../components/forms/Error.vue'
 import checkIcon from '@/assets/check.png'
-import { useAuthStore } from '../../stores/authStore'
 import { RouterLink, useRouter } from 'vue-router'
-import { useCartStore } from '../../stores/cartStore'
-import ErrorAlert from '../../components/ErrorAlert.vue'
-import SuccessAlert from '../../components/SuccessAlert.vue'
-import { getFormattedNumber } from '../../utils/helpers'
+import LoadingComponent from '../../components/LoadingComponent.vue'
+import CheckoutCard from './CheckoutCard.vue'
+import OrderSummary from './OrderSummary.vue'
+import useCheckout from '../../composables/useCheckout'
 
-const useActiveAddress = ref(true)
-const selectedAddress = ref(false)
-const cashPayment = ref(true)
-const prevBgColor = ref('')
-const validationErrors = reactive<{ address?: string[]; payment?: string[] }>({})
-const deliveryFees = 350 // later this will be calculated e.g. send distance to api and the get value back
-
-const authStore = useAuthStore()
-const cartStore = useCartStore()
-
-const success = ref(false)
-const error = ref<boolean | Error>(false)
-const message = ref('')
-const loading = ref(false)
+const {
+  useActiveAddress,
+  cashPayment,
+  validationErrors,
+  deliveryFees,
+  authStore,
+  cartStore,
+  success,
+  error,
+  message,
+  loading,
+  handlePlaceOrder,
+} = useCheckout()
 
 const router = useRouter()
+const prevBgColor = ref('')
+const pageReady = ref(false)
 
 onMounted(() => {
   if (cartStore.count == 0) {
@@ -33,133 +33,69 @@ onMounted(() => {
   }
   prevBgColor.value = document.body.style.backgroundColor
   document.body.style.backgroundColor = 'rgb(234, 234, 234)'
+  setTimeout(() => {
+    pageReady.value = true
+  }, 600)
 })
 
 onUnmounted(() => {
   document.body.style.backgroundColor = prevBgColor.value
 })
-
-// handlers
-async function handlePlaceOrder() {
-  validationErrors.address = []
-  validationErrors.payment = []
-
-  if (!useActiveAddress.value && !selectedAddress.value) {
-    validationErrors.address = ['You have to specify a delivery address.']
-    return
-  }
-  if (!cashPayment.value) {
-    validationErrors.payment = ['You have to set a payment option']
-    return
-  }
-
-  loading.value = true
-  const { data, errors } = await cartStore.placeOrder()
-  loading.value = false
-
-  if (errors !== null) {
-    error.value = errors as Error
-    message.value = error.value.message ?? 'Request failed. Please try again later.'
-  } else {
-    cartStore.clearCart()
-    success.value = data.success
-    message.value = data.message ?? 'Your order has been placed. We shall contact you for more details.'
-  }
-}
 </script>
 
 <template>
-  <section id="main">
-    <div class="order-viewport">
-      <h3>Place your order</h3>
-      <hr />
-      <div class="checkout-card">
-        <div class="heading">
-          <h5>1. Delivery Address</h5>
-          <div class="is-ok">
-            <img :src="checkIcon" alt="check-success" />
-          </div>
+  <Suspense>
+    <template #default>
+      <section id="main" v-if="pageReady">
+        <div class="order-viewport">
+          <h3>Place your order</h3>
+          <hr />
+          <CheckoutCard title="1. Delivery Address" :icon="checkIcon">
+            <div class="default-address px-1">
+              <div class="form-group">
+                <FormCheckbox v-model="useActiveAddress" name="active_address" label="Use Active Address">
+                  <Error :form-errors="validationErrors.address" />
+                </FormCheckbox>
+              </div>
+            </div>
+            <div v-show="!authStore.user?.address" class="add-address">
+              <RouterLink :to="{ name: 'profile' }">Add Address</RouterLink>
+            </div>
+          </CheckoutCard>
+          <CheckoutCard title="2. Payment Option" :icon="checkIcon">
+            <div class="payment-option px-1 pb-1">
+              <div class="form-group">
+                <FormCheckbox v-model="cashPayment" name="cash_payment" label="Cash On Delivery">
+                  <Error :form-errors="validationErrors.payment" />
+                </FormCheckbox>
+              </div>
+              <div class="form-group">
+                <FormCheckbox name="mpesa_payment" label="Pay with M-PESA" :disabled="true" />
+              </div>
+            </div>
+          </CheckoutCard>
+          <CheckoutCard title="3. Delivery details" :icon="checkIcon">
+            <div class="delivery-option px-1">
+              <p>Your order will be delivered between 1-3 days from today.</p>
+            </div>
+          </CheckoutCard>
         </div>
-        <div class="default-address px-1">
-          <div class="form-group">
-            <FormCheckbox v-model="useActiveAddress" name="active_address" label="Use Active Address">
-              <Error :form-errors="validationErrors.address" />
-            </FormCheckbox>
-          </div>
-        </div>
-        <div v-show="!authStore.user?.address" class="add-address">
-          <RouterLink :to="{ name: 'profile' }">Add Address</RouterLink>
-        </div>
-      </div>
-      <div class="checkout-card">
-        <div class="heading">
-          <h5>2. Payment Option</h5>
-          <div class="is-ok">
-            <img :src="checkIcon" alt="check-success" />
-          </div>
-        </div>
-        <div class="payment-option px-1 pb-1">
-          <div class="form-group">
-            <FormCheckbox v-model="cashPayment" name="cash_payment" label="Cash On Delivery">
-              <Error :form-errors="validationErrors.payment" />
-            </FormCheckbox>
-          </div>
-          <div class="form-group">
-            <FormCheckbox name="mpesa_payment" label="Pay with M-PESA" :disabled="true" />
-          </div>
-        </div>
-      </div>
-      <div class="checkout-card">
-        <div class="heading">
-          <h5>3. Delivery details</h5>
-          <div class="is-ok">
-            <img :src="checkIcon" alt="check-success" />
-          </div>
-        </div>
-        <div class="delivery-option px-1">
-          <p>Your order will be delivered between 1-3 days from today.</p>
-        </div>
-      </div>
-    </div>
-    <!-- order summary -->
-    <div class="order-summary-viewport">
-      <div v-if="success" class="order-response">
-        <SuccessAlert :show="success" :msg="message" :show-tick="true">
-          <div class="text-center">
-            <RouterLink :to="{ name: 'products' }">Continue shopping</RouterLink>
-          </div>
-        </SuccessAlert>
-      </div>
-      <div v-else class="order-summary">
-        <h3>Order Summary</h3>
-        <div class="line">
-          <div class="label">Items total ({{ cartStore.count }})</div>
-          <div class="cost">{{ getFormattedNumber(cartStore.subtotal) }}</div>
-        </div>
-        <div class="line">
-          <div class="label">Delivery fees</div>
-          <div class="cost">{{ getFormattedNumber(deliveryFees) }}</div>
-        </div>
-        <div class="line totals">
-          <div class="label">Total</div>
-          <div class="cost">{{ getFormattedNumber(deliveryFees + cartStore.subtotal) }}</div>
-        </div>
-        <div>
-          <button class="btn block btn-orange" :disabled="loading" @click="handlePlaceOrder">
-            {{ loading ? 'Please wait...' : 'Place Order' }}
-          </button>
-          <div style="margin: 0.5rem; text-align: center">
-            <div style="margin-bottom: 0.5rem">or</div>
-            <RouterLink :to="{ name: 'shopping-cart' }" class="text-sm decoration-none hover-underline"
-              >Modify cart</RouterLink
-            >
-          </div>
-        </div>
-        <ErrorAlert :show="!!error" :msg="message" />
-      </div>
-    </div>
-    <!-- order summary -->
-  </section>
+        <OrderSummary
+          :cartStore="cartStore"
+          :deliveryFees="deliveryFees"
+          :loading="loading"
+          :error="error"
+          :message="message"
+          :success="success"
+          :successMessage="message"
+          @placeOrder="handlePlaceOrder"
+        />
+      </section>
+    </template>
+    <template #fallback>
+      <LoadingComponent v-if="!pageReady" />
+    </template>
+  </Suspense>
 </template>
 
 <style scoped>

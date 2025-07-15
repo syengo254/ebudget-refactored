@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class OrderService {
@@ -25,8 +27,11 @@ class OrderService {
         return Order::findOrFail($id);
     }
 
-    public function createOrder(array $attributes): array
+    // make this function return a DTO
+
+    public function createOrder(array $attributes): OrderDTO
     {
+        DB::beginTransaction();
         $orderCreated = 0;
 
         try {
@@ -40,20 +45,24 @@ class OrderService {
 
             $orderCreated = $order->id;
 
-            foreach ($attributes["order"] as $item) {
+            $productIds = collect($attributes['order'])->pluck('product_id');
+            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+            foreach ($attributes['order'] as $item) {
+                $product = $products[$item['product_id']];
                 $order->orderItems()->create([
                     'product_id' => $item["product_id"],
                     'item_count' => $item["count"],
-                    'price_at_order' => Product::find($item["product_id"])->price,
+                    'price_at_order' => $product->price,
                 ]);
             }
 
-            // todo: fire new order job
             logger("ORDER::New customer order created with id: {$order->id} with {$order->orderItems->count()} items");
 
-            return [$order, true, null];
-            
+            DB::commit();
+            return new OrderDTO($order, true, null);
+
         } catch (Throwable $e) {
+            DB::rollBack();
             // clear the cart_id to allow retry
             request()->session()->forget("latest_cart_id");
 
@@ -64,7 +73,7 @@ class OrderService {
 
             logger($e->__toString());
 
-            return [null, false, $e];
+            return new OrderDTO(null, false, $e);
         }
     }
 }

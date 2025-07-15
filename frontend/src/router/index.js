@@ -7,7 +7,7 @@ import DashboardPage from '../pages/dashboard/DashboardPage.vue'
 import AllProductsPage from '../pages/products/AllProductsPage.vue'
 import ShoppingCartPage from '../pages/shopping-cart/ShoppingCartPage.vue'
 
-// TODO: laaater, make guards arrays i.e. meta.guards: ["auth", "guest", "verified", etc]
+// make guards arrays i.e. meta.guards: ["auth", "guest", "verified", etc]
 
 const routes = [
   {
@@ -24,7 +24,7 @@ const routes = [
     name: 'profile',
     meta: {
       title: 'User Profile | Edit your information | E-budget.com | Best Online Shoping Experience',
-      requiresAuth: true,
+      guards: ['auth'],
       forceCheckServerAuth: true, // ignore local storage data
     },
   },
@@ -34,7 +34,7 @@ const routes = [
     name: 'dashboard',
     meta: {
       title: 'Dashboard | E-budget.com | Best Online Shoping Experience',
-      requiresAuth: true,
+      guards: ['auth'],
       forceCheckServerAuth: true, // ignore local storage data
     },
   },
@@ -44,7 +44,7 @@ const routes = [
     name: 'register',
     meta: {
       title: 'Register | E-budget.com | Best Online Shoping Experience',
-      requiresGuest: true,
+      guards: ['guest'],
     },
   },
   {
@@ -53,7 +53,7 @@ const routes = [
     name: 'login',
     meta: {
       title: 'Login | E-budget.com | Best Online Shoping Experience',
-      requiresGuest: true,
+      guards: ['guest'],
     },
   },
   {
@@ -62,7 +62,7 @@ const routes = [
     name: 'reset-password',
     meta: {
       title: 'Reset your password | E-budget.com | Best Online Shoping Experience',
-      requiresGuest: true,
+      guards: ['guest'],
     },
   },
   {
@@ -88,9 +88,8 @@ const routes = [
     component: () => import('../pages/checkout/Index.vue'),
     meta: {
       title: 'Checkout | E-budget.com | Best Online Shoping Experience',
-      requiresAuth: true,
+      guards: ['auth', 'verified'],
       forceCheckServerAuth: true, // ignore local storage data
-      requiresVerified: true,
     },
   },
   {
@@ -101,7 +100,6 @@ const routes = [
       title: 'Shopping Cart | E-budget.com | Best Online Shoping Experience',
     },
   },
-
   {
     path: '/verify-account',
     name: 'verify-account',

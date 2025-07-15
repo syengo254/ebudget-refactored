@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Orders;
 
 use App\Http\Controllers\Controller;
+use App\Http\DTOs\OrderDTO;
 use App\Http\Requests\Orders\OrderRequest;
 use App\Mail\OrderCreated;
 use App\Models\Order;
@@ -12,6 +13,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
+use App\Models\Product;
+use Exception;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -27,50 +34,41 @@ class OrderController extends Controller
     {
         $response = Gate::inspect('create', new Order);
 
-        if($response->denied()){
-            return [
-                "success" => false,
-                "message" => $response->message(),
-            ];
+        if ($response->denied()) {
+            return (new OrderDTO(null, false, new Exception($response->message())))->toArray();
         }
 
         $validated = $request->validated();
         $cart_id = $validated["cart_id"];
-        $cartInSession = request()->session()->get("latest_cart_id", false);
+        $cartInSession = request()->session()->get("orders.latest_cart_id", false);
 
         if ($cartInSession && $cartInSession["cart_id"] == $cart_id) {
-            return response()->json([
-                "success" => true,
-                "message" => "Your order has been created.",
-                "order" => $this->orderService->find($cartInSession["order_id"]),
-                "extra" => request()->session()->get("latest_cart_id", false),
-            ]);
+            return (new OrderDTO(
+                $this->orderService->find($cartInSession["order_id"]),
+                true,
+                new Exception("Order already exists")
+            ))->toArray();
         }
 
-        [$order, $success, $error] = $this->orderService->createOrder($validated);
+        $orderDTO = $this->orderService->createOrder($validated);
 
-        if ($success) {
+        if ($orderDTO->success) {
             // save cart_id to session to avoid multiple requests
-            request()->session()->put("latest_cart_id", [
+            request()->session()->put("orders.latest_cart_id", [
                 "cart_id" => $cart_id,
-                "order_id" => $order->id,
+                "order_id" => $orderDTO->order->id,
             ]);
 
-            // send email to user
-            Mail::to(Auth::user()->email)->queue(new OrderCreated($order));
-
-            return response()->json([
-                "success" => $success,
-                "message" => "Your order has been created.",
-                "order" => $order,
-            ]);
-        } else {
-            return response()->json([
-                "success" => false,
-                "message" => $error->getMessage() ? $error->getMessage() : "Failed to create your order.",
-                "order" => null,
-            ]);
+            Mail::to(Auth::user()->email)->queue(new OrderCreated($orderDTO->order));
         }
+
+        return response()->json([
+            "success" => $orderDTO->success,
+            "message" => $orderDTO->success
+                ? "Your order has been created."
+                : $orderDTO->error?->getMessage() ?? "Failed to create your order.",
+            "order" => $orderDTO->order,
+        ]);
     }
 
     public function show(Order $order)
