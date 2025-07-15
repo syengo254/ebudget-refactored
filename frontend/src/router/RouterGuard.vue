@@ -9,10 +9,13 @@ const authStore = useAuthStore()
 router.beforeEach(async (to, _from, next) => {
   document.title = typeof to.meta.title === 'string' ? to.meta.title : 'E-budget.com | Best Online Shoping Experience'
 
-  if (to.meta.requiresAuth) {
-    await authStore.checkSessionAuthenticated(to.meta.forceCheckServerAuth ? true : false)
+  const guards = Array.isArray(to.meta.guards) ? to.meta.guards : []
+  const forceCheckServerAuth = !!to.meta.forceCheckServerAuth
+
+  if (guards.includes('auth')) {
+    await authStore.checkSessionAuthenticated(forceCheckServerAuth)
     if (authStore.isLoggedIn) {
-      if (to.meta.requiresVerified && !authStore.user?.verified) {
+      if (guards.includes('verified') && !authStore.user?.verified) {
         next({
           path: 'verify-account',
           query: { redirect: to.fullPath },
@@ -26,15 +29,19 @@ router.beforeEach(async (to, _from, next) => {
         query: { redirect: to.fullPath },
       })
     }
-  } else if (to.meta.requiresGuest) {
+    return
+  }
+
+  if (guards.includes('guest')) {
     if (authStore.isLoggedIn) {
       next('/')
     } else {
       next()
     }
-  } else {
-    next()
+    return
   }
+
+  next()
 })
 </script>
 
