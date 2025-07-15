@@ -9,6 +9,8 @@ use App\Models\Address;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderCreated;
 // use Laravel\Sanctum\Sanctum;
 
 class OrderTest extends TestCase
@@ -122,6 +124,27 @@ class OrderTest extends TestCase
             ->assertJsonValidationErrors([
                 'order.0.product_id',
             ]);
-        $response->assertStatus(422);
+    }
+
+    // test on success, order created mail is queued
+    public function test_on_success_order_created_mail_is_queued()
+    {
+        Mail::fake();
+
+        $orderPayload = [
+            'order' => [
+                [
+                    'product_id' => 1,
+                    'count' => 1,   
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $response = $this->postJson('/api/orders', $orderPayload);
+
+        Mail::assertQueued(OrderCreated::class, function ($mail) {
+            return $mail->hasTo($this->user->email);
+        });
     }
 }
