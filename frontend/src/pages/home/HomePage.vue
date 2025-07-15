@@ -36,6 +36,7 @@ const categoriesToShow = computed(() => {
     :heading="formatString(getRandomSalute(), category.name)"
     :grouping="{ key: 'category', name: category.name }"
   />
+  <!-- This is the home page -->
 </template>
 
 <style scoped></style>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Orders;
 
 use App\Http\Controllers\Controller;
+use App\Http\DTOs\OrderDTO;
 use App\Http\Requests\Orders\OrderRequest;
 use App\Mail\OrderCreated;
 use App\Models\Order;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use App\Models\Product;
+use Exception;
 use Throwable;
 
 class OrderController extends Controller
@@ -32,11 +34,8 @@ class OrderController extends Controller
     {
         $response = Gate::inspect('create', new Order);
 
-        if($response->denied()){
-            return [
-                "success" => false,
-                "message" => $response->message(),
-            ];
+        if ($response->denied()) {
+            return (new OrderDTO(null, false, new Exception($response->message())))->toArray();
         }
 
         $validated = $request->validated();
@@ -44,12 +43,11 @@ class OrderController extends Controller
         $cartInSession = request()->session()->get("orders.latest_cart_id", false);
 
         if ($cartInSession && $cartInSession["cart_id"] == $cart_id) {
-            return response()->json([
-                "success" => true,
-                "message" => "Your order has been created.",
-                "order" => $this->orderService->find($cartInSession["order_id"]),
-                "extra" => request()->session()->get("orders.latest_cart_id", false),
-            ]);
+            return (new OrderDTO(
+                $this->orderService->find($cartInSession["order_id"]),
+                true,
+                new Exception("Order already exists")
+            ))->toArray();
         }
 
         $orderDTO = $this->orderService->createOrder($validated);
@@ -62,19 +60,15 @@ class OrderController extends Controller
             ]);
 
             Mail::to(Auth::user()->email)->queue(new OrderCreated($orderDTO->order));
-
-            return response()->json([
-                "success" => $orderDTO->success,
-                "message" => "Your order has been created.",
-                "order" => $orderDTO->order,
-            ]);
-        } else {
-            return response()->json([
-                "success" => $orderDTO->success,
-                "message" => $orderDTO->error?->getMessage() ?? "Failed to create your order.",
-                "order" => $orderDTO->order,
-            ]);
         }
+
+        return response()->json([
+            "success" => $orderDTO->success,
+            "message" => $orderDTO->success
+                ? "Your order has been created."
+                : $orderDTO->error?->getMessage() ?? "Failed to create your order.",
+            "order" => $orderDTO->order,
+        ]);
     }
 
     public function show(Order $order)
@@ -98,15 +92,5 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         // cancel the order
-    }
-
-    public function rules()
-    {
-        return [
-            "order" => "required|array|min:1",
-            "order.*.product_id" => "required|integer|min:1|exists:products,id",
-            "order.*.count" => "required|integer|min:1",
-            "cart_id" => "required|string|min:10"
-        ];
     }
 }

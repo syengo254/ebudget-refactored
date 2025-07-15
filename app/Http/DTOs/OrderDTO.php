@@ -16,7 +16,7 @@ class OrderDTO {
         return [
             "order" => $this->order,
             "success" => $this->success,
-            "error" => $this->error?->getMessage(),
+            "message" => $this->error?->getMessage(),
         ];
     }
 }

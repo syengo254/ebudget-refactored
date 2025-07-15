@@ -8,9 +8,8 @@ use App\Models\Profile;
 use App\Models\Address;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Str;
 use Tests\TestCase;
-use Laravel\Sanctum\Sanctum;
+// use Laravel\Sanctum\Sanctum;
 
 class OrderTest extends TestCase
 {
@@ -46,7 +45,7 @@ class OrderTest extends TestCase
         $profile->save();
 
         // create products
-        $products = Product::factory()->count(2)->create();
+        Product::factory()->count(2)->create();
     }
 
     public function test_user_can_create_order()
@@ -64,12 +63,6 @@ class OrderTest extends TestCase
             ],
             'cart_id' => $this->faker->uuid(),
         ];
-
-        $this->withHeaders([
-            'Referer' => 'http://localhost:5173',
-            'Accept' => 'application/json', // Good practice for API-like interactions
-        ])
-            ->withSession([]);
 
         $response = $this->postJson('/api/orders', $orderPayload);
 
@@ -105,7 +98,30 @@ class OrderTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'success' => false,
+                'order' => null,
                 'message' => 'You need to verify your account.',
             ]);
+    }
+
+    // test with non-existent product
+    public function test_non_existent_product_cannot_be_added_to_order()
+    {
+        $orderPayload = [
+            'order' => [
+                [
+                    'product_id' => 999,
+                    'count' => 1,
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $response = $this->postJson('/api/orders', $orderPayload);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'order.0.product_id',
+            ]);
+        $response->assertStatus(422);
     }
 }

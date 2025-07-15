@@ -56,7 +56,6 @@ class OrderService {
                 ]);
             }
 
-            // todo: fire new order job
             logger("ORDER::New customer order created with id: {$order->id} with {$order->orderItems->count()} items");
 
             DB::commit();
