@@ -3,10 +3,12 @@
     "version": "1.2.0",
     "scripts": {
         "dev": "npm run dev --prefix frontend",
-        "build": "npm run build --prefix frontend"
+        "build": "npm run build --prefix frontend",
+        "test": "npm run test --prefix frontend"
     },
     "devDependencies": {
         "axios": "^0.27",
+        "eslint-plugin-vue": "^10.3.0",
         "laravel-vite-plugin": "^0.6.0",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",

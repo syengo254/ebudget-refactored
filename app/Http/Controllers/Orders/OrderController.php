@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
+use App\Models\Product;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -36,39 +41,38 @@ class OrderController extends Controller
 
         $validated = $request->validated();
         $cart_id = $validated["cart_id"];
-        $cartInSession = request()->session()->get("latest_cart_id", false);
+        $cartInSession = request()->session()->get("orders.latest_cart_id", false);
 
         if ($cartInSession && $cartInSession["cart_id"] == $cart_id) {
             return response()->json([
                 "success" => true,
                 "message" => "Your order has been created.",
                 "order" => $this->orderService->find($cartInSession["order_id"]),
-                "extra" => request()->session()->get("latest_cart_id", false),
+                "extra" => request()->session()->get("orders.latest_cart_id", false),
             ]);
         }
 
-        [$order, $success, $error] = $this->orderService->createOrder($validated);
+        $orderDTO = $this->orderService->createOrder($validated);
 
-        if ($success) {
+        if ($orderDTO->success) {
             // save cart_id to session to avoid multiple requests
-            request()->session()->put("latest_cart_id", [
+            request()->session()->put("orders.latest_cart_id", [
                 "cart_id" => $cart_id,
-                "order_id" => $order->id,
+                "order_id" => $orderDTO->order->id,
             ]);
 
-            // send email to user
-            Mail::to(Auth::user()->email)->queue(new OrderCreated($order));
+            Mail::to(Auth::user()->email)->queue(new OrderCreated($orderDTO->order));
 
             return response()->json([
-                "success" => $success,
+                "success" => $orderDTO->success,
                 "message" => "Your order has been created.",
-                "order" => $order,
+                "order" => $orderDTO->order,
             ]);
         } else {
             return response()->json([
-                "success" => false,
-                "message" => $error->getMessage() ? $error->getMessage() : "Failed to create your order.",
-                "order" => null,
+                "success" => $orderDTO->success,
+                "message" => $orderDTO->error?->getMessage() ?? "Failed to create your order.",
+                "order" => $orderDTO->order,
             ]);
         }
     }
@@ -94,5 +98,15 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         // cancel the order
+    }
+
+    public function rules()
+    {
+        return [
+            "order" => "required|array|min:1",
+            "order.*.product_id" => "required|integer|min:1|exists:products,id",
+            "order.*.count" => "required|integer|min:1",
+            "cart_id" => "required|string|min:10"
+        ];
     }
 }

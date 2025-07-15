@@ -18,8 +18,8 @@ const randomSalutes = [
 function getRandomSalute() {
   return randomSalutes[getRandomNumber(randomSalutes.length)]
 }
-onMounted(() => {
-  productStore.fetchCategories(true).then()
+onMounted(async () => {
+  await productStore.fetchCategories(true)
 })
 
 const displayCount = ref(5)
