@@ -3,7 +3,7 @@ import { CategoryType, ProductsFiltersType, ProductType } from '../types'
 import useProducts from '../composables/useProducts'
 import { MAX_CACHED_PAGES } from '../config'
 
-interface ProductStoreType {
+export interface ProductStoreType {
   products: ProductType[]
   cachedProducts: Record<number, { data: ProductType[]; pagination: Record<string, unknown> }>
   categories: CategoryType[]
