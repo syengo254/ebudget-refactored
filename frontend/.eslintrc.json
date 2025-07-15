@@ -42,6 +42,9 @@
     ],
     "vue/require-prop-types": "warn",
     // --- Airbnb overrides ---
+    "vue/block-order": ["error", {
+      "order": ["script", "template", "style"]
+    }],
     "indent": [
       "error",
       2,
