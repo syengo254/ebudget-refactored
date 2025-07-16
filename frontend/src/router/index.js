@@ -34,7 +34,7 @@ const routes = [
     name: 'dashboard',
     meta: {
       title: 'Dashboard | E-budget.com | Best Online Shoping Experience',
-      guards: ['auth'],
+      guards: ['auth', 'store'],
       forceCheckServerAuth: true, // ignore local storage data
     },
   },

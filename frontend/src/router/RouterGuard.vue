@@ -20,6 +20,15 @@ router.beforeEach(async (to, _from, next) => {
           path: 'verify-account',
           query: { redirect: to.fullPath },
         })
+      } else if (guards.includes('store')) {
+        if (authStore.user?.hasStore) {
+          next()
+        } else {
+          next({
+            name: 'home',
+            replace: true,
+          })
+        }
       } else {
         next()
       }
