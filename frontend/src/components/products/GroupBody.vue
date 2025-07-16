@@ -7,7 +7,7 @@ import { getRandomNumber } from '../../utils/helpers'
 import { fetchProductsBy } from '../../services/products'
 import LoadingComponent from '../LoadingComponent.vue'
 
-const randomUnique = ref('boostmode' + getRandomNumber(10000))
+const randomUnique = 'boostmode' + getRandomNumber(10000)
 const products = ref<Partial<ProductType>[]>([])
 const loading = ref(true)
 
@@ -30,7 +30,7 @@ onMounted(async () => {
 })
 
 function scroll(direction: 'left' | 'right') {
-  const elem = document.querySelector('#' + String(randomUnique.value)) as HTMLElement
+  const elem = document.querySelector('#' + String(randomUnique)) as HTMLElement
   const elemWith = parseFloat(getComputedStyle(elem).width)
   if (direction === 'left') {
     elem?.scrollTo(elemWith + elem.scrollLeft, 0)

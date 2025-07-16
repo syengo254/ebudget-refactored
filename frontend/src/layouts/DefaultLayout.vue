@@ -39,6 +39,14 @@ function handleSearchSubmit() {
   }
 }
 
+function checkFilters() {
+  // if clicked filters shoudl be cleared
+  if (productStore.hasFilters) {
+    productStore.clearFilters()
+  }
+  return true
+}
+
 watch(productStore.filters, (val) => {
   if ((val.q ?? '').length < 1) {
     searchQuery.value = ''
@@ -99,7 +107,7 @@ watch(productStore.filters, (val) => {
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/">Today's Deals</RouterLink>
-      <RouterLink to="/products">All Products</RouterLink>
+      <RouterLink to="/products" @click="checkFilters">All Products</RouterLink>
       <RouterLink to="/about">About</RouterLink>
     </nav>
   </section>

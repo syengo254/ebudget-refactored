@@ -1,7 +1,18 @@
 <script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router'
 import CategoriesPanel from './components/CategoriesPanel.vue'
 import ProductsPanel from './components/ProductsPanel.vue'
 import PromotionsPanel from './components/PromotionsPanel.vue'
+import { useProductStore } from '../../stores/productStore'
+
+const router = useRouter()
+const route = useRoute()
+const productStore = useProductStore()
+
+if (route.query?.filterCategory) {
+  productStore.addFilter('category', route.query?.filterCategory as string)
+  router.replace({ query: undefined })
+}
 </script>
 
 <template>

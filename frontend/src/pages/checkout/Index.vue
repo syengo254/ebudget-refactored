@@ -46,7 +46,7 @@ onUnmounted(() => {
 <template>
   <Suspense>
     <template #default>
-      <section id="main" v-if="pageReady">
+      <section v-if="pageReady" id="main">
         <div class="order-viewport">
           <h3>Place your order</h3>
           <hr />
@@ -81,14 +81,13 @@ onUnmounted(() => {
           </CheckoutCard>
         </div>
         <OrderSummary
-          :cartStore="cartStore"
-          :deliveryFees="deliveryFees"
+          :delivery-fees="deliveryFees"
           :loading="loading"
           :error="error"
           :message="message"
           :success="success"
-          :successMessage="message"
-          @placeOrder="handlePlaceOrder"
+          :success-message="message"
+          @place-order="handlePlaceOrder"
         />
       </section>
     </template>
