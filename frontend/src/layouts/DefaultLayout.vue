@@ -3,10 +3,10 @@ import { computed, ref, watch } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
-import MenuBar from '../assets/menu-bar.png'
 import { useAuthStore } from '../stores/authStore'
 import { useProductStore } from '../stores/productStore'
 import CartComponent from '../components/shopping-cart/CartComponent.vue'
+import UserMenu from './partials/UserMenu.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -32,19 +32,13 @@ const handleLogout = async () => {
 
 function handleSearchSubmit() {
   if (searchQuery.value.length > 3) {
-    productStore.addFilter('q', searchQuery.value)
-    if (!['products'].includes(route.name as string)) {
-      router.push('/products')
+    if (!authStore.hasStore) {
+      productStore.addFilter('q', searchQuery.value)
+      if (!['products'].includes(route.name as string)) {
+        router.push('/products')
+      }
     }
   }
-}
-
-function checkFilters() {
-  // if clicked filters shoudl be cleared
-  if (productStore.hasFilters) {
-    productStore.clearFilters()
-  }
-  return true
 }
 
 watch(productStore.filters, (val) => {
@@ -58,7 +52,9 @@ watch(productStore.filters, (val) => {
   <div class="header-wrapper">
     <header>
       <div class="logo">
-        <RouterLink to="/"><img :src="Logo" alt="" class="logo-img" /></RouterLink>
+        <RouterLink :to="authStore.hasStore ? { name: 'dashboard' } : '/'"
+          ><img :src="Logo" alt="" class="logo-img"
+        /></RouterLink>
       </div>
       <div class="search-box">
         <form @submit.prevent="handleSearchSubmit">
@@ -99,18 +95,7 @@ watch(productStore.filters, (val) => {
       </div>
     </header>
   </div>
-  <section v-if="showCategoriesBar" id="categories-bar">
-    <RouterLink to="/">
-      <img class="menu-icon" :src="MenuBar" alt="menu-bar" />
-      <span>All</span>
-    </RouterLink>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/">Today's Deals</RouterLink>
-      <RouterLink to="/products" @click="checkFilters">All Products</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav>
-  </section>
+  <UserMenu v-if="showCategoriesBar" />
   <main>
     <slot />
   </main>
@@ -268,51 +253,6 @@ div.search-icon > img {
   width: 32px;
   height: 32px;
   pointer-events: none;
-}
-
-/* categories bar styles */
-#categories-bar {
-  height: 46px;
-  background-color: rgb(34, 51, 144);
-  border-bottom: 1px solid white;
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-  color: white;
-  gap: 0.5rem;
-}
-
-#categories-bar a {
-  text-decoration: none;
-  padding: 0.5rem 0.5rem;
-  display: block;
-  box-sizing: content-box;
-  border: 1px solid transparent;
-}
-
-#categories-bar a:hover {
-  text-decoration: none;
-  border: 1px solid white;
-}
-
-#categories-bar > a:first-of-type {
-  display: flex;
-  column-gap: 0.5rem;
-  align-items: center;
-  color: white;
-  text-decoration: none;
-  outline: none;
-}
-
-#categories-bar > a > img.menu-icon {
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-}
-
-#categories-bar > a > span {
-  margin-right: 1rem;
-  font-weight: bold;
 }
 
 /* media queries */

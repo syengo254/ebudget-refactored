@@ -26,6 +26,9 @@ export const useAuthStore = defineStore('auth', {
     loggedIn(): boolean {
       return this.isLoggedIn
     },
+    hasStore(state) {
+      return state.user?.hasStore ?? false
+    },
   },
   actions: {
     setUser(user: UserStateType, isLoggedIn: boolean) {

@@ -32,6 +32,11 @@ Route::get('/email/verify', function () {
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
 
+    if(Auth::user()->has_store)
+    {
+        return redirect(env("UI_APP_URL") . "/dashboard");
+    }
+
     return redirect(env("UI_APP_URL"));
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 

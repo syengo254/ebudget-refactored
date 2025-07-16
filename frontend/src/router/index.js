@@ -3,9 +3,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../pages/home/HomePage.vue'
 import AboutPage from '../pages/about/AboutPage.vue'
 import UserProfilePage from '../pages/profile/UserProfilePage.vue'
-import DashboardPage from '../pages/dashboard/DashboardPage.vue'
 import AllProductsPage from '../pages/products/AllProductsPage.vue'
 import ShoppingCartPage from '../pages/shopping-cart/ShoppingCartPage.vue'
+
+import vendorRoutes from './vendor'
 
 // make guards arrays i.e. meta.guards: ["auth", "guest", "verified", etc]
 
@@ -17,6 +18,7 @@ const routes = [
     meta: {
       title: 'Home | E-budget.com | Best Online Shoping Experience',
     },
+    guards: ['user'],
   },
   {
     path: '/profile',
@@ -28,16 +30,9 @@ const routes = [
       forceCheckServerAuth: true, // ignore local storage data
     },
   },
-  {
-    path: '/dashboard',
-    component: DashboardPage,
-    name: 'dashboard',
-    meta: {
-      title: 'Dashboard | E-budget.com | Best Online Shoping Experience',
-      guards: ['auth', 'store'],
-      forceCheckServerAuth: true, // ignore local storage data
-    },
-  },
+  //========= Vendor Routes =============
+  vendorRoutes,
+  //========= End Vendor Routes =============
   {
     path: '/register',
     component: () => import('../pages/register/RegisterPage.vue'),

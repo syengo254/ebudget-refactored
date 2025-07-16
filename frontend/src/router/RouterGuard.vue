@@ -21,7 +21,7 @@ router.beforeEach(async (to, _from, next) => {
           query: { redirect: to.fullPath },
         })
       } else if (guards.includes('store')) {
-        if (authStore.user?.hasStore) {
+        if (authStore.hasStore) {
           next()
         } else {
           next({

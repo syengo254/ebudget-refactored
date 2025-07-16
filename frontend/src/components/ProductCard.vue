@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 
 import { ProductType } from '../types'
 import { getFormattedNumber } from '../utils/helpers'
+import { useAuthStore } from '../stores/authStore'
 
 defineProps({
   product: {
@@ -13,6 +14,8 @@ defineProps({
 })
 
 const emit = defineEmits(['addToCart'])
+
+const authStore = useAuthStore()
 
 function handleAddToCart() {
   emit('addToCart')
@@ -43,7 +46,7 @@ function handleAddToCart() {
           }}</RouterLink>
         </p>
       </div>
-      <div class="buy-btn">
+      <div v-show="!authStore.hasStore" class="buy-btn">
         <button class="add-cart-btn" @click="handleAddToCart">Add to cart</button>
       </div>
     </div>

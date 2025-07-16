@@ -19,6 +19,9 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const handleLogin = async () => {
+  if (loginError.value) {
+    loginError.value = null
+  }
   const { success, error, loading: loginLoading, formErrors } = await authStore.authLogin(email.value, password.value)
 
   loading.value = loginLoading.value
@@ -36,10 +39,17 @@ const handleLogin = async () => {
     if (route.query.redirect) {
       router.push(route.query.redirect.toString())
     } else {
-      router.push({
-        path: '/',
-        replace: true,
-      })
+      if (authStore.hasStore) {
+        router.push({
+          name: 'dashboard',
+          replace: true,
+        })
+      } else {
+        router.push({
+          path: '/',
+          replace: true,
+        })
+      }
     }
   }
 }
@@ -93,7 +103,7 @@ const handleLogin = async () => {
         <ErrorAlert
           :show="!!loginError && !validationErrors"
           class="mt-1"
-          :msg="loginError !== null ? loginError : ''"
+          :msg="loginError !== null ? loginError : 'An error occured during login.'"
         />
         <div>
           <p class="mt-1">

@@ -15,6 +15,13 @@
         border-collapse: collapse;
         padding: .5rem 1rem;
     }
+
+    @media screen and (max-width: 400px) {
+        td {
+            padding: .2rem .5rem;
+            font-size: .9rem;
+        }
+    }
 </style>
 
 <body>
@@ -44,7 +51,7 @@
                         $fmt = new \NumberFormatter( 'en_KE', \NumberFormatter::CURRENCY );
                         $amt = $fmt->format($item->price_at_order * $item->item_count);
                         @endphp
-                        <td>{{ $amt }}</td>
+                        <td style="text-align: right;">{{ $amt }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -52,7 +59,7 @@
                 <tfoot>
                     <tr>
                         <td style="font-weight:bold; text-align:right; padding-inline: 1rem;" colspan="2">Total</td>
-                        <td style="font-weight:bold">{{ $fmt->formatCurrency($order_total, "KES")}}</td>
+                        <td style="font-weight:bold; text-align: right;">{{ $fmt->formatCurrency($order_total, "KES")}}</td>
                     </tr>
                 </tfoot>
             </table>
