@@ -1,20 +1,31 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 
 import { ProductType } from '../types'
 import { getFormattedNumber } from '../utils/helpers'
 
-defineProps({
+const props = defineProps({
   product: {
     required: true,
     type: Object as PropType<Partial<ProductType>>,
   },
 })
+
+const router = useRouter()
+
+function handleCardClick() {
+  router.push({
+    name: 'products',
+    query: {
+      filterCategory: props.product.category?.name,
+    },
+  })
+}
 </script>
 
 <template>
-  <div class="product-card simple">
+  <div class="product-card simple" @click="handleCardClick">
     <div class="product-image">
       <img :src="product.image" :alt="product.name + '-image'" class="image" />
     </div>

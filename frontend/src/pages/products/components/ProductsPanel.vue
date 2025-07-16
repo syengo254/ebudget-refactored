@@ -27,7 +27,7 @@ function handleAddToCart(product: ProductType) {
 }
 
 function removeFilter(filterName: keyof ProductsFiltersType) {
-  productStore.clearFilter(filterName)
+  productStore.removeFilter(filterName)
 }
 </script>
 

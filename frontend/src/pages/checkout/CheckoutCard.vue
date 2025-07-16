@@ -1,8 +1,12 @@
+<script setup lang="ts">
+defineProps<{ title: string; icon?: string }>()
+</script>
+
 <template>
   <div class="checkout-card">
     <div class="heading">
       <h5>{{ title }}</h5>
-      <div class="is-ok" v-if="icon">
+      <div v-if="icon" class="is-ok">
         <img :src="icon" alt="check-success" />
       </div>
     </div>
@@ -11,10 +15,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{ title: string; icon?: string }>()
-</script>
 
 <style scoped>
 .checkout-card {
@@ -35,4 +35,4 @@ defineProps<{ title: string; icon?: string }>()
   width: 20px;
   height: 20px;
 }
-</style> 
+</style>

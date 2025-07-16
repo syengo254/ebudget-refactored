@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+import SuccessAlert from '../../components/SuccessAlert.vue'
+import ErrorAlert from '../../components/ErrorAlert.vue'
+import { getFormattedNumber } from '../../utils/helpers'
+import { useCartStore } from '../../stores/cartStore'
+
+defineEmits(['placeOrder'])
+defineProps<{
+  deliveryFees: number
+  loading: boolean
+  error: boolean | Error
+  message: string
+  success: boolean
+  successMessage: string
+}>()
+
+const cartStore = useCartStore()
+</script>
+
 <template>
   <div class="order-summary-viewport">
     <div v-if="success" class="order-response">
@@ -36,23 +56,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { RouterLink } from 'vue-router'
-import SuccessAlert from '../../components/SuccessAlert.vue'
-import ErrorAlert from '../../components/ErrorAlert.vue'
-import { getFormattedNumber } from '../../utils/helpers'
-
-defineProps<{
-  cartStore: any,
-  deliveryFees: number,
-  loading: boolean,
-  error: boolean | Error,
-  message: string,
-  success: boolean,
-  successMessage: string
-}>()
-</script>
 
 <style scoped>
 .order-summary-viewport {
@@ -111,4 +114,4 @@ defineProps<{
     width: 100%;
   }
 }
-</style> 
+</style>

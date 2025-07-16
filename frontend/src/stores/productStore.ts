@@ -42,6 +42,9 @@ export const useProductStore = defineStore('products', {
         }
       })
     },
+    hasFilters(state) {
+      return Object.keys(state.filters).length > 0
+    },
   },
 
   actions: {
@@ -109,18 +112,25 @@ export const useProductStore = defineStore('products', {
       }
     },
 
-    invalidateCaches() {
+    invalidateCache() {
       this.cachedProducts = {}
     },
 
-    clearFilter(filterName: keyof ProductsFiltersType) {
+    removeFilter(filterName: keyof ProductsFiltersType) {
       const filters = this.filters
       delete filters[filterName]
       this.filters = filters
-      this.invalidateCaches()
+      this.invalidateCache()
       ;(async () => {
         await this.fetchProducts(true, 1)
       })()
+    },
+
+    async clearFilters() {
+      this.filters = {}
+      this.invalidateCache()
+
+      await this.fetchProducts(false, 1)
     },
 
     addFilter(filterName: keyof ProductsFiltersType, filterValue: ProductsFiltersType[keyof ProductsFiltersType]) {
