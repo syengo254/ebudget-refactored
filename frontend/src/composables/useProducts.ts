@@ -2,6 +2,7 @@
 import axios from '../utils/axios'
 import { getProducts } from '../services/products'
 import { CategoryType, ProductsFiltersType } from '../types'
+import { AxiosError } from 'axios'
 
 export default function useProducts() {
   async function fetchProducts(page: number = 1, filters: ProductsFiltersType = {}) {
@@ -9,7 +10,7 @@ export default function useProducts() {
       const { data, meta } = await getProducts(page, filters)
       return { data, meta }
     } catch (err) {
-      return err as Error
+      return err as AxiosError
     }
   }
 
@@ -18,7 +19,7 @@ export default function useProducts() {
       const response = await axios.get('/categories')
       return response.data as CategoryType[]
     } catch (err) {
-      return err as Error
+      return err as AxiosError
     }
   }
 

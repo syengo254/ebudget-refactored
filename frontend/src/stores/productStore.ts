@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { CategoryType, ProductsFiltersType, ProductType } from '../types'
 import useProducts from '../composables/useProducts'
 import { MAX_CACHED_PAGES } from '../config'
+import { AxiosError } from 'axios'
 
 export interface ProductStoreType {
   products: ProductType[]
@@ -67,7 +68,7 @@ export const useProductStore = defineStore('products', {
       const results = await fetch(page, this.filters)
       this.loading = false
 
-      if (results instanceof Error) {
+      if (results instanceof AxiosError || results instanceof Error) {
         this.error = results
       } else {
         this.products = results.data
@@ -100,11 +101,11 @@ export const useProductStore = defineStore('products', {
 
       const response = await fetch()
 
-      if (response instanceof Error) {
+      if (response instanceof AxiosError || response instanceof Error) {
         this.categories = [
           {
             id: -1,
-            name: 'Failed to fetch categories, please reload the page. More details: ' + response.message,
+            name: 'Failed to fetch categories, please reload the page: ' + response.message,
           },
         ]
       } else {

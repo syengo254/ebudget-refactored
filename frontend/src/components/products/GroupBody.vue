@@ -6,10 +6,12 @@ import SimpleProductCard from '../SimpleProductCard.vue'
 import { getRandomNumber } from '../../utils/helpers'
 import { fetchProductsBy } from '../../services/products'
 import LoadingComponent from '../LoadingComponent.vue'
+import ErrorComponent from '../ErrorComponent.vue'
 
 const randomUnique = 'boostmode' + getRandomNumber(10000)
 const products = ref<Partial<ProductType>[]>([])
-const loading = ref(true)
+const error = ref<{ message: string } | null>(null)
+const loading = ref(false)
 
 const props = defineProps({
   filter: {
@@ -18,16 +20,24 @@ const props = defineProps({
   },
 })
 
-onMounted(async () => {
+onMounted(loadProducts)
+
+async function loadProducts() {
   try {
+    loading.value = true
+    error.value = null
     const { data } = await fetchProductsBy(props.filter.key, props.filter.name)
     products.value = data
-  } catch (error) {
-    throw new Error(`Failed to fetch products by: ${props.filter.key} - ${props.filter.name}`)
+  } catch (err) {
+    error.value = {
+      message:
+        `Failed to fetch products by: ${props.filter.key} - ${props.filter.name}` +
+        `More details: ${(err as Error).message}`,
+    }
   } finally {
     loading.value = false
   }
-})
+}
 
 function scroll(direction: 'left' | 'right') {
   const elem = document.querySelector('#' + String(randomUnique)) as HTMLElement
@@ -38,6 +48,8 @@ function scroll(direction: 'left' | 'right') {
     elem?.scrollTo(elem.scrollLeft - parseFloat(getComputedStyle(elem).width), 0)
   }
 }
+
+const reload = async () => await loadProducts()
 </script>
 
 <template>
@@ -48,7 +60,8 @@ function scroll(direction: 'left' | 'right') {
     <div class="scroller scroller-left" @click="scroll('right')">
       <span>&lt;</span>
     </div>
-    <LoadingComponent v-if="loading" />
+    <LoadingComponent v-if="loading && error == null" />
+    <ErrorComponent v-else-if="error" :error="error" :action="reload" action-name="Retry" />
     <div v-else :id="randomUnique" class="group-body-viewport">
       <SimpleProductCard v-for="product in products" :key="product.name" :product="product" />
     </div>
