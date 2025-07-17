@@ -17,8 +17,8 @@ const routes = [
     name: 'home',
     meta: {
       title: 'Home | E-budget.com | Best Online Shoping Experience',
+      guards: ['user'],
     },
-    guards: ['user'],
   },
   {
     path: '/profile',
@@ -27,7 +27,6 @@ const routes = [
     meta: {
       title: 'User Profile | Edit your information | E-budget.com | Best Online Shoping Experience',
       guards: ['auth'],
-      forceCheckServerAuth: true, // ignore local storage data
     },
   },
   //========= Vendor Routes =============
@@ -83,8 +82,7 @@ const routes = [
     component: () => import('../pages/checkout/Index.vue'),
     meta: {
       title: 'Checkout | E-budget.com | Best Online Shoping Experience',
-      guards: ['auth', 'verified'],
-      forceCheckServerAuth: true, // ignore local storage data
+      guards: ['verified', 'user'],
     },
   },
   {
@@ -101,6 +99,7 @@ const routes = [
     component: () => import('../components/UnverifiedAccountNotice.vue'),
     meta: {
       title: 'Account Verification | E-budget.com | Best Online Shoping Experience',
+      guards: ['auth', 'unverified'],
     },
   },
 ]

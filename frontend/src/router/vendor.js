@@ -14,7 +14,6 @@ export default {
       meta: {
         title: 'Dashboard | E-budget.com | Best Online Shoping Experience',
         guards: ['auth', 'store'],
-        forceCheckServerAuth: false,
       },
     },
     {
@@ -23,8 +22,7 @@ export default {
       component: VendorProductsPage,
       meta: {
         title: 'My Products | E-budget.com | Best Online Shoping Experience',
-        guards: ['auth', 'store'],
-        forceCheckServerAuth: false,
+        guards: ['store'],
       },
     },
   ],

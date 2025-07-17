@@ -26,6 +26,9 @@ export const useAuthStore = defineStore('auth', {
     loggedIn(): boolean {
       return this.isLoggedIn
     },
+    verified(state): boolean {
+      return state.user?.verified ?? false
+    },
     hasStore(state) {
       return state.user?.hasStore ?? false
     },
