@@ -2,8 +2,10 @@
 import { RouteLocationNamedRaw, RouteLocationNormalizedGeneric } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 
-function auth(to: RouteLocationNormalizedGeneric): [boolean, RouteLocationNamedRaw] {
+async function auth(to: RouteLocationNormalizedGeneric): Promise<[boolean, RouteLocationNamedRaw]> {
   const authStore = useAuthStore()
+  await authStore.checkSessionAuthenticated()
+
   return [authStore.loggedIn, { name: 'login', query: { redirect: to.fullPath } }]
 }
 
@@ -27,12 +29,16 @@ function store(_to: RouteLocationNormalizedGeneric): [boolean, RouteLocationName
   return [authStore.hasStore, { name: 'products' }]
 }
 
-function guest(_to: RouteLocationNormalizedGeneric): [boolean, RouteLocationNamedRaw] {
+async function guest(_to: RouteLocationNormalizedGeneric): Promise<[boolean, RouteLocationNamedRaw]> {
   const authStore = useAuthStore()
-  return [!authStore.loggedIn, { name: 'home' }]
+  await authStore.checkSessionAuthenticated()
+  return [authStore.loggedIn === false, authStore.hasStore ? { name: 'dashboard' } : { name: 'home' }]
 }
 
-const MAP: Record<string, (to: RouteLocationNormalizedGeneric) => [boolean, RouteLocationNamedRaw]> = {
+const MAP: Record<
+  string,
+  (to: RouteLocationNormalizedGeneric) => [boolean, RouteLocationNamedRaw] | Promise<[boolean, RouteLocationNamedRaw]>
+> = {
   auth,
   guest,
   verified,
@@ -41,7 +47,7 @@ const MAP: Record<string, (to: RouteLocationNormalizedGeneric) => [boolean, Rout
   user,
 }
 
-export function resolve(guard: string, to: RouteLocationNormalizedGeneric) {
+export async function resolve(guard: string, to: RouteLocationNormalizedGeneric) {
   if (!MAP[guard]) {
     throw new Error(`Uknown guard '${guard}' for route '${to.path}'.`)
   }
@@ -51,5 +57,7 @@ export function resolve(guard: string, to: RouteLocationNormalizedGeneric) {
     console.log(`Authorizing guard '${guard}' for route '${to.fullPath}'`)
   }
 
-  return MAP[guard](to)
+  const result = MAP[guard](to)
+
+  return result instanceof Promise ? await result : result
 }

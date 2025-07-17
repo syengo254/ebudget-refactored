@@ -20,11 +20,11 @@ export const useAuthStore = defineStore('auth', {
     return { user: null, isLoggedIn: false, nextAuthCheck: Date.now() }
   },
   getters: {
-    getUser(): UserStateType {
-      return this.user
+    getUser(state): UserStateType {
+      return state.user
     },
-    loggedIn(): boolean {
-      return this.isLoggedIn
+    loggedIn(state): boolean {
+      return state.isLoggedIn
     },
     verified(state): boolean {
       return state.user?.verified ?? false
@@ -51,9 +51,10 @@ export const useAuthStore = defineStore('auth', {
           return true
         }
         return error
+      } else {
+        this.$patch(localSession.value)
       }
 
-      this.$patch(localSession.value)
       return true
     },
 

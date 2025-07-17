@@ -104,6 +104,11 @@ select.form-select {
   color: white;
 }
 
+.btn-error {
+  background-color: orangered;
+  border: 1px solid red;
+}
+
 .btn-secondary {
   background: #0055ff;
   border: 1px solid rgb(200, 200, 200);

@@ -2,8 +2,24 @@
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../../../stores/authStore'
 import { getFormattedNumber } from '../../../utils/helpers'
+import { onMounted, ref } from 'vue'
+import instance from '../../../utils/axios'
 
 const authStore = useAuthStore()
+const storeSummary = ref({
+  total_products: 0,
+  sales_this_week: 0,
+  returned_products: 0,
+  sales_amount: 0,
+})
+
+onMounted(async () => {
+  const response = await instance.get('/stores/' + authStore.user?.store?.id + '/summary')
+
+  if (response.status === 200) {
+    storeSummary.value = response.data.counts
+  }
+})
 </script>
 
 <template>
@@ -16,19 +32,19 @@ const authStore = useAuthStore()
           <ul>
             <li>
               <div class="header">Products Listed</div>
-              <div class="body bold">{{ 25 }}</div>
+              <div class="body bold">{{ storeSummary.total_products }}</div>
             </li>
             <li>
               <div class="header">Sales This Week</div>
-              <div class="body bold">{{ 25 }}</div>
+              <div class="body bold">{{ storeSummary.sales_this_week }}</div>
             </li>
             <li>
               <div class="header">Returned Products</div>
-              <div class="body bold">{{ 25 }}</div>
+              <div class="body bold">{{ storeSummary.returned_products }}</div>
             </li>
             <li>
               <div class="header">Total Sales Amount</div>
-              <div class="body bold">{{ getFormattedNumber(250000) }}</div>
+              <div class="body bold">{{ getFormattedNumber(storeSummary.sales_amount) }}</div>
             </li>
           </ul>
         </div>

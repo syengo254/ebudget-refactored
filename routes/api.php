@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Products\CategoryController;
 use App\Http\Controllers\Products\ProductController;
+use App\Http\Controllers\Stores\StoreController;
 use App\Http\Controllers\Users\ProfileController;
 use App\Http\Controllers\Users\SessionController;
 use App\Http\Controllers\Users\UserController;
@@ -70,3 +71,8 @@ Route::get("/home", function(){
         "Access-Control-Allow-Origin" => "*",
     ]); 
 })->name("home");
+
+
+// stores
+Route::get("/stores/{store}/summary", [StoreController::class, "summary"])->middleware("auth:sanctum");
+Route::get("/stores/{store}/products", [StoreController::class, "index"])->middleware("auth:sanctum");

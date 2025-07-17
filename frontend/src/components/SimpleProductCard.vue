@@ -48,6 +48,9 @@ function handleCardClick() {
         </p>
       </div>
     </div>
+    <div class="product-footer">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -117,6 +120,10 @@ function handleCardClick() {
   font-size: 1rem;
   font-weight: bold;
   display: block;
+}
+
+.product-footer {
+  padding-inline: 0.5rem;
 }
 
 .store-info > p {
