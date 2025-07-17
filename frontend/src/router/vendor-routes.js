@@ -17,7 +17,7 @@ export default {
       },
     },
     {
-      path: 'products',
+      path: 'catalog',
       name: 'my-products',
       component: VendorProductsPage,
       meta: {
