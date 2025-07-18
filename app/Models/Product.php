@@ -19,6 +19,7 @@ class Product extends Model
         'store_id', 
         'stock_amount',
         'image',
+        'is_deleted',
     ];
 
     protected $hidden = [

@@ -9,11 +9,14 @@ import Pagination from '../../../components/Pagination.vue'
 import SimpleProductCard from '../../../components/SimpleProductCard.vue'
 import BaseButton from '../../../components/buttons/BaseButton.vue'
 import LoadingComponent from '../../../components/LoadingComponent.vue'
+import ConfirmDialog from '../../../components/dialogs/ConfirmDialog.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const vendorStore = useVendorStore()
 const loading = ref(false)
+const dialogOpen = ref(false)
+const productIdToDelete = ref(0)
 
 onMounted(async () => {
   if (vendorStore.vendorProducts.length < 1) {
@@ -32,8 +35,28 @@ async function loadProducts(page: number = 1) {
 function openEditPage(productId: number) {
   router.push(`/vendor/product/${productId}/edit`)
 }
+
+async function handleDelete() {
+  if (productIdToDelete.value == 0) return
+  await vendorStore.destroyProduct(productIdToDelete.value)
+  productIdToDelete.value = 0
+  dialogOpen.value = false
+}
+
+function handleCancel() {
+  productIdToDelete.value = 0
+  dialogOpen.value = false
+}
+
+function showConfirmDialog(productId: number) {
+  productIdToDelete.value = productId
+  dialogOpen.value = true
+}
 </script>
 <template>
+  <!-- modal goes here -->
+  <ConfirmDialog :open="dialogOpen" @confirmed="handleDelete" @cancel="handleCancel" />
+  <!-- modal goes here -->
   <section id="main-view">
     <div class="my-product-viewport">
       <h4>Products Owned By {{ authStore.user?.store?.name }}</h4>
@@ -65,7 +88,7 @@ function openEditPage(productId: number) {
                 "
                 >Edit</BaseButton
               >
-              <BaseButton type="button" variant="error">Delete</BaseButton>
+              <BaseButton type="button" variant="error" @click="showConfirmDialog(product.id)">Delete</BaseButton>
             </div>
           </SimpleProductCard>
         </div>

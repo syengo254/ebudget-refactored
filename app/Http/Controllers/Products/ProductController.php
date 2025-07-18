@@ -46,6 +46,8 @@ class ProductController extends Controller
             $request->filled('price') && $products->where("price", "<=", intval($request->price));
         }
 
+        $products->where('is_deleted', '=', FALSE);
+
         return ProductViewResource::collection($products->latest()->paginate($limit));
     }
 
@@ -59,7 +61,7 @@ class ProductController extends Controller
                 "success" => false,
                 "message" => 'You are not authorised!',
                 "product" => NULL,
-            ]);
+            ], 403);
         }
 
         $user = auth()->user();
@@ -117,7 +119,7 @@ class ProductController extends Controller
             return response()->json([
                 "success" => false,
                 "message" => 'You are not authorised!',
-            ]);
+            ], 403);
         }
 
         $success = false;
@@ -158,6 +160,19 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        //
+        if (Gate::denies('delete', $product)) {
+            return response()->json([
+                "success" => false,
+                "message" => 'You are not authorised!',
+            ], 403);
+        }
+
+        $product->is_deleted = TRUE;
+        $product->save();
+
+        return response()->json([
+            "success" => true,
+            "message" => 'Product deleted!',
+        ]);
     }
 }

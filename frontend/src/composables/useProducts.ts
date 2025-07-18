@@ -51,10 +51,21 @@ export default function useProducts() {
     }
   }
 
+  async function deleteProduct(productId: number): Promise<AxiosError | Error | AxiosResponse[`data`]> {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.post(`/products/${productId}?_method=DELETE`)
+      return response.data
+    } catch (error) {
+      return error
+    }
+  }
+
   return {
     fetch: fetchProducts,
     fetchCategories,
     addProduct,
     updateProduct,
+    deleteProduct,
   }
 }

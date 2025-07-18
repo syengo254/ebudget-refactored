@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { CategoryType, ProductType } from '../types'
+import { CategoryType, PaginationData, ProductType } from '../types'
 import { AxiosError, isAxiosError } from 'axios'
 import useProducts from '../composables/useProducts'
 import instance from '../utils/axios'
@@ -9,7 +9,7 @@ interface VendorState {
   products: ProductType[]
   categories: CategoryType[]
   orders: string[]
-  paginationData: Record<string, unknown>
+  paginationData: Partial<PaginationData>
   error: AxiosError | Error | null
 }
 
@@ -62,6 +62,23 @@ export const useVendorStore = defineStore('vendor', () => {
     return response.data.data as ProductType
   }
 
+  async function destroyProduct(productId: number) {
+    const { deleteProduct } = useProducts()
+    const response = await deleteProduct(productId)
+
+    if (response.success) {
+      catalog.value.products = vendorProducts.value.filter((p) => p.id !== productId)
+      if (typeof catalog.value.paginationData.to === 'number') {
+        catalog.value.paginationData.to -= 1
+      }
+      if (typeof catalog.value.paginationData.total === 'number') {
+        catalog.value.paginationData.total -= 1
+      }
+      return true
+    }
+    return false
+  }
+
   function addProduct(product: ProductType) {
     const products = catalog.value.products.filter((p) => p.id !== product.id)
     catalog.value.products = [product, ...products]
@@ -75,5 +92,6 @@ export const useVendorStore = defineStore('vendor', () => {
     fetchSummary,
     getOrFetch,
     addProduct,
+    destroyProduct,
   }
 })
