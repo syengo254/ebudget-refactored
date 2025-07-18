@@ -64,7 +64,7 @@ watch(productStore.filters, (val) => {
           </div>
         </form>
       </div>
-      <CartComponent />
+      <CartComponent v-show="!authStore.hasStore" />
       <div class="navigation-links">
         <div v-if="isLoggedIn" class="user-links">
           <p class="text-md">

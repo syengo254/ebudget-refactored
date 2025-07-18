@@ -10,11 +10,17 @@ const props = defineProps({
     required: true,
     type: Object as PropType<Partial<ProductType>>,
   },
+  dontNavigate: {
+    required: false,
+    type: Boolean,
+    default: false,
+  },
 })
 
 const router = useRouter()
 
 function handleCardClick() {
+  if (props.dontNavigate) return
   router.push({
     name: 'products',
     query: {

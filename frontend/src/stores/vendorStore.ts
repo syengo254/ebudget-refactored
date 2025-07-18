@@ -51,11 +51,23 @@ export const useVendorStore = defineStore('vendor', () => {
     }
   }
 
+  async function getOrFetch(productId: number) {
+    const product = vendorProducts.value.find((p) => p.id == productId)
+
+    if (product) {
+      return product
+    }
+
+    const response = await instance.get(`/products/${productId}`)
+    return response.data.data as ProductType
+  }
+
   return {
     catalog,
     vendorProducts,
     fetchVendorProducts,
     vendorSummary,
     fetchSummary,
+    getOrFetch,
   }
 })

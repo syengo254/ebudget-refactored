@@ -28,6 +28,10 @@ async function loadProducts(page: number = 1) {
     loading.value = false
   }
 }
+
+function openEditPage(productId: number) {
+  router.push(`/vendor/product/${productId}/edit`)
+}
 </script>
 <template>
   <section id="main-view">
@@ -47,9 +51,20 @@ async function loadProducts(page: number = 1) {
             :key="product.name"
             style="border: 1px solid gray"
             :product="product"
+            :dont-navigate="true"
           >
             <div style="display: flex; justify-content: space-between">
-              <BaseButton type="button" variant="primary">Edit</BaseButton>
+              <BaseButton
+                type="button"
+                variant="primary"
+                @click="
+                  (e: Event) => {
+                    e.stopPropagation()
+                    openEditPage(product.id)
+                  }
+                "
+                >Edit</BaseButton
+              >
               <BaseButton type="button" variant="error">Delete</BaseButton>
             </div>
           </SimpleProductCard>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../../../stores/authStore'
 import { useProductStore } from '../../../stores/productStore'
 
@@ -13,14 +13,24 @@ import SubmitButton from '../../profile/components/SubmitButton.vue'
 import SuccessAlert from '../../../components/SuccessAlert.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import useCreateorUpdateProduct from '../../../composables/useCreateUpdateProduct'
+import { ProductType } from '../../../types'
+import { useVendorStore } from '../../../stores/vendorStore'
 
 const authStore = useAuthStore()
 const productStore = useProductStore()
+const vendorStore = useVendorStore()
 const router = useRouter()
+const route = useRoute()
 
+/**
+ * This SFC is used for both editing or creating a product
+ * The @var mode is used to distinguish whether to edit or create
+ *
+ */
 const mode = ref<'edit' | 'create'>('create')
 
 const name = ref('')
+const productId = ref(0)
 const categoryName = ref('')
 const price = ref('')
 const stock = ref('')
@@ -28,7 +38,7 @@ const category = ref('')
 const image = ref<File | null>(null)
 const previewSrc = ref('')
 
-const { loading, createError, success, createProduct, validationErrors } = useCreateorUpdateProduct()
+const { loading, createError, success, createOrUpdateProduct, validationErrors } = useCreateorUpdateProduct()
 
 function handleFileChange(event: string | undefined) {
   if (event !== 'image') return
@@ -58,22 +68,35 @@ function resetForm() {
 }
 
 async function handleSubmit() {
-  if (mode.value === 'create') {
-    await createProduct({
-      name: name.value,
-      categoryName: categoryName.value,
-      price: price.value,
-      stock: stock.value,
-      category: category.value,
-      image: image.value as File,
-    })
-  } else {
-    // update product
-  }
+  validationErrors.value = null
+  createError.value = null
+  success.value = false
+
+  await createOrUpdateProduct({
+    name: name.value,
+    categoryName: categoryName.value,
+    price: parseFloat(price.value),
+    stock: parseInt(stock.value),
+    category: category.value,
+    image: image.value as File,
+    ...(mode.value === 'edit' ? { productId: productId.value } : {}),
+  })
 }
 
 onMounted(async () => {
   await productStore.fetchCategories()
+
+  if (route.name == 'edit-product') {
+    mode.value = 'edit'
+    const product: ProductType = await vendorStore.getOrFetch(parseInt(route.params.id as string))
+
+    name.value = product.name
+    price.value = String(product.price)
+    stock.value = String(product.stock_amount)
+    category.value = String(product.category_id ?? product.category?.id)
+    productId.value = product.id
+    previewSrc.value = product.image
+  }
 })
 </script>
 
@@ -126,7 +149,7 @@ onMounted(async () => {
                     name="image"
                     label="An image of the product (.png, .jpg, .jpeg & .webp)"
                     type="file"
-                    required
+                    :required="mode === 'create'"
                     @file-changed="handleFileChange"
                   >
                     <Error :form-errors="validationErrors?.image" />
@@ -152,7 +175,7 @@ onMounted(async () => {
                 <FormInput
                   v-model="categoryName"
                   name="category-name"
-                  label="or Add a category"
+                  label="or Add a category (Optional if selected above)"
                   placeholder="e.g. Beverages, Tables, etc."
                 >
                   <Error :form-errors="validationErrors?.categoryname" />
@@ -161,23 +184,34 @@ onMounted(async () => {
             </div>
             <div class="submit-btns flex flex-row gap-1">
               <BaseButton variant="outlined" style="border-radius: 3.5px" @click="cancelCreate">Cancel</BaseButton>
-              <SubmitButton style="margin-left: auto" :disabled="loading">{{
+              <SubmitButton v-if="mode === 'edit'" style="margin-left: auto" :disabled="loading">{{
+                loading ? 'Save...' : 'Save'
+              }}</SubmitButton>
+              <SubmitButton v-else style="margin-left: auto" :disabled="loading">{{
                 loading ? 'Adding...' : 'Add'
               }}</SubmitButton>
             </div>
           </fieldset>
           <div class="response flex flex-column">
-            <SuccessAlert :show="success" msg="Product added successfully" :show-tick="true" />
+            <SuccessAlert
+              :show="success"
+              :msg="mode === 'edit' ? 'Changes saved.' : 'Product added successfully'"
+              :show-tick="true"
+            />
             <ErrorAlert
               :show="!!createError"
-              msg="Could not create your product, please reload the page and try again."
+              :msg="
+                mode === 'edit'
+                  ? 'Unable to save your changes'
+                  : 'Could not create your product, please reload the page and try again.'
+              "
             />
           </div>
         </form>
       </div>
       <div class="preview">
         <h4>Preview product</h4>
-        <div v-show="image" class="preview-img">
+        <div v-show="previewSrc?.length ?? false" class="preview-img">
           <img :src="previewSrc" alt="preview-product-image" />
         </div>
       </div>

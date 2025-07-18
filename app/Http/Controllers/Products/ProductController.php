@@ -7,9 +7,12 @@ use App\Http\Requests\Products\ProductRequest;
 use App\Http\Resources\ProductViewResource;
 use App\Models\Category;
 use App\Models\Product;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\File;
 
 class ProductController extends Controller
 {
@@ -51,14 +54,22 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
+        if (Gate::denies('create')) {
+            return response()->json([
+                "success" => false,
+                "message" => 'You are not authorised!',
+                "product" => NULL,
+            ]);
+        }
+
         $user = auth()->user();
         $store = $user->store;
         $product = NULL;
 
-        $res = DB::transaction(function () use ($validated, $store, &$product) {
+        DB::transaction(function () use ($validated, $store, &$product) {
             $category = NULL;
 
-            if(request()->filled("categoryname")){
+            if (request()->filled("categoryname")) {
                 $category = Category::firstOrCreate([
                     "name" => strtolower($validated["categoryname"]),
                 ]);
@@ -71,28 +82,78 @@ class ProductController extends Controller
                 'category_id' => $category ? $category->id : $validated['category'] ?? 1,
                 'store_id' => $store->id,
             ]);
-    
+
             $path = $validated["image"]->store('product-images');
             $product->image = $path;
             $product->save();
         });
 
-        return response()->json( [
+        return response()->json([
             "success" => boolval($product),
             "message" => boolval($product) ? "Product added." : "Failed to add product. Try again.",
             "product" => $product,
-            "extra" => $res,
         ], boolval($product) ? 201 : 500);
     }
 
     public function show(Product $product)
     {
-        return $product;
+        return ProductViewResource::make($product);
     }
 
     public function update(Request $request, Product $product)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:400',
+            'price' => 'required|numeric|min:1',
+            'stock' => 'required|numeric|min:1',
+            "image" => ["sometimes", File::types(["jpg", "jpeg", "png", "webp"])->min(2)->max(1024 * 5)],
+            'category' => "sometimes|integer|min:1|exists:categories,id",
+            'categoryname' => "sometimes|string|min:4|alpha",
+            'id' => 'sometimes|exists:products,id'
+        ]);
+
+        if (Gate::denies('update', $product)) {
+            return response()->json([
+                "success" => false,
+                "message" => 'You are not authorised!',
+            ]);
+        }
+
+        $success = false;
+
+        DB::transaction(function () use ($validated, &$product, &$success) {
+            $category = NULL;
+
+            if (request()->filled("categoryname")) {
+                $category = Category::firstOrCreate([
+                    "name" => strtolower($validated["categoryname"]),
+                ]);
+            }
+
+            $success = $product->update([
+                'name' => $validated['name'],
+                'price' => $validated['price'],
+                "image" => '',
+                'stock_amount' => $validated['stock'],
+                'category_id' => $category ? $category->id : $validated['category'] ?? 1,
+            ]);
+
+            if ($success) {
+                if (request()->has("image")) {
+                    $path = $validated["image"]->store('product-images');
+                    $product->image = $path;
+                    $product->save();
+                }
+            } else {
+                throw new Exception("Could not update product image.");
+            }
+        });
+
+        return response()->json([
+            "success" => $success,
+            "message" => $success ? "Product updated." : "Failed to add product. Try again.",
+            "product" => $product,
+        ], $success ? 201 : 500);
     }
 
     public function destroy(Product $product)

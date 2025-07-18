@@ -26,7 +26,7 @@ function user(_to: RouteLocationNormalizedGeneric): [boolean, RouteLocationNamed
 
 function store(_to: RouteLocationNormalizedGeneric): [boolean, RouteLocationNamedRaw] {
   const authStore = useAuthStore()
-  return [authStore.hasStore, { name: 'products' }]
+  return [authStore.hasStore, { name: 'home' }]
 }
 
 async function guest(_to: RouteLocationNormalizedGeneric): Promise<[boolean, RouteLocationNamedRaw]> {

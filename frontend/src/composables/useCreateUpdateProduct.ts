@@ -1,18 +1,20 @@
 import { AxiosError, isAxiosError } from 'axios'
 import useProducts from './useProducts'
 import { ref } from 'vue'
+import { ProductType } from '../types'
 
 type CreateProductType = {
   name: string
-  stock: string
-  price: string
+  stock: number
+  price: number
   category: string
   categoryName: string
   image: File
+  productId?: number
 }
 
 export default function useCreateUpdateProduct() {
-  const { addProduct } = useProducts()
+  const { addProduct, updateProduct } = useProducts()
   const validationErrors = ref<{
     name?: string[]
     price?: string[]
@@ -25,8 +27,9 @@ export default function useCreateUpdateProduct() {
   const createError = ref<null | Error | AxiosError>(null)
   const success = ref<boolean>(false)
   const loading = ref<boolean>(false)
+  const product = ref<ProductType | null>(null)
 
-  function validate({ name, stock, price, categoryName, category, image }: CreateProductType): boolean {
+  function validate({ productId, name, stock, price, categoryName, category, image }: CreateProductType): boolean {
     // validate
     if (name.length < 8) {
       validationErrors.value = {
@@ -34,13 +37,13 @@ export default function useCreateUpdateProduct() {
       }
       return false
     }
-    if (price.length < 10) {
+    if (price < 10) {
       validationErrors.value = {
         price: ['Price minimum should be KES 10'],
       }
       return false
     }
-    if (stock.length < 10) {
+    if (stock < 10) {
       validationErrors.value = {
         stock: ['Stock minimum should be 1'],
       }
@@ -52,14 +55,14 @@ export default function useCreateUpdateProduct() {
       }
       return false
     }
-    if (!image) {
+    if (!image && !productId) {
       validationErrors.value = {
         image: ['You must set the product image'],
       }
       return false
     }
 
-    if (image.size > 1000 * 1000 * 5) {
+    if (image && image.size > 1000 * 1000 * 5) {
       validationErrors.value = {
         image: ['Image size cannot be more than 5MB'],
       }
@@ -69,8 +72,16 @@ export default function useCreateUpdateProduct() {
     return true
   }
 
-  async function createProduct({ name, stock, price, categoryName, category, image }: CreateProductType) {
-    if (!validate({ name, stock, price, categoryName, category, image })) {
+  async function createOrUpdateProduct({
+    productId,
+    name,
+    stock,
+    price,
+    categoryName,
+    category,
+    image,
+  }: CreateProductType) {
+    if (!validate({ productId, name, stock, price, categoryName, category, image })) {
       return
     }
 
@@ -79,16 +90,24 @@ export default function useCreateUpdateProduct() {
 
     const formData = new FormData()
     formData.append('name', name)
-    formData.append('price', price)
-    formData.append('stock', stock)
+    formData.append('price', String(price))
+    formData.append('stock', String(stock))
     if (categoryName.length > 0) {
       formData.append('categoryname', categoryName)
     } else {
       formData.append('category', category)
     }
-    formData.append('image', image)
+    if (productId) {
+      formData.append('id', String(productId))
+    }
+    if (image) {
+      formData.append('image', image)
+    }
+
+    let response = null
+
     loading.value = true
-    const response = await addProduct(formData)
+    response = !productId ? await addProduct(formData) : await updateProduct(productId, formData)
     loading.value = false
 
     // handle response
@@ -98,13 +117,16 @@ export default function useCreateUpdateProduct() {
       } else {
         createError.value = response
       }
+    } else if (response instanceof Error) {
+      createError.value = response
     } else {
-      success.value = true
+      success.value = response.success
+      product.value = response.product
     }
   }
 
   return {
-    createProduct,
+    createOrUpdateProduct,
     createError,
     loading,
     success,

@@ -35,5 +35,14 @@ export default {
         guards: ['auth', 'store'],
       },
     },
+    {
+      path: 'product/:id(\\d+)/edit',
+      name: 'edit-product',
+      component: CreateProductPage,
+      meta: {
+        title: 'Update your products | E-budget.com | Best Online Shoping Experience',
+        guards: ['auth', 'store'],
+      },
+    },
   ],
 }

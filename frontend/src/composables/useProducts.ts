@@ -37,9 +37,24 @@ export default function useProducts() {
     }
   }
 
+  async function updateProduct(productId: number, data: FormData): Promise<AxiosError | Error | AxiosResponse[`data`]> {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.post(`/products/${productId}?_method=PATCH`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error) {
+      return error
+    }
+  }
+
   return {
     fetch: fetchProducts,
     fetchCategories,
     addProduct,
+    updateProduct,
   }
 }
