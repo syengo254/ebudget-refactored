@@ -61,11 +61,17 @@ export default function useProducts() {
     }
   }
 
+  async function fetchProduct(productId: number) {
+    const response = await axios.get(`/products/${productId}`)
+    return response.data
+  }
+
   return {
     fetch: fetchProducts,
     fetchCategories,
     addProduct,
     updateProduct,
     deleteProduct,
+    fetchProduct,
   }
 }

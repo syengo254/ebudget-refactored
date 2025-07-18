@@ -69,6 +69,11 @@ export const routes = [
     component: AllProductsPage,
   },
   {
+    path: '/products/:id(\\d+)',
+    name: 'view-product',
+    component: () => import('../pages/products/SingleProductPage.vue'),
+  },
+  {
     path: '/checkout',
     name: 'checkout',
     component: () => import('../pages/checkout/Index.vue'),

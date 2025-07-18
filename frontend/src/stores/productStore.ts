@@ -95,6 +95,19 @@ export const useProductStore = defineStore('products', {
       await this.fetchProducts()
     },
 
+    //
+    async getOrFetch(productId: number) {
+      const product = this.products.find((p) => p.id == productId)
+
+      if (product) {
+        return product
+      }
+
+      const response = await useProducts().fetchProduct(productId)
+      return response.data as ProductType
+    },
+    //
+
     async fetchCategories(noCache: boolean = false) {
       if (!noCache && this.getCategories.length > 1) return
       const { fetchCategories: fetch } = useProducts()
