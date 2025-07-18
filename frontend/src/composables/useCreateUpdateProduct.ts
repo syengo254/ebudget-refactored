@@ -1,7 +1,6 @@
 import { AxiosError, isAxiosError } from 'axios'
 import useProducts from './useProducts'
 import { ref } from 'vue'
-import { ProductType } from '../types'
 
 type CreateProductType = {
   name: string
@@ -27,7 +26,6 @@ export default function useCreateUpdateProduct() {
   const createError = ref<null | Error | AxiosError>(null)
   const success = ref<boolean>(false)
   const loading = ref<boolean>(false)
-  const product = ref<ProductType | null>(null)
 
   function validate({ productId, name, stock, price, categoryName, category, image }: CreateProductType): boolean {
     // validate
@@ -102,6 +100,7 @@ export default function useCreateUpdateProduct() {
     }
     if (image) {
       formData.append('image', image)
+      if (productId) formData.append('imageHasChanged', '1')
     }
 
     let response = null
@@ -121,7 +120,6 @@ export default function useCreateUpdateProduct() {
       createError.value = response
     } else {
       success.value = response.success
-      product.value = response.product
     }
   }
 

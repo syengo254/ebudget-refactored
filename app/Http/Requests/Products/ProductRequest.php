@@ -30,7 +30,7 @@ class ProductRequest extends FormRequest
             'stock' => 'required|numeric|min:1',
             "image" => ["required", File::types(["jpg", "jpeg", "png", "webp"])->min(2)->max(1024 * 5)],
             'category' => "sometimes|integer|min:1|exists:categories,id",
-            'categoryname' => "sometimes|string|min:4|alpha",
+            'categoryname' => "sometimes|string|min:4",
         ];
     }
 }

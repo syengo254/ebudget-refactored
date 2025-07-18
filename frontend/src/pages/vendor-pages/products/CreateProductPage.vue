@@ -81,6 +81,15 @@ async function handleSubmit() {
     image: image.value as File,
     ...(mode.value === 'edit' ? { productId: productId.value } : {}),
   })
+
+  if (success.value && mode.value === 'create') {
+    resetForm()
+  }
+
+  if (success.value && authStore.user?.store?.name) {
+    // refresh
+    await vendorStore.fetchVendorProducts(authStore.user?.store?.name, 1)
+  }
 }
 
 onMounted(async () => {
@@ -210,7 +219,7 @@ onMounted(async () => {
         </form>
       </div>
       <div class="preview">
-        <h4>Preview product</h4>
+        <h4>Product Image</h4>
         <div v-show="previewSrc?.length ?? false" class="preview-img">
           <img :src="previewSrc" alt="preview-product-image" />
         </div>
@@ -257,15 +266,15 @@ h5 {
   min-width: 400px;
 }
 div.preview-img {
-  width: 255px;
-  max-height: 252px;
+  width: 400px;
+  max-height: 410px;
   padding: 0.1rem;
   border: 1px solid rgb(221, 221, 221);
 }
 
 div.preview-img > img {
-  width: 250px;
-  max-height: 250px;
+  width: 395px;
+  max-height: 405px;
   object-fit: fill;
 }
 </style>

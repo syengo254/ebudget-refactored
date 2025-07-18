@@ -54,7 +54,7 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        if (Gate::denies('create')) {
+        if (Gate::denies('create', new Product)) {
             return response()->json([
                 "success" => false,
                 "message" => 'You are not authorised!',
@@ -108,8 +108,9 @@ class ProductController extends Controller
             'stock' => 'required|numeric|min:1',
             "image" => ["sometimes", File::types(["jpg", "jpeg", "png", "webp"])->min(2)->max(1024 * 5)],
             'category' => "sometimes|integer|min:1|exists:categories,id",
-            'categoryname' => "sometimes|string|min:4|alpha",
-            'id' => 'sometimes|exists:products,id'
+            'categoryname' => "sometimes|string|min:4",
+            'id' => 'sometimes|exists:products,id',
+            'imageHasChanged' => 'sometimes|boolean',
         ]);
 
         if (Gate::denies('update', $product)) {
@@ -126,20 +127,19 @@ class ProductController extends Controller
 
             if (request()->filled("categoryname")) {
                 $category = Category::firstOrCreate([
-                    "name" => strtolower($validated["categoryname"]),
+                    "name" => ucfirst($validated["categoryname"]),
                 ]);
             }
 
             $success = $product->update([
                 'name' => $validated['name'],
                 'price' => $validated['price'],
-                "image" => '',
                 'stock_amount' => $validated['stock'],
                 'category_id' => $category ? $category->id : $validated['category'] ?? 1,
             ]);
 
             if ($success) {
-                if (request()->has("image")) {
+                if (request()->has("image") && $validated["imageHasChanged"] == TRUE) {
                     $path = $validated["image"]->store('product-images');
                     $product->image = $path;
                     $product->save();

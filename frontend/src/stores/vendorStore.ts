@@ -62,6 +62,11 @@ export const useVendorStore = defineStore('vendor', () => {
     return response.data.data as ProductType
   }
 
+  function addProduct(product: ProductType) {
+    const products = catalog.value.products.filter((p) => p.id !== product.id)
+    catalog.value.products = [product, ...products]
+  }
+
   return {
     catalog,
     vendorProducts,
@@ -69,5 +74,6 @@ export const useVendorStore = defineStore('vendor', () => {
     vendorSummary,
     fetchSummary,
     getOrFetch,
+    addProduct,
   }
 })
