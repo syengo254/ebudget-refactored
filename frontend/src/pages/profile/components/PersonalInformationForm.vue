@@ -140,6 +140,14 @@ function handleFileChange(event: string | undefined) {
   <form action="/profile" method="post" autocomplete="off" enctype="multipart/form-data" @submit.prevent="handleSubmit">
     <fieldset>
       <legend><h4>Personal Information</h4></legend>
+      <div v-show="!authStore.user?.verified" class="form-group">
+        <Error :form-errors="['You have not verified your account email address yet!']" />
+        <div class="mb-1 text-sm">
+          <RouterLink :to="{ name: 'verify-account', query: { redirect: '/profile' } }"
+            >Click here to verify</RouterLink
+          >
+        </div>
+      </div>
       <div class="form-group">
         <FormInput
           v-model="name"

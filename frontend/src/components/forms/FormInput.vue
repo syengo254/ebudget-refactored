@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 defineEmits(['file-changed'])
-const modelValue = defineModel<string>()
+const modelValue = defineModel<string | number>()
 
 defineProps({
   type: {

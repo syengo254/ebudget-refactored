@@ -10,11 +10,17 @@ const props = defineProps({
     required: true,
     type: Object as PropType<Partial<ProductType>>,
   },
+  dontNavigate: {
+    required: false,
+    type: Boolean,
+    default: false,
+  },
 })
 
 const router = useRouter()
 
 function handleCardClick() {
+  if (props.dontNavigate) return
   router.push({
     name: 'products',
     query: {
@@ -32,7 +38,9 @@ function handleCardClick() {
     <div class="product-info">
       <div class="product-desc">
         <span class="muted-text" style="margin-bottom: 0.5rem; display: block"
-          ><a href="#" class="decoration-none" :data-id="product.category?.name">{{ product.category?.name }}</a></span
+          ><a href="#" class="decoration-none" :data-id="product.category?.name" style="text-transform: capitalize">{{
+            product.category?.name
+          }}</a></span
         >
         <p>
           <RouterLink :to="'/products/' + product.id">{{ product.name }}</RouterLink>
@@ -47,6 +55,9 @@ function handleCardClick() {
           }}</RouterLink>
         </p>
       </div>
+    </div>
+    <div class="product-footer">
+      <slot />
     </div>
   </div>
 </template>
@@ -117,6 +128,10 @@ function handleCardClick() {
   font-size: 1rem;
   font-weight: bold;
   display: block;
+}
+
+.product-footer {
+  padding-inline: 0.5rem;
 }
 
 .store-info > p {

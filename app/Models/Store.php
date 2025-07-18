@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -36,5 +37,10 @@ class Store extends Authenticatable
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function orderItems(): HasManyThrough
+    {
+        return $this->hasManyThrough(OrderItem::class, Product::class);
     }
 }

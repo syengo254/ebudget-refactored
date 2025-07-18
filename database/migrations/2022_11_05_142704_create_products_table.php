@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignIdFor(Category::class);
             $table->decimal('price')->default(0);
             $table->integer("stock_amount")->default(100);
-            $table->text('image');
+            $table->text('image')->nullable();
             $table->timestamps();
         });
     }

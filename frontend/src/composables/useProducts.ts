@@ -2,6 +2,7 @@
 import axios from '../utils/axios'
 import { getProducts } from '../services/products'
 import { CategoryType, ProductsFiltersType } from '../types'
+import { AxiosError, AxiosResponse } from 'axios'
 
 export default function useProducts() {
   async function fetchProducts(page: number = 1, filters: ProductsFiltersType = {}) {
@@ -9,7 +10,7 @@ export default function useProducts() {
       const { data, meta } = await getProducts(page, filters)
       return { data, meta }
     } catch (err) {
-      return err as Error
+      return err as AxiosError
     }
   }
 
@@ -18,12 +19,59 @@ export default function useProducts() {
       const response = await axios.get('/categories')
       return response.data as CategoryType[]
     } catch (err) {
-      return err as Error
+      return err as AxiosError
     }
+  }
+
+  async function addProduct(data: FormData): Promise<AxiosError | Error | AxiosResponse[`data`]> {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.post(`/products`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  async function updateProduct(productId: number, data: FormData): Promise<AxiosError | Error | AxiosResponse[`data`]> {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.post(`/products/${productId}?_method=PATCH`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  async function deleteProduct(productId: number): Promise<AxiosError | Error | AxiosResponse[`data`]> {
+    try {
+      await axios.get(import.meta.env.VITE_BASE_URL + 'sanctum/csrf-cookie')
+      const response = await axios.post(`/products/${productId}?_method=DELETE`)
+      return response.data
+    } catch (error) {
+      return error
+    }
+  }
+
+  async function fetchProduct(productId: number) {
+    const response = await axios.get(`/products/${productId}`)
+    return response.data
   }
 
   return {
     fetch: fetchProducts,
     fetchCategories,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    fetchProduct,
   }
 }
