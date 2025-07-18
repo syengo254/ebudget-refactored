@@ -50,6 +50,7 @@ Route::middleware("auth:sanctum")->get("/users/{user}", [UserController::class, 
 
 // products
 Route::get("/products", [ProductController::class, "index"]);
+Route::post("/products", [ProductController::class, "store"]);
 Route::get("/products/{product}", [ProductController::class, "show"]);
 
 // categories

@@ -96,7 +96,7 @@ export const useProductStore = defineStore('products', {
     },
 
     async fetchCategories(noCache: boolean = false) {
-      if (!noCache || this.categories.length > 1) return
+      if (!noCache && this.getCategories.length > 1) return
       const { fetchCategories: fetch } = useProducts()
 
       const response = await fetch()

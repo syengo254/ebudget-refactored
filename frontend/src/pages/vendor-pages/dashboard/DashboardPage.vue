@@ -2,22 +2,15 @@
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../../../stores/authStore'
 import { getFormattedNumber } from '../../../utils/helpers'
-import { onMounted, ref } from 'vue'
-import instance from '../../../utils/axios'
+import { onMounted } from 'vue'
+import { useVendorStore } from '../../../stores/vendorStore'
 
 const authStore = useAuthStore()
-const storeSummary = ref({
-  total_products: 0,
-  sales_this_week: 0,
-  returned_products: 0,
-  sales_amount: 0,
-})
+const vendorStore = useVendorStore()
 
 onMounted(async () => {
-  const response = await instance.get('/stores/' + authStore.user?.store?.id + '/summary')
-
-  if (response.status === 200) {
-    storeSummary.value = response.data.counts
+  if (authStore.user?.store) {
+    await vendorStore.fetchSummary(authStore.user?.store?.id)
   }
 })
 </script>
@@ -32,19 +25,19 @@ onMounted(async () => {
           <ul>
             <li>
               <div class="header">Products Listed</div>
-              <div class="body bold">{{ storeSummary.total_products }}</div>
+              <div class="body bold">{{ vendorStore.vendorSummary.total_products }}</div>
             </li>
             <li>
               <div class="header">Sales This Week</div>
-              <div class="body bold">{{ storeSummary.sales_this_week }}</div>
+              <div class="body bold">{{ vendorStore.vendorSummary.sales_this_week }}</div>
             </li>
             <li>
               <div class="header">Returned Products</div>
-              <div class="body bold">{{ storeSummary.returned_products }}</div>
+              <div class="body bold">{{ vendorStore.vendorSummary.returned_products }}</div>
             </li>
             <li>
               <div class="header">Total Sales Amount</div>
-              <div class="body bold">{{ getFormattedNumber(storeSummary.sales_amount) }}</div>
+              <div class="body bold">{{ getFormattedNumber(vendorStore.vendorSummary.sales_amount) }}</div>
             </li>
           </ul>
         </div>
@@ -54,7 +47,7 @@ onMounted(async () => {
     <div class="quick-links mt-1">
       <nav>
         <RouterLink :to="{ name: 'profile' }">Edit Store Information</RouterLink>
-        <RouterLink :to="{ name: 'my-products' }">My Products</RouterLink>
+        <RouterLink :to="{ name: 'catalog' }">My Products</RouterLink>
         <RouterLink to="#" aria-disabled="true">Reports</RouterLink>
       </nav>
     </div>

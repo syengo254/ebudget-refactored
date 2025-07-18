@@ -64,10 +64,6 @@ export const routes = [
     },
   },
   {
-    path: '/products/store',
-    name: 'products',
-  },
-  {
     path: '/products',
     name: 'products',
     component: AllProductsPage,

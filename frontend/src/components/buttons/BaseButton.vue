@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { PropType, ref } from 'vue'
+import { PropType } from 'vue'
 
 const props = defineProps({
   type: {
     type: String as PropType<'submit' | 'button'>,
     required: false,
-    default: 'submit',
+    default: 'button',
   },
   disabled: {
     type: Boolean,
@@ -13,7 +13,7 @@ const props = defineProps({
     default: false,
   },
   variant: {
-    type: String as PropType<'primary' | 'error' | 'info'>,
+    type: String as PropType<'primary' | 'error' | 'info' | 'secondary' | 'outlined'>,
     required: false,
     default: 'primary',
   },
@@ -23,9 +23,11 @@ const variantClasses = {
   primary: 'btn-primary',
   error: 'btn-error',
   info: 'btn-info',
+  secondary: 'btn-secondary',
+  outlined: 'btn-outlined',
 }
 
-const classes = ref('btn ' + variantClasses[props.variant])
+const classes = 'btn ' + variantClasses[props.variant]
 </script>
 
 <template>
@@ -39,8 +41,7 @@ const classes = ref('btn ' + variantClasses[props.variant])
 <style scoped>
 button[type='submit'],
 button[type='button'] {
-  color: white;
-  cursor: pointer;
   font-weight: 600;
+  outline: none;
 }
 </style>

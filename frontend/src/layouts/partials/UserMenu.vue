@@ -26,7 +26,10 @@ function checkFilters() {
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/">Today's Deals</RouterLink>
       <RouterLink to="/products" @click="checkFilters">All Products</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
+      <RouterLink v-if="authStore.loggedIn" :to="{ name: 'profile' }" style="margin-left: auto; margin-right: 1rem"
+        >My Account</RouterLink
+      >
+      <RouterLink v-else to="/about">About</RouterLink>
     </nav>
   </section>
   <section v-else id="categories-bar">
@@ -36,7 +39,9 @@ function checkFilters() {
     <nav>
       <RouterLink :to="{ name: 'dashboard' }">Dashboard</RouterLink>
       <RouterLink to="#">Sales</RouterLink>
-      <RouterLink :to="{ name: 'my-products' }">My Products</RouterLink>
+      <RouterLink :to="{ name: 'catalog' }">My Products</RouterLink>
+      <RouterLink :to="{ name: 'add-product' }">Add Product</RouterLink>
+      <RouterLink :to="{ name: 'profile' }" style="margin-left: auto; margin-right: 1rem">My Account</RouterLink>
     </nav>
   </section>
 </template>
@@ -46,6 +51,7 @@ nav {
   display: inline-flex;
   flex-wrap: wrap;
   column-gap: 2rem;
+  width: 100%;
 }
 
 nav > a,

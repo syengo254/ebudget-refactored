@@ -32,7 +32,9 @@ function handleCardClick() {
     <div class="product-info">
       <div class="product-desc">
         <span class="muted-text" style="margin-bottom: 0.5rem; display: block"
-          ><a href="#" class="decoration-none" :data-id="product.category?.name">{{ product.category?.name }}</a></span
+          ><a href="#" class="decoration-none" :data-id="product.category?.name" style="text-transform: capitalize">{{
+            product.category?.name
+          }}</a></span
         >
         <p>
           <RouterLink :to="'/products/' + product.id">{{ product.name }}</RouterLink>

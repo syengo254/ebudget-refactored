@@ -1,45 +1,49 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { ProductType } from '../../../types'
-import { useAuthStore } from '../../../stores/authStore'
-import Pagination from '../../../components/Pagination.vue'
-import useProducts from '../../../composables/useProducts'
-import SimpleProductCard from '../../../components/SimpleProductCard.vue'
-import { isAxiosError } from 'axios'
-import BaseButton from '../../../components/buttons/BaseButton.vue'
+import { useRouter } from 'vue-router'
 
-const products = ref<ProductType[]>([])
-const paginationData = ref([])
+import { useAuthStore } from '../../../stores/authStore'
+import { useVendorStore } from '../../../stores/vendorStore'
+
+import Pagination from '../../../components/Pagination.vue'
+import SimpleProductCard from '../../../components/SimpleProductCard.vue'
+import BaseButton from '../../../components/buttons/BaseButton.vue'
+import LoadingComponent from '../../../components/LoadingComponent.vue'
+
+const router = useRouter()
 const authStore = useAuthStore()
-const { fetch } = useProducts()
+const vendorStore = useVendorStore()
+const loading = ref(false)
 
 onMounted(async () => {
-  if (products.value.length < 1) {
-    await fetchProducts()
+  if (vendorStore.vendorProducts.length < 1) {
+    await loadProducts()
   }
 })
 
-async function fetchProducts(page: number = 1) {
-  const response = await fetch(page, { store: authStore.user?.store?.name })
-
-  if (!isAxiosError(response)) {
-    products.value = response.data
-    paginationData.value = response.meta
+async function loadProducts(page: number = 1) {
+  if (authStore.user?.store?.name) {
+    loading.value = true
+    await vendorStore.fetchVendorProducts(authStore.user?.store?.name, page)
+    loading.value = false
   }
-}
-
-async function nextPage(page: number) {
-  await fetchProducts(page)
 }
 </script>
 <template>
-  <section>
+  <section id="main-view">
     <div class="my-product-viewport">
-      <div class="my-products-container">
-        <Pagination class="mb-1" :pagination-handler="nextPage" :meta="paginationData" />
+      <h4>Products Owned By {{ authStore.user?.store?.name }}</h4>
+      <LoadingComponent v-if="loading" />
+      <div v-else class="my-products-container">
+        <section class="products-head mb-1">
+          <Pagination :pagination-handler="loadProducts" :meta="vendorStore.catalog.paginationData" />
+          <BaseButton type="button" variant="secondary" @click="router.push({ name: 'add-product' })"
+            >+ Add a product</BaseButton
+          >
+        </section>
         <div class="my-products">
           <SimpleProductCard
-            v-for="product in products"
+            v-for="product in vendorStore.vendorProducts"
             :key="product.name"
             style="border: 1px solid gray"
             :product="product"
@@ -56,13 +60,28 @@ async function nextPage(page: number) {
 </template>
 
 <style scoped>
-section {
+section#main-view {
   padding: 1rem 2rem;
+}
+
+h4 {
+  text-align: center;
+  font-size: large;
+  padding: 0;
+  margin: 0;
+}
+
+section.products-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 div.my-products {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
 }
 </style>
