@@ -171,6 +171,7 @@ onMounted(async () => {
                 label="Select Product Category"
                 :required="categoryName.length < 2"
               >
+                <option value="" selected>Select a category</option>
                 <template #options>
                   <option v-for="_category in productStore.getCategories" :key="_category.name" :value="_category.id">
                     {{ _category.name }}

@@ -17,7 +17,6 @@ defineProps({
 <template>
   <label v-if="label !== ''" :for="name">{{ label }}</label>
   <select :id="name" v-model="modelValue" class="form-select" v-bind="$attrs">
-    <option value="" selected>Select a category</option>
     <slot name="options">
       <!-- options will be rendered here -->
     </slot>

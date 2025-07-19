@@ -102,3 +102,8 @@ export interface PaginationLink {
   label: string
   active: boolean
 }
+
+export type BreadcrumpItemType = {
+  item: string
+  link?: string
+}

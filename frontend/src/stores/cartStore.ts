@@ -39,19 +39,22 @@ export const useCartStore = defineStore('shopping-cart', {
     getItemById(state) {
       return (itemId: keyof CartItemsType) => state.items[itemId]
     },
+    isInCart(state) {
+      return (productId: number) => Boolean(state.items[productId])
+    },
   },
   actions: {
     setUserId(userId: number) {
       this.$state.userId = userId
     },
-    addItem(item: ProductType) {
+    addItem(item: ProductType, quantity: number = 1) {
       if (this.items[item.id]) {
         if (this.items[item.id].count == 10) return
-        this.items[item.id].count++
+        this.items[item.id].count += quantity
       } else {
         this.items[item.id] = {
           product: item,
-          count: 1,
+          count: quantity,
         }
       }
       this.updateLocalStorage()

@@ -99,6 +99,13 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        if($product->is_deleted){
+            return response()->json([
+                "data" => null,
+                "message" => "This product is deleted",
+            ], 404);
+        }
+        
         return ProductViewResource::make($product);
     }
 

@@ -183,6 +183,10 @@ div.block {
   max-width: 100%;
 }
 
+.block {
+  display: block;
+}
+
 a:visited {
   color: #0000ee;
 }
