@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../../../stores/authStore'
 import { getFormattedNumber } from '../../../utils/helpers'
 import { onMounted } from 'vue'
@@ -42,14 +41,6 @@ onMounted(async () => {
           </ul>
         </div>
       </div>
-    </div>
-
-    <div class="quick-links mt-1">
-      <nav>
-        <RouterLink :to="{ name: 'profile' }">Edit Store Information</RouterLink>
-        <RouterLink :to="{ name: 'catalog' }">My Products</RouterLink>
-        <RouterLink to="#" aria-disabled="true">Reports</RouterLink>
-      </nav>
     </div>
   </div>
 </template>
@@ -98,12 +89,5 @@ div.dashboard-summary-items > ul > li > div.body {
   padding: 0.5rem 1rem;
   color: rgb(62, 62, 62);
   font-size: 1.2rem;
-}
-
-/* quick links */
-.quick-links nav {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
 }
 </style>

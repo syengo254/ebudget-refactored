@@ -23,9 +23,9 @@ function checkFilters() {
       <span>All</span>
     </RouterLink>
     <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/">Today's Deals</RouterLink>
-      <RouterLink to="/products" @click="checkFilters">All Products</RouterLink>
+      <RouterLink :to="{ name: 'home' }">Home</RouterLink>
+      <RouterLink :to="{ name: 'home' }">Today's Deals</RouterLink>
+      <RouterLink :to="{ name: 'products' }" @click="checkFilters">All Products</RouterLink>
       <RouterLink v-if="authStore.loggedIn" :to="{ name: 'profile' }" style="margin-left: auto; margin-right: 1rem"
         >My Account</RouterLink
       >
@@ -38,9 +38,9 @@ function checkFilters() {
     </RouterLink>
     <nav>
       <RouterLink :to="{ name: 'dashboard' }">Dashboard</RouterLink>
-      <RouterLink to="#">Sales</RouterLink>
-      <RouterLink :to="{ name: 'catalog' }">My Products</RouterLink>
       <RouterLink :to="{ name: 'add-product' }">Add Product</RouterLink>
+      <RouterLink :to="{ name: 'catalog' }">My Products</RouterLink>
+      <RouterLink :to="{ name: 'sales' }">Sales</RouterLink>
       <RouterLink :to="{ name: 'profile' }" style="margin-left: auto; margin-right: 1rem">My Account</RouterLink>
     </nav>
   </section>

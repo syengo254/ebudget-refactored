@@ -77,5 +77,9 @@ Route::get("/home", function(){
 
 
 // stores
-Route::get("/stores/{store}/summary", [StoreController::class, "summary"])->middleware("auth:sanctum");
-Route::get("/stores/{store}/products", [StoreController::class, "index"])->middleware("auth:sanctum");
+Route::controller(StoreController::class)->middleware("auth:sanctum")->group(function(){
+    Route::get("/stores/{store}/orders", "showVendorOrders");
+    Route::get("/stores/{store}/summary", "summary");
+    Route::get("/stores/{store}/products", "index");
+});
+

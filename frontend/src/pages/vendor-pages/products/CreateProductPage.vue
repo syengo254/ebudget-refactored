@@ -173,7 +173,11 @@ onMounted(async () => {
               >
                 <option value="" selected>Select a category</option>
                 <template #options>
-                  <option v-for="_category in productStore.getCategories" :key="_category.name" :value="_category.id">
+                  <option
+                    v-for="_category in productStore.getCategories"
+                    :key="_category.name"
+                    :value="String(_category.id)"
+                  >
                     {{ _category.name }}
                   </option>
                 </template>

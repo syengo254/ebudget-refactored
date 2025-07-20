@@ -21,6 +21,7 @@ const passwordChanged = computed(() => showChangePassword.value && (password.val
 const updating = ref(false)
 const success = ref(false)
 const randomKey = ref(getRandomNumber(1000))
+const userEmail = authStore.user?.email
 
 const personalDisabled = ref(true)
 
@@ -157,6 +158,9 @@ function handleFileChange(event: string | undefined) {
           :disabled="personalDisabled"
           :required="true"
         >
+          <Error :form-errors="validationErrors?.name" />
+        </FormInput>
+        <FormInput v-model="userEmail" type="email" name="email" label="Your email address" disabled>
           <Error :form-errors="validationErrors?.name" />
         </FormInput>
       </div>

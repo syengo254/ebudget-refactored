@@ -28,6 +28,7 @@ export default function useCreateUpdateProduct() {
   const loading = ref<boolean>(false)
 
   function validate({ productId, name, stock, price, categoryName, category, image }: CreateProductType): boolean {
+    // console.table({ productId, name, stock, price, categoryName, category, image })
     // validate
     if (name.length < 8) {
       validationErrors.value = {
@@ -41,9 +42,9 @@ export default function useCreateUpdateProduct() {
       }
       return false
     }
-    if (stock < 10) {
+    if (stock < 3) {
       validationErrors.value = {
-        stock: ['Stock minimum should be 1'],
+        stock: ['Stock minimum should be 3'],
       }
       return false
     }

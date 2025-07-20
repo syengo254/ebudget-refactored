@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class StoreController extends Controller
@@ -18,15 +19,15 @@ class StoreController extends Controller
     private function authCheck(Store $store)
     {
         Gate::define("summary", function (User $user, Store $store) {
-            return $user->is($store->user);
+            return $user->has_store && $user->is($store->user);
         });
 
         if (Gate::denies("summary", $store)) {
-            return abort(403);
+            return abort(403, 'Unauthorised access');
         }
     }
 
-    public function index(Request $request, Store $store, int $page=1, int $limit = 10)
+    public function index(Request $request, Store $store, int $page = 1, int $limit = 10)
     {
         $this->authCheck($store);
 
@@ -67,5 +68,21 @@ class StoreController extends Controller
                 "sales_amount" => $amountSold,
             ]
         ];
+    }
+
+    public function showVendorOrders(Store $store)
+    {
+        $this->authCheck($store);
+
+        $products = Store::find($store->id)
+            ->orderItems()
+            ->with("product", "order:id,status,expected_delivery_date")
+            ->whereHas("order", function ($query) {
+                $query->where("status", OrderStatus::NEW)
+                ->orWhere("status", OrderStatus::PENDING);
+            })
+            ->get();
+
+        return $products->toArray();
     }
 }

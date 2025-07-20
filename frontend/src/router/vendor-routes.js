@@ -2,6 +2,7 @@ import VendorPage from '../pages/vendor-pages/VendorPage.vue'
 import DashboardPage from '../pages/vendor-pages/dashboard/DashboardPage.vue'
 import VendorProductsPage from '../pages/vendor-pages/products/VendorProductsPage.vue'
 import CreateProductPage from '../pages/vendor-pages/products/CreateProductPage.vue'
+import VendorSalesPage from '../pages/vendor-pages/sales/VendorSalesPage.vue'
 
 export default {
   path: '/vendor',
@@ -41,6 +42,15 @@ export default {
       component: CreateProductPage,
       meta: {
         title: 'Update your products | E-budget.com | Best Online Shoping Experience',
+        guards: ['auth', 'store'],
+      },
+    },
+    {
+      path: 'sales',
+      name: 'sales',
+      component: VendorSalesPage,
+      meta: {
+        title: 'Vendor Sales | E-budget.com | Best Online Shoping Experience',
         guards: ['auth', 'store'],
       },
     },
