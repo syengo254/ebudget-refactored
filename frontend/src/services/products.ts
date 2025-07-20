@@ -12,8 +12,8 @@ async function productsFetch(url: string) {
   }
 }
 
-export async function getProducts(page?: number, filters?: ProductsFiltersType) {
-  let url = API_URL + 'products' + (page ? `?page=${page}` : '')
+export async function getProducts(page?: number, filters?: ProductsFiltersType, limit = 20) {
+  let url = API_URL + 'products' + (page ? `?page=${page}&limit=${limit}` : '')
 
   if (filters) {
     const filterKeys = Object.keys(filters)

@@ -33,3 +33,7 @@ export function formatString(str: string, ...values: string[]) {
     return typeof values[index] !== 'undefined' ? values[index] : match
   })
 }
+
+export const getEstimatedDeliveryDate = () => {
+  return new Date(new Date().setDate(new Date().getDate() + getRandomNumber(3))).toDateString()
+}

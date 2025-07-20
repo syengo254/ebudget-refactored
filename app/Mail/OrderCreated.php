@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -46,21 +47,24 @@ class OrderCreated extends Mailable
      */
     public function content()
     {
-        $order = Order::query()->where('id', $this->order->id);
-        $order = $order->with('user', 'orderItems')->withWhereHas('orderItems', function ($query) {
-            $query->with('product');
-        })->first();
-
-        $orderTotal = $order->orderItems->reduce(function($prev, $val){
-            return $prev + ($val->product->price * $val->item_count);
-        }, 0);
+        $order = Order::query()
+            ->with('user', 'orderItems')
+            ->withCount('orderItems')
+            ->addSelect(
+                [
+                    "order_total" => OrderItem::whereColumn("order_id", 'orders.id')
+                        ->selectRaw("sum(item_count * price_at_order) as cost")
+                ]
+            )
+            ->where('id', $this->order->id)
+            ->first();
 
         return new Content(
             view: 'emails.orders.created',
             with: [
                 'order' => $order,
-                'order_total' => $orderTotal,
-            ]);
+            ]
+        );
     }
 
     /**

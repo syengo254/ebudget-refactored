@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import useAuth from '../composables/useAuth'
 import SuccessAlert from './SuccessAlert.vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, RouterLink, useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const { sendVerifyEmail } = useAuth()
 const success = ref(false)
 
 const route = useRoute()
+const router = useRouter()
 
 async function handleResend() {
   const resp = await sendVerifyEmail()
@@ -15,6 +17,13 @@ async function handleResend() {
     success.value = true
   }
 }
+
+onMounted(() => {
+  const authStore = useAuthStore()
+  if (authStore.verified) {
+    router.push({ name: 'profile' })
+  }
+})
 </script>
 
 <template>

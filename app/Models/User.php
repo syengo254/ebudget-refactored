@@ -48,10 +48,6 @@ class User extends Authenticatable
     
     public function store(): HasOne
     {
-        // if(! $this->has_Store){
-        //     return NULL;
-        // }
-
         return $this->hasOne(Store::class);
     }
 

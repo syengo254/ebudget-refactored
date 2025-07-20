@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute as CastsAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -18,6 +19,7 @@ class Product extends Model
         'store_id', 
         'stock_amount',
         'image',
+        'is_deleted',
     ];
 
     protected $hidden = [
@@ -32,6 +34,11 @@ class Product extends Model
     public function store() 
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     protected function image(): CastsAttribute

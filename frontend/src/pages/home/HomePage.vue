@@ -3,8 +3,13 @@ import { computed, onMounted, ref } from 'vue'
 import ProductGroupView from '../../components/products/ProductGroupView.vue'
 import { useProductStore } from '../../stores/productStore'
 import { formatString, getRandomNumber } from '../../utils/helpers'
+import { useAuthStore } from '../../stores/authStore'
+import { useRouter } from 'vue-router'
 
 const productStore = useProductStore()
+const authStore = useAuthStore()
+
+const router = useRouter()
 
 const randomSalutes = [
   '{0}',
@@ -19,6 +24,12 @@ function getRandomSalute() {
   return randomSalutes[getRandomNumber(randomSalutes.length)]
 }
 onMounted(async () => {
+  if (authStore.hasStore) {
+    router.push({
+      name: 'dashboard',
+      replace: true,
+    })
+  }
   await productStore.fetchCategories(true)
 })
 

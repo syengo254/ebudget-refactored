@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Products\CategoryController;
 use App\Http\Controllers\Products\ProductController;
+use App\Http\Controllers\Stores\StoreController;
 use App\Http\Controllers\Users\ProfileController;
 use App\Http\Controllers\Users\SessionController;
 use App\Http\Controllers\Users\UserController;
@@ -49,7 +50,10 @@ Route::middleware("auth:sanctum")->get("/users/{user}", [UserController::class, 
 
 // products
 Route::get("/products", [ProductController::class, "index"]);
+Route::post("/products", [ProductController::class, "store"])->middleware("auth:sanctum");
 Route::get("/products/{product}", [ProductController::class, "show"]);
+Route::patch("/products/{product}", [ProductController::class, "update"])->middleware("auth:sanctum");
+Route::delete("/products/{product}", [ProductController::class, "destroy"])->middleware("auth:sanctum");
 
 // categories
 Route::get("/categories", [CategoryController::class, "index"]);
@@ -70,3 +74,12 @@ Route::get("/home", function(){
         "Access-Control-Allow-Origin" => "*",
     ]); 
 })->name("home");
+
+
+// stores
+Route::controller(StoreController::class)->middleware("auth:sanctum")->group(function(){
+    Route::get("/stores/{store}/orders", "showVendorOrders");
+    Route::get("/stores/{store}/summary", "summary");
+    Route::get("/stores/{store}/products", "index");
+});
+

@@ -47,12 +47,16 @@ section#main {
 .cart-totals {
   position: relative;
   background: white;
-  margin: 1rem;
+  margin: 1rem 1rem;
   padding: 1rem 1.5rem;
 }
 
 .page-viewport {
   flex-grow: 1;
+}
+
+.page-viewport > h2 {
+  margin-top: 0;
 }
 
 /* cart totals */

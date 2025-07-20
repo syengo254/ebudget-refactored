@@ -21,6 +21,7 @@ const passwordChanged = computed(() => showChangePassword.value && (password.val
 const updating = ref(false)
 const success = ref(false)
 const randomKey = ref(getRandomNumber(1000))
+const userEmail = authStore.user?.email
 
 const personalDisabled = ref(true)
 
@@ -140,6 +141,14 @@ function handleFileChange(event: string | undefined) {
   <form action="/profile" method="post" autocomplete="off" enctype="multipart/form-data" @submit.prevent="handleSubmit">
     <fieldset>
       <legend><h4>Personal Information</h4></legend>
+      <div v-show="!authStore.user?.verified" class="form-group">
+        <Error :form-errors="['You have not verified your account email address yet!']" />
+        <div class="mb-1 text-sm">
+          <RouterLink :to="{ name: 'verify-account', query: { redirect: '/profile' } }"
+            >Click here to verify</RouterLink
+          >
+        </div>
+      </div>
       <div class="form-group">
         <FormInput
           v-model="name"
@@ -149,6 +158,9 @@ function handleFileChange(event: string | undefined) {
           :disabled="personalDisabled"
           :required="true"
         >
+          <Error :form-errors="validationErrors?.name" />
+        </FormInput>
+        <FormInput v-model="userEmail" type="email" name="email" label="Your email address" disabled>
           <Error :form-errors="validationErrors?.name" />
         </FormInput>
       </div>

@@ -1,28 +1,40 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 
 import { ProductType } from '../types'
 import { getFormattedNumber } from '../utils/helpers'
+import { useAuthStore } from '../stores/authStore'
 
-defineProps({
+const { product } = defineProps({
   product: {
     required: true,
     type: Object as PropType<ProductType>,
   },
 })
 
+const router = useRouter()
 const emit = defineEmits(['addToCart'])
+
+const authStore = useAuthStore()
 
 function handleAddToCart() {
   emit('addToCart')
+}
+function navigateToProduct() {
+  router.push({
+    name: 'view-product',
+    params: {
+      id: product.id,
+    },
+  })
 }
 </script>
 
 <template>
   <div class="product-card">
     <div class="product-image">
-      <img :src="product.image" :alt="product.name + '-image'" class="image" />
+      <img :src="product.image" :alt="product.name + '-image'" class="image" @click="navigateToProduct" />
       <img class="store-icon" :src="product.store?.logo" alt="store-logo" />
     </div>
     <div class="product-info">
@@ -43,7 +55,7 @@ function handleAddToCart() {
           }}</RouterLink>
         </p>
       </div>
-      <div class="buy-btn">
+      <div v-show="!authStore.hasStore" class="buy-btn">
         <button class="add-cart-btn" @click="handleAddToCart">Add to cart</button>
       </div>
     </div>
@@ -57,7 +69,6 @@ function handleAddToCart() {
   width: 240px;
   height: fit-content;
   border: 1px solid rgb(237, 237, 237);
-  cursor: pointer;
   padding-bottom: 0.5rem;
 }
 
@@ -69,6 +80,7 @@ function handleAddToCart() {
   position: relative;
   background-color: rgb(240, 240, 240);
   max-height: 238px;
+  cursor: pointer;
 }
 
 .product-card > .product-image > img.store-icon {

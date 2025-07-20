@@ -55,11 +55,12 @@ const isStocked = computed(() => cartItem.product.stock_amount > 0)
   height: fit-content;
   border-bottom: 1px solid rgb(210, 210, 210);
   margin-bottom: 1rem;
+  padding-bottom: 1rem;
 }
 
 .cart-product > div.image > img {
-  height: 200px;
-  width: 200px;
+  height: 160px;
+  width: 160px;
   object-fit: fill;
   margin: 0.5rem 1rem 0rem 0rem;
 }
@@ -80,6 +81,7 @@ const isStocked = computed(() => cartItem.product.stock_amount > 0)
 .name {
   font-size: 1.3rem;
   font-weight: 400;
+  max-width: 620px;
 }
 
 .total {

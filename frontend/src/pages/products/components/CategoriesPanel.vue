@@ -27,8 +27,8 @@ function handlePriceFilter() {
   productStore.addFilter('price', priceFilter.value)
 }
 
-onMounted(() => {
-  productStore.fetchCategories(true).then()
+onMounted(async () => {
+  await productStore.fetchCategories(true)
 })
 </script>
 

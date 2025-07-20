@@ -84,3 +84,26 @@ export type ShoppingCartType = {
   maxSize: number
   items: CartItemsType
 }
+
+// pagination data
+export interface PaginationData {
+  current_page: number
+  from: number
+  last_page: number
+  links: PaginationLink[]
+  path: string
+  per_page: number
+  to: number
+  total: number
+}
+
+export interface PaginationLink {
+  url?: string
+  label: string
+  active: boolean
+}
+
+export type BreadcrumpItemType = {
+  item: string
+  link?: string
+}
