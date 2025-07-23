@@ -11,6 +11,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCreated;
+use Illuminate\Support\Facades\Queue;
+
 // use Laravel\Sanctum\Sanctum;
 
 class OrderTest extends TestCase
@@ -130,6 +132,7 @@ class OrderTest extends TestCase
     public function test_on_success_order_created_mail_is_queued()
     {
         Mail::fake();
+        Queue::fake();
 
         $orderPayload = [
             'order' => [

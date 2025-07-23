@@ -44,6 +44,9 @@
          <p>
              Your order has been created and shall be delivered on <strong>{{ $order->expected_delivery_date }}</strong> (latest on: <b>{{ $order->latest_delivery_date }}</b>).
          </p>
+         <p>
+            <strong>Order Number: </strong>{{ $order->order_no }}
+         </p>
          <div>
              <h4>Order Summary</h4>
              <p><i>Total items ({{ $order->order_items_count }})</i></p>

@@ -6,6 +6,7 @@ use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Support\OrderNumberGenerator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -41,6 +42,7 @@ class OrderService {
                 'latest_delivery_date' => now()->addDays(random_int(3, 5))->toDateString(),
                 'actual_delivery_date' => NULL,
                 'address_id' => Auth::user()->profile->active_address_id,
+                'order_no' => OrderNumberGenerator::getNextCode(Order::latest()->first()->order_no ?? "A000000001"),
             ]);
 
             $orderCreated = $order->id;
