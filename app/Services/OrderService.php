@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
 use App\Models\Product;
@@ -11,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class OrderService {
+class OrderService
+{
 
     public function getUserOrders(User $user, int $page, int $limit)
     {
@@ -59,12 +61,28 @@ class OrderService {
 
             DB::commit();
             return new OrderDTO($order, true, null);
-
         } catch (Throwable $e) {
             DB::rollBack();
             logger($e->__toString());
 
             return new OrderDTO(null, false, $e);
         }
+    }
+
+    public function setOrderStatus(Order $order, OrderStatus $status)
+    {
+        $order->status = $status;
+        $order->save();
+    }
+
+    public static function confirmNewOrders()
+    {
+        // only confirm new orders that are more than 12 hrs old.
+        return Order::query()
+        ->where("status", "=", OrderStatus::NEW)
+        ->where("created_at", "<=", now()->subHours(intval(env("ORDER_CONFIRM_AGE", "12"))))
+        ->update([
+            "status" => OrderStatus::CONFIRMED,
+        ]);
     }
 }

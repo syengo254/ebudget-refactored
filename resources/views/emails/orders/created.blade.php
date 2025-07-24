@@ -5,10 +5,13 @@
      <x-slot:title>Order for {{ $order->user->name }} Created</x-slot:title>
      Hello {{ $order->user->name }},
      <p>
-         Your order has been created and shall be delivered on <strong>{{ $order->expected_delivery_date }}</strong> (latest on: <b>{{ $order->latest_delivery_date }}</b>).
+         Your order has been received and shall be delivered on <strong>{{ $order->expected_delivery_date }}</strong> (latest on: <b>{{ $order->latest_delivery_date }}</b>).
      </p>
      <p>
          <strong>Order Number: </strong>{{ $order->order_no }}
+     </p>
+     <p>
+         <strong>Order Status: </strong><span style="text-transform:capitalize;">{{ $order->status }}</span>
      </p>
      <div>
          <h4>Order Summary</h4>

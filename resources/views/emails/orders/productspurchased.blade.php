@@ -5,7 +5,7 @@
     <x-slot:title>Product Purchased From {{ $orderItems->first()->product->store->user->name }}</x-slot:title>
 
     <p>Hello {{ $orderItems->first()->product->store->user->name }},</p>
-    <p>Your products have been purchased by our customer. Please find the details below:</p>
+    <p>Some of your products on our website have been purchased by one of our customers. Please find the details below:</p>
         <table>
         <thead>
             <tr>
@@ -36,13 +36,13 @@
     </table>
     <div>
         <p>
-            Please ensure that these products are available for pickup on 
+            For smooth pickup by our delivery team, please ensure that these products are available by 
             <strong>
                 {{ $longDateString = date("l, F j, Y", strtotime($orderItems->first()->order->expected_delivery_date)) }}.
             </strong> 
             <br />
             <br />
-            <i>If this is not possible, please contact our sales team within 12 hours to avoid inconveniencing the customer.</i>
+            <i>If this is not possible, please contact our sales team within 12 hours.</i>
         </p>
     </div>
     <p>Thank you for your business.</p>

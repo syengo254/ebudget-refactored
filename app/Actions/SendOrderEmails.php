@@ -26,7 +26,7 @@ class SendOrderEmails
         $orderItems = $order->orderItems()->with('product', 'order')->get();
         $vendors = $orderItems->pluck('product.store.user')->unique();
         
-        foreach ($vendors as $key => $vendor) {
+        foreach ($vendors as $vendor) {
             Mail::to($vendor->email)
                 ->queue(
                     new ProductsPurchased(

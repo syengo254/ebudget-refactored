@@ -36,7 +36,7 @@ class OrderCreated extends Mailable
     {
         return new Envelope(
             from: new Address(env("SALES_EMAIL_ADDRESS", "sales@e-budget.jubatus.co.ke"),  env("SALES_EMAIL_ADDRESS_NAME", "E-budget Sales Team")),
-            subject: 'Your Order Has Been Created - No: ' . $this->order->order_no,
+            subject: 'Your Order Has Been Received - No: ' . $this->order->order_no,
         );
     }
 
