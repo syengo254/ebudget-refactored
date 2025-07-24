@@ -44,7 +44,7 @@ class OrderController extends Controller
             ))->toArray();
         }
 
-        $orderDTO = $this->orderService->createOrder($validated);
+        $orderDTO = $this->orderService->create($validated);
 
         if ($orderDTO->success) {
             // save cart_id to session to avoid multiple requests

@@ -30,10 +30,9 @@ class OrderService {
 
     // make this function return a DTO
 
-    public function createOrder(array $attributes): OrderDTO
+    public function create(array $attributes): OrderDTO
     {
         DB::beginTransaction();
-        $orderCreated = 0;
 
         try {
             $order = Auth::user()->orders()->create([
@@ -44,8 +43,6 @@ class OrderService {
                 'address_id' => Auth::user()->profile->active_address_id,
                 'order_no' => OrderNumberGenerator::getNextCode(Order::latest()->first()->order_no ?? "A000000001"),
             ]);
-
-            $orderCreated = $order->id;
 
             $productIds = collect($attributes['order'])->pluck('product_id');
             $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
@@ -65,14 +62,6 @@ class OrderService {
 
         } catch (Throwable $e) {
             DB::rollBack();
-            // clear the cart_id to allow retry
-            request()->session()->forget("latest_cart_id");
-
-            if (boolval($orderCreated)) {
-                // rollback this order
-                Order::find($orderCreated)->destroy();
-            }
-
             logger($e->__toString());
 
             return new OrderDTO(null, false, $e);

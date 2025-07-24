@@ -35,7 +35,7 @@ class OrderCreated extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: new Address(env("SALES_EMAIL_ADDRESS", "sales@e-budget.jubatus.co.ke"), "E-budget Sales Team"),
+            from: new Address(env("SALES_EMAIL_ADDRESS", "sales@e-budget.jubatus.co.ke"),  env("SALES_EMAIL_ADDRESS_NAME", "E-budget Sales Team")),
             subject: 'Your Order Has Been Created - No: ' . $this->order->order_no,
         );
     }
@@ -53,7 +53,9 @@ class OrderCreated extends Mailable
             ->addSelect(
                 [
                     "order_total" => OrderItem::whereColumn("order_id", 'orders.id')
-                        ->selectRaw("sum(item_count * price_at_order) as cost")
+                        ->selectRaw("sum(item_count * price_at_order) as cost"),
+                    "all_items_count" => OrderItem::whereColumn("order_id", 'orders.id')
+                        ->selectRaw("sum(item_count) as total_items"),
                 ]
             )
             ->where('id', $this->order->id)
