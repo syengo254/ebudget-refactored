@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\SendOrderEmails;
 use App\Enums\OrderStatus;
 use App\Http\Resources\UserResource;
 use App\Mail\OrderCreated;
@@ -7,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -67,18 +69,26 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/preview', function () {
-    //Mail::to(Auth::user())->queue(new OrderCreated(Order::find(28)));
-    // $products = Product::query()
-    //     ->withCount('orderItems')
-    //     ->with("orderItems")
-    //     ->where("store_id", "=", 6)
-    //     ->addSelect([
-    //         "total_quantity_ordered" => OrderItem::whereColumn("product_id", 'products.id')
-    //             ->selectRaw("sum(item_count) as quantity")
-    //     ])
-    //     ->get();
-
-    return Store::find(6)->orderItems()->whereHas("order", function($query){
-        $query->where("status", OrderStatus::CANCELLED->value);
-    })->get();
+    $validated = [
+            'order' => [
+                [
+                    'product_id' => 51,
+                    'count' => 1,
+                ],
+                [
+                    'product_id' => 52,
+                    'count' => 2,
+                ],
+                [
+                    'product_id' => 53,
+                    'count' => 1,
+                ],
+            ],
+            'cart_id' => fake()->uuid(),
+        ];
+    $orderDTO = (new OrderService)->create($validated);
+    if($orderDTO->success){
+        (new SendOrderEmails())->handle($orderDTO->order);
+    }
+    return $orderDTO->toArray();
 });

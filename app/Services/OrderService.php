@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Support\OrderNumberGenerator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class OrderService {
+class OrderService
+{
 
     public function getUserOrders(User $user, int $page, int $limit)
     {
@@ -29,10 +32,9 @@ class OrderService {
 
     // make this function return a DTO
 
-    public function createOrder(array $attributes): OrderDTO
+    public function create(array $attributes): OrderDTO
     {
         DB::beginTransaction();
-        $orderCreated = 0;
 
         try {
             $order = Auth::user()->orders()->create([
@@ -41,9 +43,8 @@ class OrderService {
                 'latest_delivery_date' => now()->addDays(random_int(3, 5))->toDateString(),
                 'actual_delivery_date' => NULL,
                 'address_id' => Auth::user()->profile->active_address_id,
+                'order_no' => OrderNumberGenerator::getNextCode(Order::latest()->first()->order_no ?? "A000000001"),
             ]);
-
-            $orderCreated = $order->id;
 
             $productIds = collect($attributes['order'])->pluck('product_id');
             $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
@@ -60,20 +61,28 @@ class OrderService {
 
             DB::commit();
             return new OrderDTO($order, true, null);
-
         } catch (Throwable $e) {
             DB::rollBack();
-            // clear the cart_id to allow retry
-            request()->session()->forget("latest_cart_id");
-
-            if (boolval($orderCreated)) {
-                // rollback this order
-                Order::find($orderCreated)->destroy();
-            }
-
             logger($e->__toString());
 
             return new OrderDTO(null, false, $e);
         }
+    }
+
+    public function setOrderStatus(Order $order, OrderStatus $status)
+    {
+        $order->status = $status;
+        $order->save();
+    }
+
+    public static function confirmNewOrders()
+    {
+        // only confirm new orders that are more than 12 hrs old.
+        return Order::query()
+        ->where("status", "=", OrderStatus::NEW)
+        ->where("created_at", "<=", now()->subHours(intval(env("ORDER_CONFIRM_AGE", "12"))))
+        ->update([
+            "status" => OrderStatus::CONFIRMED,
+        ]);
     }
 }

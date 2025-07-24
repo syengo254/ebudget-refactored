@@ -11,6 +11,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCreated;
+use App\Mail\ProductsPurchased;
+use App\Models\Store;
+use Illuminate\Support\Facades\Queue;
+
 // use Laravel\Sanctum\Sanctum;
 
 class OrderTest extends TestCase
@@ -130,6 +134,7 @@ class OrderTest extends TestCase
     public function test_on_success_order_created_mail_is_queued()
     {
         Mail::fake();
+        Queue::fake();
 
         $orderPayload = [
             'order' => [
@@ -145,6 +150,34 @@ class OrderTest extends TestCase
 
         Mail::assertQueued(OrderCreated::class, function ($mail) {
             return $mail->hasTo($this->user->email);
+        });
+    }
+
+    public function test_that_vendor_productPuchased_email_is_sent_upon_succesful_order()
+    {
+        Mail::fake();
+        Queue::fake();
+
+        $vendor = Store::factory()->create();
+
+        $product = Product::factory()->create([
+            "store_id" => $vendor->id,
+        ]);
+
+        $payload = [
+            'order' => [
+                [
+                    'product_id' => $product->id,
+                    'count' => 1,   
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $this->postJson("/api/orders", $payload);
+        
+        Mail::assertQueued(ProductsPurchased::class, function($mail) use ($vendor) {
+            return $mail->hasTo($vendor->user->email);
         });
     }
 }

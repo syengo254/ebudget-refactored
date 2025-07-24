@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\Orders;
 
+use App\Actions\SendOrderEmails;
 use App\Http\Controllers\Controller;
 use App\Http\DTOs\OrderDTO;
 use App\Http\Requests\Orders\OrderRequest;
-use App\Mail\OrderCreated;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
-use App\Models\Product;
 use Exception;
-use Throwable;
 
 class OrderController extends Controller
 {
@@ -50,7 +44,7 @@ class OrderController extends Controller
             ))->toArray();
         }
 
-        $orderDTO = $this->orderService->createOrder($validated);
+        $orderDTO = $this->orderService->create($validated);
 
         if ($orderDTO->success) {
             // save cart_id to session to avoid multiple requests
@@ -59,7 +53,7 @@ class OrderController extends Controller
                 "order_id" => $orderDTO->order->id,
             ]);
 
-            Mail::to(Auth::user()->email)->queue(new OrderCreated($orderDTO->order));
+            (new SendOrderEmails())->handle($orderDTO->order);
         }
 
         return response()->json([

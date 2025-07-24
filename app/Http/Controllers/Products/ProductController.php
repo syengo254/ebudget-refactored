@@ -20,10 +20,6 @@ class ProductController extends Controller
     {
         $limit = request()->limit ?? $limit;
 
-        // if (!(request()->category || request()->price || request()->store )) {
-        //     return ProductViewResource::collection(Product::with("store", "category")->latest()->paginate($limit));
-        // }
-
         $products = Product::query();
 
         if ($request->filled('q')) {
@@ -73,7 +69,7 @@ class ProductController extends Controller
 
             if (request()->filled("categoryname")) {
                 $category = Category::firstOrCreate([
-                    "name" => strtolower($validated["categoryname"]),
+                    "name" => ucfirst($validated["categoryname"]),
                 ]);
             }
             $product = Product::create([
