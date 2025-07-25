@@ -7,15 +7,10 @@ const props = defineProps({
     required: false,
     default: 'button',
   },
-  disabled: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
   variant: {
-    type: String as PropType<'primary' | 'error' | 'info' | 'secondary' | 'outlined'>,
+    type: String as PropType<'primary' | 'danger' | 'success' | 'secondary' | 'outlined' | 'default'>,
     required: false,
-    default: 'primary',
+    default: 'default',
   },
   size: {
     type: String as PropType<'sm' | 'md' | 'lg'>,
@@ -26,23 +21,24 @@ const props = defineProps({
 
 const variantClasses = {
   primary: 'btn-primary',
-  error: 'btn-error',
-  info: 'btn-info',
+  danger: 'btn-danger',
+  success: 'btn-success',
   secondary: 'btn-secondary',
   outlined: 'btn-outlined',
+  default: 'btn-default',
 }
 
 const sizes = {
-  sm: 'sm',
-  md: '',
-  lg: 'lg',
+  sm: 'sm rounded-sm',
+  md: 'rounded',
+  lg: 'lg rounded-lg',
 }
 
-const classes = 'btn ' + variantClasses[props.variant] + ' ' + sizes[props.size]
+const classes = (variantClasses[props.variant] + ' ' + sizes[props.size]).trim()
 </script>
 
 <template>
-  <button :type="type" :class="classes" :disabled="disabled">
+  <button :type="type" :class="classes">
     <slot>
       <!-- slot -->
     </slot>
@@ -50,17 +46,95 @@ const classes = 'btn ' + variantClasses[props.variant] + ' ' + sizes[props.size]
 </template>
 
 <style scoped>
-button[type='submit'],
-button[type='button'] {
-  font-weight: 600;
+/* button base */
+button {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  width: fit-content;
+  padding: 0.4rem 1rem;
+  background: rgb(240, 240, 240);
+  color: rgb(53, 53, 53);
   outline: none;
+  border: 1px solid rgb(200, 200, 200);
+  transition: 0.5s;
+  font-weight: 500;
+  cursor: pointer;
 }
 
+/* variants */
+
+.btn-primary {
+  background: rgb(37, 82, 205);
+  border: 1px solid rgb(31, 69, 176);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: rgb(33, 74, 189);
+}
+
+.btn-danger {
+  background-color: rgb(239, 92, 38);
+  border: 1px solid red;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: rgb(224, 83, 32);
+}
+
+.btn-secondary {
+  background: #f2f2f2;
+  border: 1px solid rgb(226, 226, 226);
+  color: rgb(156, 39, 176);
+}
+
+.btn-secondary:hover {
+  background: rgb(245, 233, 248);
+}
+
+.btn-success {
+  background: rgb(92, 184, 92);
+  border: 1px solid rgb(61, 133, 61);
+  color: white;
+}
+
+.btn-success:hover {
+  background: rgb(83, 171, 83);
+}
+/* variants */
+
+/* sizes */
+
 button.sm {
-  padding: 0.5rem 1rem;
-  border-radius: 14px;
+  padding: 0.25rem 0.6rem;
   font-family: 'Roboto', sans-serif;
-  font-weight: 400;
-  font-size: 0.95rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+button.lg {
+  padding: 0.6rem 1.4rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+/* sizes */
+
+/* disabled */
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* rounded */
+button.rounded-sm {
+  border-radius: 3.5px;
+}
+button.rounded {
+  border-radius: 5px;
+}
+button.rounded-lg {
+  border-radius: 8.5px;
 }
 </style>

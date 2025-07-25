@@ -3,11 +3,11 @@ import { ref } from 'vue'
 
 import FormInput from '../../../components/forms/FormInput.vue'
 import Error from '../../../components/forms/Error.vue'
-import SubmitButton from './SubmitButton.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import useProfile from '../../../composables/useProfile'
 import { useAuthStore } from '../../../stores/authStore'
 import SuccessAlert from '../../../components/SuccessAlert.vue'
+import BaseButton from '../../../components/buttons/BaseButton.vue'
 
 const authStore = useAuthStore()
 const { addUserAddress, apiData, apiError, formErrors, apiLoading, apiSuccess } = useProfile()
@@ -148,10 +148,10 @@ function resetFormValues() {
         <button v-if="!addressDisabled" type="button" class="btn btn-cancel" @click="toggleAddressForm('cancel')">
           Cancel
         </button>
-        <SubmitButton v-if="!addressDisabled" :disabled="apiLoading">
+        <BaseButton v-if="!addressDisabled" variant="primary" :disabled="apiLoading">
           {{ apiLoading ? 'Saving' : 'Save' }}
-        </SubmitButton>
-        <SubmitButton v-if="addressDisabled" type="button" @click="toggleAddressForm">Edit</SubmitButton>
+        </BaseButton>
+        <BaseButton v-if="addressDisabled" variant="primary" type="button" @click="toggleAddressForm">Edit</BaseButton>
       </div>
 
       <SuccessAlert msg="Account details updated." :show="apiSuccess" />
@@ -174,6 +174,7 @@ div.submit-btns {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+  align-items: center;
 }
 
 label {

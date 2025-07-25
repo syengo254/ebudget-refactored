@@ -108,4 +108,12 @@ export const routes = [
       guards: ['auth'],
     },
   },
+  {
+    path: '/playground',
+    name: 'playground',
+    component: () => import('../pages/Playground.vue'),
+    meta: {
+      title: 'Playground | E-budget.com | Best Online Shoping Experience',
+    },
+  },
 ]

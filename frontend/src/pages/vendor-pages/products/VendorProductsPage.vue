@@ -76,7 +76,7 @@ function showConfirmDialog(productId: number) {
             :product="product"
             :dont-navigate="true"
           >
-            <div style="display: flex; justify-content: space-between">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem">
               <BaseButton
                 type="button"
                 variant="primary"
@@ -88,7 +88,7 @@ function showConfirmDialog(productId: number) {
                 "
                 >Edit</BaseButton
               >
-              <BaseButton type="button" variant="error" @click="showConfirmDialog(product.id)">Delete</BaseButton>
+              <BaseButton type="button" variant="danger" @click="showConfirmDialog(product.id)">Delete</BaseButton>
             </div>
           </SimpleProductCard>
         </div>

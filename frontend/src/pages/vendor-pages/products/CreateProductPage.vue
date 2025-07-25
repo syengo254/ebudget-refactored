@@ -9,7 +9,6 @@ import Error from '../../../components/forms/Error.vue'
 import FormInput from '../../../components/forms/FormInput.vue'
 import FormSelect from '../../../components/forms/FormSelect.vue'
 import FormTextArea from '../../../components/forms/FormTextArea.vue'
-import SubmitButton from '../../profile/components/SubmitButton.vue'
 import SuccessAlert from '../../../components/SuccessAlert.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import useCreateorUpdateProduct from '../../../composables/useCreateUpdateProduct'
@@ -198,12 +197,12 @@ onMounted(async () => {
             </div>
             <div class="submit-btns flex flex-row gap-1">
               <BaseButton variant="outlined" style="border-radius: 3.5px" @click="cancelCreate">Cancel</BaseButton>
-              <SubmitButton v-if="mode === 'edit'" style="margin-left: auto" :disabled="loading">{{
+              <BaseButton v-if="mode === 'edit'" variant="primary" style="margin-left: auto" :disabled="loading">{{
                 loading ? 'Save...' : 'Save'
-              }}</SubmitButton>
-              <SubmitButton v-else style="margin-left: auto" :disabled="loading">{{
+              }}</BaseButton>
+              <BaseButton v-else style="margin-left: auto" variant="primary" :disabled="loading">{{
                 loading ? 'Adding...' : 'Add'
-              }}</SubmitButton>
+              }}</BaseButton>
             </div>
           </fieldset>
           <div class="response flex flex-column">

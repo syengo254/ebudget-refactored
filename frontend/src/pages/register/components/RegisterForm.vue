@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import useRegister from '@/composables/useRegister'
+import BaseButton from '../../../components/buttons/BaseButton.vue'
 
 const name = ref('')
 const email = ref('')
@@ -101,9 +102,11 @@ const handleRegister = async () => {
         <Error v-if="formErrors" :form-errors="formErrors?.password_confirmation" />
       </div>
 
-      <div class="submit-btns">
-        <button type="submit" class="btn block" :disabled="loading">Register</button>
-        <p style="margin: 0.5rem 0">Already registered? Click here to <RouterLink to="/login">Sign in.</RouterLink></p>
+      <div class="submit-btns mt-1">
+        <BaseButton type="submit" variant="primary" class="block" size="lg" :disabled="loading">Register</BaseButton>
+        <p class="text-center" style="margin: 0">
+          Already registered? Click here to <RouterLink to="/login">Sign in.</RouterLink>
+        </p>
       </div>
 
       <div v-show="error" class="alert error mt-1 block">
@@ -137,19 +140,9 @@ div.customer-signup > h5 {
 div.submit-btns {
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
-}
-
-div.submit-btns button[type='submit'] {
-  background-color: blue;
-  color: white;
-  border: 1px solid blue;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-div.submit-btns button[type='submit']:hover {
-  background-color: rgb(2, 2, 173);
+  justify-content: center;
+  width: 100%;
+  row-gap: 1.5rem;
 }
 
 label {

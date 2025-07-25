@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/authStore'
 import ErrorAlert from '../../components/ErrorAlert.vue'
+import BaseButton from '../../components/buttons/BaseButton.vue'
 
 const email = ref('')
 const password = ref('')
@@ -97,9 +98,9 @@ const handleLogin = async () => {
       </div>
 
       <div class="submit-btns">
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <BaseButton type="submit" variant="primary" class="mt-1" :disabled="loading">
           {{ loading ? 'Loggin in...' : 'Login' }}
-        </button>
+        </BaseButton>
         <ErrorAlert
           :show="!!loginError && !validationErrors"
           class="mt-1"
@@ -124,11 +125,5 @@ div#signin {
   position: relative;
   max-width: 360px;
   margin-inline: auto;
-}
-
-button[type='submit']:hover {
-  background-color: rgba(0, 0, blue, 0.6);
-  color: white;
-  border: 1px solid blue;
 }
 </style>
