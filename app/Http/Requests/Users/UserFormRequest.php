@@ -28,7 +28,7 @@ class UserFormRequest extends FormRequest
         return [
             "name" => 'required|string|min:8',
             "email" => 'required|email|unique:users,email',
-            "password" => Password::defaults()->min(6)->symbols()->numbers()->mixedCase(),
+            "password" => [Password::defaults()->min(6)->symbols()->numbers()->mixedCase(), "confirmed"],
             "has_store" => "sometimes|boolean"
         ];
     }
