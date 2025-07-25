@@ -34,7 +34,7 @@ const orders = ref<SaleItem[]>([])
 const error = ref(false)
 const loading = ref(false)
 
-const hasData = computed(() => true)
+const hasData = computed(() => orders.value.length > 0)
 
 onMounted(async () => {
   await loadSales()

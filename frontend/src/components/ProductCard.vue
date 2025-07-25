@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { computed, PropType } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import { ProductType } from '../types'
 import { getFormattedNumber } from '../utils/helpers'
 import { useAuthStore } from '../stores/authStore'
+import { useCartStore } from '../stores/cartStore'
 
 const { product } = defineProps({
   product: {
@@ -14,13 +15,20 @@ const { product } = defineProps({
 })
 
 const router = useRouter()
-const emit = defineEmits(['addToCart'])
+const emit = defineEmits(['addToCart', 'remove'])
 
 const authStore = useAuthStore()
+const cartStore = useCartStore()
+const inCart = computed(() => cartStore.isInCart(product.id))
 
 function handleAddToCart() {
   emit('addToCart')
 }
+
+function handleRemove() {
+  emit('remove')
+}
+
 function navigateToProduct() {
   router.push({
     name: 'view-product',
@@ -56,7 +64,10 @@ function navigateToProduct() {
         </p>
       </div>
       <div v-show="!authStore.hasStore" class="buy-btn">
-        <button class="add-cart-btn" @click="handleAddToCart">Add to cart</button>
+        <button class="add-cart-btn" @click="handleAddToCart">
+          {{ inCart ? 'Added' : 'Add to cart' }}
+        </button>
+        <button v-if="inCart" class="rm-cart-btn" @click="handleRemove">Remove</button>
       </div>
     </div>
   </div>
@@ -140,6 +151,17 @@ function navigateToProduct() {
   color: rgb(51, 97, 224);
 }
 
+.buy-btn {
+  display: flex;
+  column-gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+button {
+  font-family: Roboto, sans-serif;
+}
+
 button.add-cart-btn {
   outline: none;
   border: none;
@@ -148,6 +170,20 @@ button.add-cart-btn {
   padding: 0.5rem 1rem;
   border-radius: 14px;
   cursor: pointer;
+}
+
+button.rm-cart-btn {
+  outline: none;
+  border: none;
+  background-color: orangered;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+button.add-cart-btn:hover {
+  background-color: rgb(52, 76, 212);
 }
 
 .product-price {
@@ -168,10 +204,6 @@ button.add-cart-btn {
 
 .store-info > p > a:hover {
   text-decoration: underline;
-}
-
-button.add-cart-btn:hover {
-  background-color: rgb(52, 76, 212);
 }
 
 @media screen and (max-width: 420px) {

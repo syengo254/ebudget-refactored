@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             "name" => $this->name,
             "hasStore" => $this->has_store,
             "profile" => $this->profile,
-            "phone" => $this->when($this->profile, $this->profile->phone),
+            "phone" => $this->when($this->profile, $this->profile->phone ?? null),
             "address" => $this->when($this->profile, $this->profile->getActiveAddress()),
             "store" => $this->when($this->has_store, $this->store),
             "verified" => boolval($this->email_verified_at)

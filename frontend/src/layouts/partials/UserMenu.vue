@@ -26,15 +26,16 @@ function checkFilters() {
       <RouterLink :to="{ name: 'home' }">Home</RouterLink>
       <RouterLink :to="{ name: 'home' }">Today's Deals</RouterLink>
       <RouterLink :to="{ name: 'products' }" @click="checkFilters">All Products</RouterLink>
-      <RouterLink v-if="authStore.loggedIn" :to="{ name: 'profile' }" style="margin-left: auto; margin-right: 1rem"
-        >My Account</RouterLink
-      >
+      <div v-if="authStore.loggedIn">
+        <RouterLink :to="{ name: 'order-history' }" style="margin-left: auto">My Orders</RouterLink>
+        <RouterLink :to="{ name: 'profile' }" style="margin-left: auto; margin-right: 1rem">My Account</RouterLink>
+      </div>
       <RouterLink v-else to="/about">About</RouterLink>
     </nav>
   </section>
   <section v-else id="categories-bar">
     <RouterLink :to="{ name: 'dashboard' }">
-      <img class="menu-icon" :src="authStore.user?.store?.logo" alt="menu-bar" />
+      <img class="menu-icon" style="background-color: white" :src="authStore.user?.store?.logo" alt="menu-bar" />
     </RouterLink>
     <nav>
       <RouterLink :to="{ name: 'dashboard' }">Dashboard</RouterLink>
@@ -54,7 +55,14 @@ nav {
   width: 100%;
 }
 
+nav > div {
+  display: flex;
+  margin-left: auto;
+  column-gap: 1rem;
+}
+
 nav > a,
+nav > div > a,
 ul.small-nav > li > a {
   color: white;
   text-decoration: none;

@@ -17,6 +17,11 @@ const props = defineProps({
     required: false,
     default: 'primary',
   },
+  size: {
+    type: String as PropType<'sm' | 'md' | 'lg'>,
+    required: false,
+    default: 'md',
+  },
 })
 
 const variantClasses = {
@@ -27,7 +32,13 @@ const variantClasses = {
   outlined: 'btn-outlined',
 }
 
-const classes = 'btn ' + variantClasses[props.variant]
+const sizes = {
+  sm: 'sm',
+  md: '',
+  lg: 'lg',
+}
+
+const classes = 'btn ' + variantClasses[props.variant] + ' ' + sizes[props.size]
 </script>
 
 <template>
@@ -43,5 +54,13 @@ button[type='submit'],
 button[type='button'] {
   font-weight: 600;
   outline: none;
+}
+
+button.sm {
+  padding: 0.5rem 1rem;
+  border-radius: 14px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 0.95rem;
 }
 </style>

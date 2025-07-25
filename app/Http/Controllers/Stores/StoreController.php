@@ -48,7 +48,7 @@ class StoreController extends Controller
             ])
             ->get();
 
-        $returnedItems = Store::find(6)->orderItems()->whereHas("order", function ($query) {
+        $returnedItems = Store::find($store->id)->orderItems()->whereHas("order", function ($query) {
             $query->where("status", OrderStatus::CANCELLED->value);
         })->get();
 
