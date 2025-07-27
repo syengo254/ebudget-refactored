@@ -27,7 +27,6 @@ class UserTest extends TestCase
         $user = \App\Models\User::create($user_data);
         Queue::fake();
         $user->sendEmailVerificationNotification();
-        // Queue::assertPushed(SendVerifyEmailJob::class);
-        $this->assertTrue(Queue::hasPushed(SendVerifyEmailJob::class));
+        Queue::assertPushed(SendVerifyEmailJob::class);
     }
 }

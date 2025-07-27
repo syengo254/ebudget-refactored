@@ -22,12 +22,6 @@ class UserRegisterTest extends TestCase
             'Referer' => 'http://localhost:5173',
             'Accept' => 'application/json', // Good practice for API-like interactions
         ]);
-
-        RequestGuard::macro('logout', function () {
-            // $this->user = null;
-        });
-
-        $this->app['auth']->guard('web')->logout();
     }
 
     public function test_that_we_have_validation_errors_with_invalid_data()
@@ -57,7 +51,6 @@ class UserRegisterTest extends TestCase
         ];
 
         $response = $this->postJson("api/users", $payload);
-        $response->dump();
 
         $response->assertStatus(200)->assertJson([
             "success" => TRUE,
