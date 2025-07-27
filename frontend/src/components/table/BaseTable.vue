@@ -76,7 +76,7 @@ tfoot > tr {
 :slotted(tfoot > tr > td) {
   font-size: 1rem;
   font-weight: 600;
-  padding: 0.3rem 0.8rem;
+  padding: 0.4rem 0.6rem;
   width: auto;
   text-transform: uppercase;
 }

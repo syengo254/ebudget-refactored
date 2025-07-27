@@ -197,10 +197,15 @@ onMounted(async () => {
             </div>
             <div class="submit-btns flex flex-row gap-1">
               <BaseButton variant="outlined" style="border-radius: 3.5px" @click="cancelCreate">Cancel</BaseButton>
-              <BaseButton v-if="mode === 'edit'" variant="primary" style="margin-left: auto" :disabled="loading">{{
-                loading ? 'Save...' : 'Save'
-              }}</BaseButton>
-              <BaseButton v-else style="margin-left: auto" variant="primary" :disabled="loading">{{
+              <BaseButton
+                v-if="mode === 'edit'"
+                type="submit"
+                variant="primary"
+                style="margin-left: auto"
+                :disabled="loading"
+                >{{ loading ? 'Save...' : 'Save' }}</BaseButton
+              >
+              <BaseButton v-else type="submit" style="margin-left: auto" variant="primary" :disabled="loading">{{
                 loading ? 'Adding...' : 'Add'
               }}</BaseButton>
             </div>
