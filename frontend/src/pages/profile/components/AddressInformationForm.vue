@@ -148,7 +148,7 @@ function resetFormValues() {
         <button v-if="!addressDisabled" type="button" class="btn btn-cancel" @click="toggleAddressForm('cancel')">
           Cancel
         </button>
-        <BaseButton v-if="!addressDisabled" variant="primary" :disabled="apiLoading">
+        <BaseButton v-if="!addressDisabled" variant="primary" type="submit" :disabled="apiLoading">
           {{ apiLoading ? 'Saving' : 'Save' }}
         </BaseButton>
         <BaseButton v-if="addressDisabled" variant="primary" type="button" @click="toggleAddressForm">Edit</BaseButton>

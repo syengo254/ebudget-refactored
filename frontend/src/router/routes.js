@@ -79,7 +79,7 @@ export const routes = [
     component: () => import('../pages/checkout/Index.vue'),
     meta: {
       title: 'Checkout | E-budget.com | Best Online Shoping Experience',
-      guards: ['verified', 'user'],
+      guards: ['auth', 'verified', 'user'],
     },
   },
   {

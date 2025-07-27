@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '../../components/buttons/BaseButton.vue'
 import { useAuthStore } from '../../stores/authStore'
 import AddressInformationForm from './components/AddressInformationForm.vue'
 import PersonalInformationForm from './components/PersonalInformationForm.vue'
@@ -12,8 +13,13 @@ const authStore = useAuthStore()
     <p>You can update your account information here</p>
 
     <div class="flex flex-row flex-wrap gap-2" style="align-items: start">
-      <div v-show="authStore.user?.hasStore" class="avatar">
+      <div v-if="authStore.user?.hasStore" class="avatar">
         <img :src="authStore.user?.store?.logo" alt="user-store-logo" />
+      </div>
+      <div v-else class="mt-1">
+        <RouterLink :to="{ name: 'order-history' }">
+          <BaseButton variant="primary">View My Order History</BaseButton>
+        </RouterLink>
       </div>
       <div class="profile-info">
         <PersonalInformationForm />

@@ -8,10 +8,12 @@ import { useAuthStore } from '../../stores/authStore'
 import ErrorBoundary from '../../components/ErrorBoundary.vue'
 import { OrderType, PaginationData } from '../../types'
 import Pagination from '../../components/Pagination.vue'
+import LoadingComponent from '../../components/LoadingComponent.vue'
 
 const authStore = useAuthStore()
 const orders = ref<OrderType[]>([])
 const pagination = ref<PaginationData | null>(null)
+const loading = ref(false)
 
 function showOrderItemsSummary(order: OrderType) {
   return order.order_items.map((oi) => `${oi.product.name}-<b>(${oi.item_count})</b>`).join(', ')
@@ -25,7 +27,9 @@ async function fetchOrders(page: number = 1) {
 }
 
 onMounted(async () => {
+  loading.value = true
   await fetchOrders()
+  loading.value = false
 })
 </script>
 
@@ -34,7 +38,8 @@ onMounted(async () => {
     <h3>My Order History</h3>
     <div class="table-viewport">
       <ErrorBoundary :is-page="false">
-        <BaseTable class="rounded stripped">
+        <LoadingComponent v-if="loading" />
+        <BaseTable v-else class="rounded stripped">
           <template #caption>These are the orders you have placed with us</template>
           <template #thead>
             <th>#</th>
