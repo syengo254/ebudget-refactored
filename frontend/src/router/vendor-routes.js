@@ -33,7 +33,7 @@ export default {
       component: CreateProductPage,
       meta: {
         title: 'Adding Products | E-budget.com | Best Online Shoping Experience',
-        guards: ['auth', 'store'],
+        guards: ['auth', 'verified', 'store'],
       },
     },
     {

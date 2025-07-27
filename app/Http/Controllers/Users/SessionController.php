@@ -38,10 +38,6 @@ class SessionController extends Controller
         );
 
         if ($authenticated) {
-            // check if password rehash
-            // if (Hash::needsRehash()) {
-            //     $hashed = Hash::make('plain-text');
-            // }
             request()->session()->regenerate();
 
             return response()->json([

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\OrderStatus;
 use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use App\Support\OrderNumberGenerator;
@@ -17,7 +18,15 @@ class OrderService
 
     public function getUserOrders(User $user, int $page, int $limit)
     {
-        return $user->orders()->with("order_items")->paginate($limit);
+        return $user->orders()
+            ->select("id", "order_no", "status", "actual_delivery_date", "expected_delivery_date")
+            ->with("orderItems.product:id,name")
+            ->addSelect([
+                "total" => OrderItem::whereColumn("order_id", 'orders.id')
+                    ->selectRaw("sum(item_count * price_at_order) as cost")
+            ])
+            ->latest()
+            ->paginate($limit);
     }
 
     public function getAllOrders(int $page, int $limit)
@@ -79,10 +88,10 @@ class OrderService
     {
         // only confirm new orders that are more than 12 hrs old.
         return Order::query()
-        ->where("status", "=", OrderStatus::NEW)
-        ->where("created_at", "<=", now()->subHours(intval(env("ORDER_CONFIRM_AGE", "12"))))
-        ->update([
-            "status" => OrderStatus::CONFIRMED,
-        ]);
+            ->where("status", "=", OrderStatus::NEW)
+            ->where("created_at", "<=", now()->subHours(intval(env("ORDER_CONFIRM_AGE", "12"))))
+            ->update([
+                "status" => OrderStatus::CONFIRMED,
+            ]);
     }
 }

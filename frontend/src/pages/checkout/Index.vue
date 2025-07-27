@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import FormCheckbox from '../../components/forms/FormCheckbox.vue'
 import Error from '../../components/forms/Error.vue'
 import checkIcon from '@/assets/check.png'
@@ -27,6 +27,9 @@ const router = useRouter()
 const prevBgColor = ref('')
 const pageReady = ref(false)
 
+const hasActiveAddress = computed(() => authStore.user?.profile?.active_address_id !== null)
+useActiveAddress.value = hasActiveAddress.value
+
 onMounted(() => {
   if (cartStore.count == 0) {
     router.push('/products')
@@ -41,6 +44,8 @@ onMounted(() => {
 onUnmounted(() => {
   document.body.style.backgroundColor = prevBgColor.value
 })
+
+watch(hasActiveAddress, () => (useActiveAddress.value = hasActiveAddress.value))
 </script>
 
 <template>
@@ -53,12 +58,17 @@ onUnmounted(() => {
           <CheckoutCard title="1. Delivery Address" :icon="checkIcon">
             <div class="default-address px-1">
               <div class="form-group">
-                <FormCheckbox v-model="useActiveAddress" name="active_address" label="Use Active Address">
+                <FormCheckbox
+                  v-model="useActiveAddress"
+                  name="active_address"
+                  label="Use Active Address"
+                  :disabled="!hasActiveAddress"
+                >
                   <Error :form-errors="validationErrors.address" />
                 </FormCheckbox>
               </div>
             </div>
-            <div v-show="!authStore.user?.address" class="add-address">
+            <div class="add-address">
               <RouterLink :to="{ name: 'profile' }">Add Address</RouterLink>
             </div>
           </CheckoutCard>

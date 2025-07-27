@@ -79,7 +79,7 @@ export const routes = [
     component: () => import('../pages/checkout/Index.vue'),
     meta: {
       title: 'Checkout | E-budget.com | Best Online Shoping Experience',
-      guards: ['verified', 'user'],
+      guards: ['auth', 'verified', 'user'],
     },
   },
   {
@@ -95,8 +95,25 @@ export const routes = [
     name: 'verify-account',
     component: () => import('../components/UnverifiedAccountNotice.vue'),
     meta: {
-      title: 'Account Verification | E-budget.com | Best Online Shoping Experience',
+      title: 'Account Verification is Required | E-budget.com | Best Online Shoping Experience',
       guards: ['auth', 'unverified'],
+    },
+  },
+  {
+    path: '/my-orders',
+    name: 'order-history',
+    component: () => import('../pages/orders/OrderHistoryPage.vue'),
+    meta: {
+      title: 'My Order History | E-budget.com | Best Online Shoping Experience',
+      guards: ['auth'],
+    },
+  },
+  {
+    path: '/playground',
+    name: 'playground',
+    component: () => import('../pages/Playground.vue'),
+    meta: {
+      title: 'Playground | E-budget.com | Best Online Shoping Experience',
     },
   },
 ]

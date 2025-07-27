@@ -60,7 +60,8 @@ Route::get("/categories", [CategoryController::class, "index"]);
 
 // orders
 Route::controller(OrderController::class)->middleware("auth:sanctum")->group(function(){
-    Route::get("/orders", "index");
+    Route::get("/orders", "index")->name("all-order"); // for admin or staff
+    Route::get("/users/{user}/orders", "showUserOrderHistory")->name("user-orders");
     Route::post("/orders", "store");
     Route::patch("/orders/{order}", "update");
     Route::get("/orders/{order}", "show");

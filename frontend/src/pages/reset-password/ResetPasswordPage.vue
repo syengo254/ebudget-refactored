@@ -5,10 +5,10 @@ import axios from '../../utils/axios'
 import Error from '../../components/forms/Error.vue'
 import FormInput from '../../components/forms/FormInput.vue'
 import SuccessAlert from '../../components/SuccessAlert.vue'
-import SubmitButton from '../profile/components/SubmitButton.vue'
 import { RouterLink, useRoute } from 'vue-router'
 import ErrorAlert from '../../components/ErrorAlert.vue'
 import EnterPasswordView from './EnterPasswordView.vue'
+import BaseButton from '../../components/buttons/BaseButton.vue'
 
 const route = useRoute()
 const pageReady = ref(false)
@@ -116,9 +116,9 @@ async function resendLink() {
             </FormInput>
           </div>
           <div class="submit-btns">
-            <SubmitButton type="submit" :disabled="loading">
+            <BaseButton type="submit" variant="primary" :disabled="loading">
               {{ loading ? 'Sending...' : 'Reset Password' }}
-            </SubmitButton>
+            </BaseButton>
           </div>
         </form>
       </div>
@@ -126,9 +126,9 @@ async function resendLink() {
         <SuccessAlert :show="success" :msg="successMessage" />
         <ErrorAlert :show="error" :msg="validationErrors?.email[0] ?? ''" />
         <div class="submit-btns mt-1">
-          <SubmitButton type="submit" :disabled="loading" @click="resendLink">
+          <BaseButton type="submit" variant="outlined" :disabled="loading" @click="resendLink">
             {{ loading ? 'Sending...' : 'Resend Link' }}
-          </SubmitButton>
+          </BaseButton>
           <p class="help" style="font-style: italic">
             If you don't receive any email within <strong>10-15</strong> minutes, you have not registered with us. Click
             <RouterLink to="/register"> here to register.</RouterLink>

@@ -26,6 +26,10 @@ function handleAddToCart(product: ProductType) {
   shoppingCart.addItem(product)
 }
 
+function handleRemoveFromCart(product: ProductType) {
+  shoppingCart.removeItem(product.id, true)
+}
+
 function removeFilter(filterName: keyof ProductsFiltersType) {
   productStore.removeFilter(filterName)
 }
@@ -62,6 +66,7 @@ function removeFilter(filterName: keyof ProductsFiltersType) {
           :key="product.id + product.name"
           :product="product"
           @add-to-cart="handleAddToCart(product)"
+          @remove="handleRemoveFromCart(product)"
         />
       </div>
       <Pagination style="margin-bottom: 2rem" :pagination-handler="handlerPagination" :meta="productStore.pagination" />

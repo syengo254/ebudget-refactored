@@ -86,14 +86,21 @@ class OrderTest extends TestCase
 
     public function test_unverified_user_cannot_create_order()
     {
+        // create products
+        Product::factory()->count(2)->create();
+
         $this->user = User::factory()->unverified()->create();
         $this->actingAs($this->user);
 
         $orderPayload = [
             'order' => [
                 [
-                    'product_id' => 1,
+                    'product_id' => 2,
                     'count' => 1,
+                ],
+                [
+                    'product_id' => 1,
+                    'count' => 2,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),

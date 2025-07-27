@@ -29,7 +29,7 @@ onMounted(() => {
 <template>
   <div class="viewport">
     <h4>Sorry, your account is unverified.</h4>
-    <p>Please check your inbox for the everification email that we sent you.</p>
+    <p>Please check your inbox for the verification email that we sent to you.</p>
     <button class="btn btn-primary" @click="handleResend">Resend verification email</button>
     <SuccessAlert :show="success" msg="Verification email sent" show-tick />
     <p>If you have verified your account, click continue.</p>

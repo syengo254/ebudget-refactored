@@ -107,3 +107,28 @@ export type BreadcrumpItemType = {
   item: string
   link?: string
 }
+
+// orders
+export interface OrderType {
+  id: number
+  order_no: string
+  user_id: number
+  status: string
+  expected_delivery_date: string
+  actual_delivery_date: string
+  delivery_charge: string
+  address_id: number
+  total: number
+  order_items: OrderItem[]
+  created_at: string
+}
+
+export interface OrderItem {
+  id: number
+  order_id: number
+  product_id: number
+  item_count: number
+  price_at_order: string
+  created_at: string
+  product: ProductType
+}

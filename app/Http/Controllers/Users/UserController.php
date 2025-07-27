@@ -45,7 +45,7 @@ class UserController extends Controller
             }
 
             // login user
-            Auth::login($user);
+            Auth::guard("web")->login($user);
 
             // send verify email
             $user->sendEmailVerificationNotification();

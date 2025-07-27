@@ -2,12 +2,12 @@
 import { computed, ref } from 'vue'
 import Error from '../../../components/forms/Error.vue'
 import FormInput from '../../../components/forms/FormInput.vue'
-import SubmitButton from './SubmitButton.vue'
 import ErrorAlert from '../../../components/ErrorAlert.vue'
 import { useAuthStore } from '../../../stores/authStore'
 import SuccessAlert from '../../../components/SuccessAlert.vue'
 import { UserUpdateType } from '../../../types'
 import { getRandomNumber } from '../../../utils/helpers'
+import BaseButton from '../../../components/buttons/BaseButton.vue'
 
 const authStore = useAuthStore()
 
@@ -204,25 +204,26 @@ function handleFileChange(event: string | undefined) {
         </div>
       </div>
       <div v-else>
-        <SubmitButton
+        <BaseButton
           type="button"
+          variant="secondary"
           @click="
             () => {
               showChangePassword = !showChangePassword
               togglePersonalForm()
             }
           "
-          >Change Password</SubmitButton
+          >Change Password</BaseButton
         >
       </div>
       <div class="submit-btns">
         <button v-if="!personalDisabled" type="button" class="btn btn-cancel" @click="togglePersonalForm('cancel')">
           Cancel
         </button>
-        <SubmitButton v-if="!personalDisabled" type="submit" :disabled="updating">
+        <BaseButton v-if="!personalDisabled" variant="primary" type="submit" :disabled="updating">
           {{ updating ? 'Saving' : 'Save' }}
-        </SubmitButton>
-        <SubmitButton v-if="personalDisabled" type="button" @click="togglePersonalForm"> Edit </SubmitButton>
+        </BaseButton>
+        <BaseButton v-if="personalDisabled" variant="primary" @click="togglePersonalForm"> Edit </BaseButton>
       </div>
 
       <ErrorAlert :show="!success && !!updateError" :msg="updateError?.toString() ?? ''" />
@@ -248,6 +249,7 @@ div.submit-btns {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+  align-items: center;
 }
 
 label {

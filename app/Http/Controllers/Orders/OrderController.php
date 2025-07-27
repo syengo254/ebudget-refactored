@@ -21,7 +21,7 @@ class OrderController extends Controller
 
     public function index(Request $request, int $page = 1, int $limit = 15)
     {
-        return $this->orderService->getUserOrders(Auth::user(), $page, $limit);
+        //
     }
 
     public function store(OrderRequest $request)
@@ -76,6 +76,19 @@ class OrderController extends Controller
         }
 
         return $order->with("order_items");
+    }
+
+    public function showUserOrderHistory(User $user, int $page = 1, int $limit = 10)
+    {
+        Gate::define("can-view", function (User $authUser, $user) {
+            return $authUser->is($user);
+        });
+
+        if (Gate::denies("can-view", $user)) {
+            return abort(403);
+        }
+
+        return $this->orderService->getUserOrders(Auth::user(), $page, $limit);
     }
 
     public function update(Request $request, Order $order)

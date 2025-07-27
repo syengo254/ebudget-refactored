@@ -4,9 +4,9 @@ import axiosRoot from 'axios'
 import axios from '../../utils/axios'
 import FormInput from '../../components/forms/FormInput.vue'
 import Error from '../../components/forms/Error.vue'
-import SubmitButton from '../profile/components/SubmitButton.vue'
 import SuccessAlert from '../../components/SuccessAlert.vue'
 import ErrorAlert from '../../components/ErrorAlert.vue'
+import BaseButton from '../../components/buttons/BaseButton.vue'
 
 const props = defineProps({
   token: {
@@ -115,9 +115,9 @@ async function handleSubmit() {
         />
       </div>
       <div class="submit-btns">
-        <SubmitButton type="submit" :disabled="loading">
+        <BaseButton type="submit" variant="primary" :disabled="loading">
           {{ loading ? 'Saving...' : 'Change Password' }}
-        </SubmitButton>
+        </BaseButton>
       </div>
     </form>
     <div class="alert-section">

@@ -16,7 +16,7 @@ const searchQuery = ref('')
 const authStore = useAuthStore()
 const productStore = useProductStore()
 
-const showCategoriesBar = computed(() => !['register', 'login', 'profile', 'checkout'].includes(route.name as string))
+const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // handlers
@@ -68,7 +68,9 @@ watch(productStore.filters, (val) => {
       <div class="navigation-links">
         <div v-if="isLoggedIn" class="user-links">
           <p class="text-md">
-            <RouterLink to="/profile" class="text-white decoration-none">Hello, {{ authStore.user?.name }}</RouterLink>
+            <RouterLink to="/profile" class="text-white decoration-none hover-underline"
+              >Hello, {{ authStore.user?.name }}</RouterLink
+            >
           </p>
           <a class="btn btn-sm" @click.prevent="handleLogout">Logout</a>
         </div>
