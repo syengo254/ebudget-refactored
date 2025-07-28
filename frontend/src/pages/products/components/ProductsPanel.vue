@@ -30,7 +30,7 @@ async function handlerPagination(page: number = 1) {
 
 function handleAddToCart(product: ProductType) {
   shoppingCart.addItem(product)
-  toast.show(product.name + ' added to cart.', { lifeTime: 1000, variant: 'info' })
+  toast.show(product.name + ' added to cart.', { lifeTime: 1400, variant: 'info' })
 }
 
 function handleRemoveFromCart(product: ProductType) {
