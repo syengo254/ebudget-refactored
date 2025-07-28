@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import ErrorBoundary from '../../components/ErrorBoundary.vue'
 import { useCartStore } from '../../stores/cartStore'
@@ -6,6 +7,16 @@ import { getFormattedNumber } from '../../utils/helpers'
 import CartProduct from './components/CartProduct.vue'
 
 const cart = useCartStore()
+const prevBgColor = ref('')
+
+onMounted(() => {
+  prevBgColor.value = document.body.style.backgroundColor
+  document.body.style.backgroundColor = 'rgb(234, 234, 234)'
+})
+
+onUnmounted(() => {
+  document.body.style.backgroundColor = prevBgColor.value
+})
 </script>
 
 <template>
@@ -35,7 +46,7 @@ const cart = useCartStore()
 <style scoped>
 section#main {
   position: relative;
-  background-color: rgb(224, 224, 224);
+  background-color: rgb(234, 234, 234);
   width: 100%;
   height: inherit;
   margin: 0;

@@ -132,3 +132,12 @@ export interface OrderItem {
   created_at: string
   product: ProductType
 }
+
+export type NotificationType = 'success' | 'info' | 'error' | 'warning'
+
+export type UserStateType = UserType | null
+export interface UserStoreType {
+  user: UserStateType
+  isLoggedIn: boolean
+  nextAuthCheck: number
+}

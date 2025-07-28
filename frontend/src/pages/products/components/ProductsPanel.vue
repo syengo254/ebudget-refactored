@@ -1,16 +1,22 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
+import { useProductStore } from '../../../stores/productStore'
+import { useCartStore } from '../../../stores/cartStore'
+import useToast from '../../../composables/useToast'
+
 import ProductCard from '../../../components/ProductCard.vue'
 import Pagination from '../../../components/Pagination.vue'
 import LoadingComponent from '../../../components/LoadingComponent.vue'
 import ErrorComponent from '../../../components/ErrorComponent.vue'
-import { useProductStore } from '../../../stores/productStore'
-import { computed } from 'vue'
 import ErrorBoundary from '../../../components/ErrorBoundary.vue'
+import ToastMessageNotification from '../../../components/ToastMessageNotification.vue'
+
 import { ProductsFiltersType, ProductType } from '../../../types'
-import { useCartStore } from '../../../stores/cartStore'
 
 const productStore = useProductStore()
 const shoppingCart = useCartStore()
+const toast = useToast()
 
 const hasFilters = computed(() => Object.keys(productStore.filters).length > 0)
 
@@ -24,6 +30,7 @@ async function handlerPagination(page: number = 1) {
 
 function handleAddToCart(product: ProductType) {
   shoppingCart.addItem(product)
+  toast.show(product.name + ' added to cart.', { lifeTime: 1000, variant: 'info' })
 }
 
 function handleRemoveFromCart(product: ProductType) {
@@ -36,6 +43,7 @@ function removeFilter(filterName: keyof ProductsFiltersType) {
 </script>
 
 <template>
+  <ToastMessageNotification position="top" />
   <ErrorBoundary>
     <LoadingComponent v-if="productStore.loading && !productStore.error" />
     <ErrorComponent
@@ -88,8 +96,8 @@ div.product-panel {
   gap: 1rem;
   margin-bottom: 5rem;
   width: fit-content;
+  height: max-content;
   align-items: stretch;
-  /* margin-inline: auto; */
 }
 @media screen and (max-width: 420px) {
   #products-root {

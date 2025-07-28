@@ -6,6 +6,7 @@ import { ProductType } from '../types'
 import { getFormattedNumber } from '../utils/helpers'
 import { useAuthStore } from '../stores/authStore'
 import { useCartStore } from '../stores/cartStore'
+import BaseButton from './buttons/BaseButton.vue'
 
 const { product } = defineProps({
   product: {
@@ -67,7 +68,14 @@ function navigateToProduct() {
         <button class="add-cart-btn" @click="handleAddToCart">
           {{ inCart ? 'Added' : 'Add to cart' }}
         </button>
-        <button v-if="inCart" class="rm-cart-btn" @click="handleRemove">Remove</button>
+        <BaseButton
+          v-if="inCart"
+          variant="danger"
+          size="sm"
+          style="border-radius: 14px; font-weight: 400; font-size: 0.9rem"
+          @click="handleRemove"
+          >Remove</BaseButton
+        >
       </div>
     </div>
   </div>
@@ -78,9 +86,10 @@ function navigateToProduct() {
   position: relative;
   background-color: rgb(248, 248, 248);
   width: 240px;
-  height: fit-content;
   border: 1px solid rgb(237, 237, 237);
   padding-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
@@ -122,6 +131,7 @@ function navigateToProduct() {
   flex-direction: column;
   row-gap: 0.8em;
   padding: 0.5rem;
+  flex-grow: 1;
 }
 
 .product-info > .product-desc {
@@ -156,6 +166,7 @@ function navigateToProduct() {
   column-gap: 1rem;
   align-items: center;
   justify-content: space-between;
+  margin-top: auto;
 }
 
 button {
@@ -165,17 +176,7 @@ button {
 button.add-cart-btn {
   outline: none;
   border: none;
-  background-color: rgb(51, 97, 224);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 14px;
-  cursor: pointer;
-}
-
-button.rm-cart-btn {
-  outline: none;
-  border: none;
-  background-color: orangered;
+  background-color: rgb(242, 126, 2);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 14px;
@@ -183,7 +184,7 @@ button.rm-cart-btn {
 }
 
 button.add-cart-btn:hover {
-  background-color: rgb(52, 76, 212);
+  background-color: rgb(218, 113, 2);
 }
 
 .product-price {

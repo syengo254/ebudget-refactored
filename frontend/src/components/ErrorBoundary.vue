@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onErrorCaptured, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useLocalStorage } from '../utils/helpers'
+import { LS_USER_SESSION_KEY } from '../config'
+import { UserStoreType } from '../types'
 
 const hasError = ref(false)
 const errorMessage = ref('')
@@ -26,6 +29,15 @@ onErrorCaptured((err, instance, info) => {
 })
 
 function reload() {
+  // clear auth session storage here
+  const ls = useLocalStorage<UserStoreType>(LS_USER_SESSION_KEY, {
+    user: null,
+    isLoggedIn: false,
+    nextAuthCheck: 0,
+  })
+
+  ls.value = { user: null, isLoggedIn: false, nextAuthCheck: 0 }
+
   window.location.reload()
 }
 

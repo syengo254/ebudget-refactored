@@ -12,7 +12,7 @@
 
 <style scoped>
 .group-container {
-  background-color: rgb(222, 222, 222);
+  background-color: rgb(234, 234, 234);
   padding-block: 1rem;
 }
 </style>
