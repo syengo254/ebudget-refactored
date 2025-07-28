@@ -1,19 +1,12 @@
 import { defineStore } from 'pinia'
 import axiosRoot, { AxiosError } from 'axios'
 
-import { UserType, UserUpdateType } from '../types'
+import { UserStateType, UserStoreType, UserUpdateType } from '../types'
 import useAuth from '../composables/useAuth'
 import useLogin from '../composables/useLogin'
 import { ref } from 'vue'
 import { isElapsed, useLocalStorage } from '../utils/helpers'
 import { AUTH_CHECK_INTERVAL, LS_USER_SESSION_KEY } from '../config'
-
-type UserStateType = UserType | null
-interface UserStoreType {
-  user: UserStateType
-  isLoggedIn: boolean
-  nextAuthCheck: number
-}
 
 export const useAuthStore = defineStore('auth', {
   state: (): UserStoreType => {

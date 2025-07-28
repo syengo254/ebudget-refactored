@@ -20,16 +20,16 @@ function showOrderItemsSummary(order: OrderType) {
 }
 
 async function fetchOrders(page: number = 1) {
+  loading.value = true
   const response = await instance.get(`/users/${authStore.user?.id}/orders?page=${page}`)
+  loading.value = false
 
   orders.value = response.data.data
   pagination.value = generatePaginationData(response) as PaginationData
 }
 
 onMounted(async () => {
-  loading.value = true
   await fetchOrders()
-  loading.value = false
 })
 </script>
 

@@ -2,14 +2,15 @@
 import { computed, ref } from 'vue'
 import Error from '../../../components/forms/Error.vue'
 import FormInput from '../../../components/forms/FormInput.vue'
-import ErrorAlert from '../../../components/ErrorAlert.vue'
 import { useAuthStore } from '../../../stores/authStore'
-import SuccessAlert from '../../../components/SuccessAlert.vue'
 import { UserUpdateType } from '../../../types'
 import { getRandomNumber } from '../../../utils/helpers'
 import BaseButton from '../../../components/buttons/BaseButton.vue'
+import useToast from '../../../composables/useToast'
+import ToastMessageNotification from '../../../components/ToastMessageNotification.vue'
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const name = ref(authStore.user?.name)
 const logo = ref<File | null>(null)
@@ -107,11 +108,15 @@ async function handleSubmit() {
     // show alert success
     success.value = done.value
     togglePersonalForm('cancel')
+    toast.show('Changes saved successfully. You may need to re-login if you changed your password.', {
+      variant: 'success',
+    })
   } else if (errors.value !== null) {
     validationErrors.value = errors.value
   } else {
     // show error alert
     updateError.value = error.value
+    toast.show(error.value ? error.value.toString() : 'Sorry, we could not update your info.', { variant: 'error' })
   }
   updating.value = loading.value
 }
@@ -138,6 +143,7 @@ function handleFileChange(event: string | undefined) {
 </script>
 
 <template>
+  <ToastMessageNotification position="bottom" />
   <form action="/profile" method="post" autocomplete="off" enctype="multipart/form-data" @submit.prevent="handleSubmit">
     <fieldset>
       <legend><h4>Personal Information</h4></legend>
@@ -225,12 +231,6 @@ function handleFileChange(event: string | undefined) {
         </BaseButton>
         <BaseButton v-if="personalDisabled" variant="primary" @click="togglePersonalForm"> Edit </BaseButton>
       </div>
-
-      <ErrorAlert :show="!success && !!updateError" :msg="updateError?.toString() ?? ''" />
-      <SuccessAlert
-        msg="Account details updated. You will need to login again if you changed your password"
-        :show="success"
-      />
     </fieldset>
   </form>
 </template>
