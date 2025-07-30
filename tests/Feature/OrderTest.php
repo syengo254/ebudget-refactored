@@ -187,4 +187,57 @@ class OrderTest extends TestCase
             return $mail->hasTo($vendor->user->email);
         });
     }
+
+    public function test_that_when_order_item_is_created_product_stock_amount_is_updated()
+    {
+        $vendor = Store::factory()->create();
+        $initialAmt = 5;
+        $orderAmt = 2;
+
+        $product = Product::factory()->create([
+            "store_id" => $vendor->id,
+            "stock_amount" => $initialAmt,
+        ]);
+
+        $payload = [
+            'order' => [
+                [
+                    'product_id' => $product->id,
+                    'count' => $orderAmt,   
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $this->postJson("/api/orders", $payload);
+
+        $this->assertEquals($initialAmt - $orderAmt, $product->fresh()->stock_amount);
+    }
+
+    public function test_that_when_product_out_of_stock_order_creation_throws_exception()
+    {
+        $vendor = Store::factory()->create();
+
+        $product = Product::factory()->create([
+            "store_id" => $vendor->id,
+            "stock_amount" => 0,
+        ]);
+
+        $payload = [
+            'order' => [
+                [
+                    'product_id' => $product->id,
+                    'count' => 1,   
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $response = $this->postJson("/api/orders", $payload);
+        $response->assertJson([
+            "success" => false,
+            "order" => null,
+            "message" => "Stock amount for '{$product->name}' is below the requested product amount '1'!",
+        ]);
+    }
 }

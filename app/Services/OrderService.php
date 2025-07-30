@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\OrderStatus;
+use App\Enums\StockUpdateType;
 use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -55,15 +56,21 @@ class OrderService
                 'order_no' => OrderNumberGenerator::getNextCode(Order::latest()->first()->order_no ?? "A000000001"),
             ]);
 
+            $productService = new ProductService();
+
             $productIds = collect($attributes['order'])->pluck('product_id');
-            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+            $products = $productService->getProductsById($productIds)->keyBy('id');
+
             foreach ($attributes['order'] as $item) {
                 $product = $products[$item['product_id']];
+
                 $order->orderItems()->create([
                     'product_id' => $item["product_id"],
                     'item_count' => $item["count"],
                     'price_at_order' => $product->price,
                 ]);
+
+                $productService->updateStockAmount($product, $item["count"], StockUpdateType::REMOVE);
             }
 
             logger("ORDER::New customer order created with id: {$order->id} with {$order->orderItems->count()} items");

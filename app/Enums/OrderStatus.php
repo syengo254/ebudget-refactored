@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum OrderStatus:string {
+enum OrderStatus: string
+{
     case NEW = "new";
     case CONFIRMED = "confirmed";
     case PENDING = "pending";

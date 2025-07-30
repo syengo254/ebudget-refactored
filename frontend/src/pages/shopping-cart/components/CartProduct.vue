@@ -133,16 +133,10 @@ const isStocked = computed(() => cartItem.product.stock_amount > 0)
   font-size: 1.2rem;
   cursor: pointer;
 }
+
 .stock-info {
   font-size: 0.9rem;
   margin-bottom: auto;
   margin-top: 1rem;
-}
-
-.stock-info.green {
-  color: rgb(2, 155, 104);
-}
-.stock-info.red {
-  color: orangered;
 }
 </style>

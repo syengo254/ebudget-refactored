@@ -49,16 +49,17 @@ export const useCartStore = defineStore('shopping-cart', {
     },
     addItem(item: ProductType, quantity: number = 1) {
       if (this.items[item.id]) {
-        if (this.items[item.id].product.stock_amount < 1 || this.items[item.id].count == 10) return
+        if (this.items[item.id].product.stock_amount < 1 || this.items[item.id].count == 10) return false
         this.items[item.id].count += quantity
       } else {
         this.items[item.id] = {
-          product: item,
+          product: { ...item },
           count: quantity,
         }
       }
       this.items[item.id].product.stock_amount -= quantity
       this.updateLocalStorage()
+      return true
     },
     removeItem(itemId: keyof CartItemsType, clear = false) {
       this.items[itemId].count--
