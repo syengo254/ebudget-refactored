@@ -24,11 +24,19 @@ const addToCart = () => {
     quantity.value = '1'
   }
 }
+
+const valueToShow = computed(() => {
+  if (cartStore.getItemById(product.id)) {
+    return cartStore.getItemById(product.id).count * cartStore.getItemById(product.id).product.price
+  }
+
+  return product.price
+})
 </script>
 
 <template>
   <div id="mini-cart">
-    <div class="item-price">{{ getFormattedNumber(product?.price ?? 0, 'decimal') }}/=</div>
+    <div class="item-price">{{ getFormattedNumber(valueToShow, 'decimal') }}/=</div>
     <div class="delivery-info">
       <p>
         <span class="block" style="margin-bottom: 0.5rem">Approx. KES 350 Delivery fee.</span>
@@ -41,7 +49,7 @@ const addToCart = () => {
         {{ stocked ? 'In Stock' : 'Out of Stock' }}
       </p>
     </div>
-    <div class="add-cart flex gap-1">
+    <div class="add-cart flex gap-1" style="align-items: center">
       <FormSelect v-model="quantity" name="quantity" style="font-size: 0.95rem; border-radius: 21px">
         <template #options>
           <option v-for="num in 10" :key="num" :value="num">Quantity: {{ num }}</option>
@@ -72,8 +80,7 @@ div#mini-cart {
 }
 
 .add-cart > button {
-  display: inline-block;
-  padding: 0.3rem 0.6rem;
+  padding: 0.5rem 0.9rem;
   background: rgb(242, 126, 2);
   color: white;
   font-family: 'Roboto', sans-serif;

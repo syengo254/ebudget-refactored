@@ -19,7 +19,7 @@ class StoreFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'user_id' => User::factory(),
+            // 'user_id' => User::factory(),
             'logo' => fake()->imageUrl(),
         ];
     }

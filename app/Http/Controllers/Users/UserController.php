@@ -44,6 +44,9 @@ class UserController extends Controller
                 ]);
             }
 
+            // create user_settings entry
+            $user->userSettings()->create([]);
+
             // login user
             Auth::guard('web')->login($user);
 

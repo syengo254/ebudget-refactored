@@ -35,6 +35,10 @@ class CategoryFactory extends Factory
                 'Monitors',
                 'Keyboards',
                 'Graphic cards',
+                'Vegetables',
+                'Radios',
+                'Detergents',
+                'Grooming'
             ]),
         ];
     }

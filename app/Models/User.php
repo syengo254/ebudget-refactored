@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
+    public function userSettings(): HasOne
+    {
+        return $this->hasOne(UserSettings::class);
+    }
+
     public function sendEmailVerificationNotification()
     {
         SendVerifyEmailJob::dispatch($this);

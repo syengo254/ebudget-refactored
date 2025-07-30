@@ -18,12 +18,12 @@ class AddressFactory extends Factory
     public function definition()
     {
         return [
-            'profile_id' => Profile::inRandomOrder()->first() ?? Profile::factory(),
+            // 'profile_id' => Profile::inRandomOrder()->first() ?? Profile::factory(),
             'city' => $this->faker->city(),
             'town' => $this->faker->city(),
             'building' => $this->faker->buildingNumber(),
             'floor' => $this->faker->numberBetween(1, 10),
-            'additional_info' => $this->faker->sentence(),
+            'additional_info' => $this->faker->sentence(8),
         ];
     }
 }
