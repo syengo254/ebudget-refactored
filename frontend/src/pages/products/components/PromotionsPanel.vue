@@ -2,21 +2,38 @@
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../../../stores/cartStore'
 import { getFormattedNumber } from '../../../utils/helpers'
+import BaseButton from '../../../components/buttons/BaseButton.vue'
+import ConfirmDialog from '../../../components/dialogs/ConfirmDialog.vue'
+import { ref } from 'vue'
+import useToast from '../../../composables/useToast'
 
 const router = useRouter()
 const shoppingCart = useCartStore()
+const toast = useToast()
+const openConfirm = ref(false)
 
 function handleGotoCart() {
   router.push('/shopping-cart')
 }
+
+function handleClearCart() {
+  shoppingCart.clearCart()
+  openConfirm.value = false
+  toast.show('Your cart has been cleared.', { variant: 'warning', lifeTime: 2000 })
+}
 </script>
+
 <template>
+  <ConfirmDialog :open="openConfirm" @cancel="openConfirm = false" @confirmed="handleClearCart" />
   <div class="ads-cart-subtotal-viewport">
     <div v-show="shoppingCart.hasItems" class="cart-preview text-center">
       <h4>Subtotal</h4>
       <div class="sub-total-text">{{ getFormattedNumber(shoppingCart.subtotal) }}</div>
       <div class="text-sm">({{ shoppingCart.count }} items)</div>
       <button class="btn btn-outlined" @click="handleGotoCart">Go to Cart</button>
+    </div>
+    <div v-show="shoppingCart.hasItems" class="text-center mt-1 mb-1">
+      <BaseButton size="sm" variant="secondary" @click="openConfirm = true">Clear cart</BaseButton>
     </div>
     <div id="promotions-panel">
       <p>Ads and promotions go here</p>

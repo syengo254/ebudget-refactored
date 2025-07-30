@@ -49,7 +49,7 @@ export const useCartStore = defineStore('shopping-cart', {
     },
     addItem(item: ProductType, quantity: number = 1) {
       if (this.items[item.id]) {
-        if (this.items[item.id].count == 10) return
+        if (this.items[item.id].product.stock_amount < 1 || this.items[item.id].count == 10) return
         this.items[item.id].count += quantity
       } else {
         this.items[item.id] = {
@@ -57,10 +57,12 @@ export const useCartStore = defineStore('shopping-cart', {
           count: quantity,
         }
       }
+      this.items[item.id].product.stock_amount -= quantity
       this.updateLocalStorage()
     },
     removeItem(itemId: keyof CartItemsType, clear = false) {
       this.items[itemId].count--
+      this.items[itemId].product.stock_amount++
 
       if (clear || this.items[itemId].count < 1) {
         delete this.items[itemId]
