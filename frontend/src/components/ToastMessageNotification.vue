@@ -17,7 +17,7 @@ const { toastQueue } = useToast()
   <Teleport to="body">
     <div :class="'toast-group ' + position">
       <TransitionGroup name="toast-transition">
-        <div v-for="toast in toastQueue" :key="toast.message" :class="'toast ' + toast.variant">
+        <div v-for="toast in toastQueue" :key="toast.id" :class="'toast ' + toast.variant">
           {{ toast.read() }}
         </div>
       </TransitionGroup>
@@ -87,29 +87,32 @@ const { toastQueue } = useToast()
 /* variants */
 
 /* transition classes */
-.toast-transition-enter-from {
-  opacity: 0;
-  /* transform: translateY(300px); */
-}
-
+/* .toast-transition-enter-from, */
 .toast-transition-leave-to {
   opacity: 0;
-  /* transform: translateY(-30px); */
+  transform: translateX(100px);
 }
 
 .toast-transition-enter-to,
 .toast-transition-leave-from {
   opacity: 1;
+  transform: translateX(0px);
 }
 
 .toast-transition-leave-active {
-  transition: all 200ms ease-in;
+  transition: all 300ms ease-in;
 }
 .toast-transition-enter-active {
-  animation: wobble 0.3s ease;
+  animation: wobble 0.6s ease;
 }
 
 @keyframes wobble {
+  0% {
+    transform: translateX(100px);
+  }
+  50% {
+    transform: translateX(0);
+  }
   60% {
     transform: translate(6px);
   }
