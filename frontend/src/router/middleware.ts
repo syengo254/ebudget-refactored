@@ -2,41 +2,35 @@
 import { RouteLocationNamedRaw, RouteLocationNormalizedGeneric } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 
-async function auth(to: RouteLocationNormalizedGeneric, fallback?: string): Promise<[boolean, RouteLocationNamedRaw]> {
+async function auth(to?: RouteLocationNormalizedGeneric, fallback?: string): Promise<[boolean, RouteLocationNamedRaw]> {
   const authStore = useAuthStore()
   await authStore.checkSessionAuthenticated()
 
-  return [authStore.loggedIn, { name: fallback ?? 'login', query: { redirect: to.fullPath } }]
+  return [authStore.loggedIn, { name: fallback ?? 'login', query: { redirect: to?.fullPath } }]
 }
 
-async function verified(
-  to: RouteLocationNormalizedGeneric,
-  _fallback?: string,
-): Promise<[boolean, RouteLocationNamedRaw]> {
+async function verified(to?: RouteLocationNormalizedGeneric): Promise<[boolean, RouteLocationNamedRaw]> {
   const authStore = useAuthStore()
   await authStore.checkSessionAuthenticated(true)
-  return [authStore.verified, { name: 'verify-account', query: { redirect: to.fullPath } }]
+  return [authStore.verified, { name: 'verify-account', query: { redirect: to?.fullPath } }]
 }
 
-function unverified(_to: RouteLocationNormalizedGeneric, _fallback?: string): [boolean, RouteLocationNamedRaw] {
+function unverified(): [boolean, RouteLocationNamedRaw] {
   const authStore = useAuthStore()
   return [!authStore.verified, { name: 'back' }]
 }
 
-function user(_to: RouteLocationNormalizedGeneric, _fallback?: string): [boolean, RouteLocationNamedRaw] {
+function user(): [boolean, RouteLocationNamedRaw] {
   const authStore = useAuthStore()
   return [!authStore.hasStore, { name: 'dashboard' }]
 }
 
-function store(_to: RouteLocationNormalizedGeneric, _fallback?: string): [boolean, RouteLocationNamedRaw] {
+function store(): [boolean, RouteLocationNamedRaw] {
   const authStore = useAuthStore()
   return [authStore.hasStore, { name: 'home' }]
 }
 
-async function guest(
-  _to: RouteLocationNormalizedGeneric,
-  _fallback?: string,
-): Promise<[boolean, RouteLocationNamedRaw]> {
+async function guest(): Promise<[boolean, RouteLocationNamedRaw]> {
   const authStore = useAuthStore()
   await authStore.checkSessionAuthenticated()
   return [authStore.loggedIn === false, authStore.hasStore ? { name: 'dashboard' } : { name: 'home' }]
@@ -45,7 +39,7 @@ async function guest(
 const MAP: Record<
   string,
   (
-    to: RouteLocationNormalizedGeneric,
+    to?: RouteLocationNormalizedGeneric,
     fallback?: string,
   ) => [boolean, RouteLocationNamedRaw] | Promise<[boolean, RouteLocationNamedRaw]>
 > = {
