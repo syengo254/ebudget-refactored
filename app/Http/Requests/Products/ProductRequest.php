@@ -28,9 +28,9 @@ class ProductRequest extends FormRequest
             'name' => 'required|string|max:400',
             'price' => 'required|numeric|min:1',
             'stock' => 'required|numeric|min:1',
-            "image" => ["required", File::types(["jpg", "jpeg", "png", "webp"])->min(2)->max(1024 * 5)],
-            'category' => "sometimes|integer|min:1|exists:categories,id",
-            'categoryname' => "sometimes|string|min:4",
+            'image' => ['required', File::types(['jpg', 'jpeg', 'png', 'webp'])->min(2)->max(1024 * 5)],
+            'category' => 'sometimes|integer|min:1|exists:categories,id',
+            'categoryname' => 'sometimes|string|min:4',
         ];
     }
 }

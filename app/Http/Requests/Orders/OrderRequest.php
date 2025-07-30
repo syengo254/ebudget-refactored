@@ -14,7 +14,7 @@ class OrderRequest extends FormRequest
      */
     public function authorize()
     {
-        return !Auth::guest();
+        return ! Auth::guest();
     }
 
     /**
@@ -25,10 +25,10 @@ class OrderRequest extends FormRequest
     public function rules()
     {
         return [
-            "order" => "required|array|min:1",
-            "order.*.product_id" => "required|integer|min:1|exists:products,id",
-            "order.*.count" => "required|integer|min:1",
-            "cart_id" => "required|string|min:10"
+            'order' => 'required|array|min:1',
+            'order.*.product_id' => 'required|integer|min:1|exists:products,id',
+            'order.*.count' => 'required|integer|min:1',
+            'cart_id' => 'required|string|min:10',
         ];
     }
 }

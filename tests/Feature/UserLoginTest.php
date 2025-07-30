@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Http\Resources\UserResource;
 use App\Models\Address;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 // use Laravel\Sanctum\Sanctum;
@@ -20,7 +18,7 @@ class UserLoginTest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withHeaders([
@@ -49,13 +47,13 @@ class UserLoginTest extends TestCase
     // test that user with correct credentials can login
     public function test_that_a_user_able_to_login_with_correct_credentials()
     {
-        $response = $this->postJson("/api/login", [
-            "email" => $this->user->email,
-            "password" => "Password1234!",
+        $response = $this->postJson('/api/login', [
+            'email' => $this->user->email,
+            'password' => 'Password1234!',
         ]);
 
         $response->assertOk()->assertJson([
-            "success" => true,
+            'success' => true,
         ]);
 
         $this->assertAuthenticatedAs($this->user);
@@ -64,13 +62,13 @@ class UserLoginTest extends TestCase
     // test that user with incorrect credentials cannot login
     public function test_that_login_fails_with_wrong_credentials()
     {
-        $response = $this->postJson("/api/login", [
-            "email" => $this->user->email,
-            "password" => "Password124!",
+        $response = $this->postJson('/api/login', [
+            'email' => $this->user->email,
+            'password' => 'Password124!',
         ]);
 
         $response->assertStatus(401)->assertJson([
-            "success" => false,
+            'success' => false,
         ]);
     }
 

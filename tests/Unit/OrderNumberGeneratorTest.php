@@ -14,8 +14,8 @@ class OrderNumberGeneratorTest extends TestCase
      */
     public function test_that_generator_sequence_works_with_previous_number()
     {
-        $current = "AZ999999999";
-        $next = "BA000000001";
+        $current = 'AZ999999999';
+        $next = 'BA000000001';
 
         $result = OrderNumberGenerator::getNextCode($current);
 

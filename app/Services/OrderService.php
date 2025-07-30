@@ -7,7 +7,6 @@ use App\Enums\StockUpdateType;
 use App\Http\DTOs\OrderDTO;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
 use App\Models\User;
 use App\Support\OrderNumberGenerator;
 use Illuminate\Support\Facades\Auth;
@@ -16,15 +15,14 @@ use Throwable;
 
 class OrderService
 {
-
     public function getUserOrders(User $user, int $page, int $limit)
     {
         return $user->orders()
-            ->select("id", "order_no", "status", "actual_delivery_date", "expected_delivery_date")
-            ->with("orderItems.product:id,name")
+            ->select('id', 'order_no', 'status', 'actual_delivery_date', 'expected_delivery_date')
+            ->with('orderItems.product:id,name')
             ->addSelect([
-                "total" => OrderItem::whereColumn("order_id", 'orders.id')
-                    ->selectRaw("sum(item_count * price_at_order) as cost")
+                'total' => OrderItem::whereColumn('order_id', 'orders.id')
+                    ->selectRaw('sum(item_count * price_at_order) as cost'),
             ])
             ->latest()
             ->paginate($limit);
@@ -51,12 +49,12 @@ class OrderService
                 'delivery_charge' => 350,
                 'expected_delivery_date' => now()->addDays(random_int(1, 3))->toDateString(),
                 'latest_delivery_date' => now()->addDays(random_int(3, 5))->toDateString(),
-                'actual_delivery_date' => NULL,
+                'actual_delivery_date' => null,
                 'address_id' => Auth::user()->profile->active_address_id,
-                'order_no' => OrderNumberGenerator::getNextCode(Order::latest()->first()->order_no ?? "A000000001"),
+                'order_no' => OrderNumberGenerator::getNextCode(Order::latest()->first()->order_no ?? 'A000000001'),
             ]);
 
-            $productService = new ProductService();
+            $productService = new ProductService;
 
             $productIds = collect($attributes['order'])->pluck('product_id');
             $products = $productService->getProductsById($productIds)->keyBy('id');
@@ -65,17 +63,18 @@ class OrderService
                 $product = $products[$item['product_id']];
 
                 $order->orderItems()->create([
-                    'product_id' => $item["product_id"],
-                    'item_count' => $item["count"],
+                    'product_id' => $item['product_id'],
+                    'item_count' => $item['count'],
                     'price_at_order' => $product->price,
                 ]);
 
-                $productService->updateStockAmount($product, $item["count"], StockUpdateType::REMOVE);
+                $productService->updateStockAmount($product, $item['count'], StockUpdateType::REMOVE);
             }
 
             logger("ORDER::New customer order created with id: {$order->id} with {$order->orderItems->count()} items");
 
             DB::commit();
+
             return new OrderDTO($order, true, null);
         } catch (Throwable $e) {
             DB::rollBack();
@@ -95,10 +94,10 @@ class OrderService
     {
         // only confirm new orders that are more than 12 hrs old.
         return Order::query()
-            ->where("status", "=", OrderStatus::NEW)
-            ->where("created_at", "<=", now()->subHours(intval(env("ORDER_CONFIRM_AGE", "12"))))
+            ->where('status', '=', OrderStatus::NEW)
+            ->where('created_at', '<=', now()->subHours(intval(env('ORDER_CONFIRM_AGE', '12'))))
             ->update([
-                "status" => OrderStatus::CONFIRMED,
+                'status' => OrderStatus::CONFIRMED,
             ]);
     }
 }

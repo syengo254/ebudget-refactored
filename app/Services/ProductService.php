@@ -9,7 +9,6 @@ use Illuminate\Support\Collection;
 
 class ProductService
 {
-
     public function updateStockAmount(Product $product, int $amount, StockUpdateType $updateType = StockUpdateType::ADD)
     {
         if ($updateType === StockUpdateType::ADD) {

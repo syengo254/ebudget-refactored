@@ -10,6 +10,7 @@ use Tests\TestCase;
 class UserTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * A basic test example.
      *
@@ -18,10 +19,10 @@ class UserTest extends TestCase
     public function test_that_when_user_is_created_an_email_job_is_pushed_to_queue()
     {
         $user_data = [
-            "name" => "Example User",
-            "email" => "exampleuser@example.com",
-            "password" => "Password1234!",
-            "has_store" => true,
+            'name' => 'Example User',
+            'email' => 'exampleuser@example.com',
+            'password' => 'Password1234!',
+            'has_store' => true,
         ];
 
         $user = \App\Models\User::create($user_data);

@@ -18,4 +18,4 @@ class ProfileFactory extends Factory
             'active_address_id' => null, // can be set after creating address
         ];
     }
-} 
+}

@@ -9,14 +9,13 @@ use App\Http\Requests\Orders\OrderRequest;
 use App\Models\Order;
 use App\Models\User;
 use App\Services\OrderService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Exception;
 
 class OrderController extends Controller
 {
-
     public function __construct(protected OrderService $orderService) {}
 
     public function index(Request $request, int $page = 1, int $limit = 15)
@@ -33,14 +32,14 @@ class OrderController extends Controller
         }
 
         $validated = $request->validated();
-        $cart_id = $validated["cart_id"];
-        $cartInSession = request()->session()->get("orders.latest_cart_id", false);
+        $cart_id = $validated['cart_id'];
+        $cartInSession = request()->session()->get('orders.latest_cart_id', false);
 
-        if ($cartInSession && $cartInSession["cart_id"] == $cart_id) {
+        if ($cartInSession && $cartInSession['cart_id'] == $cart_id) {
             return (new OrderDTO(
-                $this->orderService->find($cartInSession["order_id"]),
+                $this->orderService->find($cartInSession['order_id']),
                 true,
-                new Exception("Order already exists")
+                new Exception('Order already exists')
             ))->toArray();
         }
 
@@ -48,43 +47,43 @@ class OrderController extends Controller
 
         if ($orderDTO->success) {
             // save cart_id to session to avoid multiple requests
-            request()->session()->put("orders.latest_cart_id", [
-                "cart_id" => $cart_id,
-                "order_id" => $orderDTO->order->id,
+            request()->session()->put('orders.latest_cart_id', [
+                'cart_id' => $cart_id,
+                'order_id' => $orderDTO->order->id,
             ]);
 
-            (new SendOrderEmails())->handle($orderDTO->order);
+            (new SendOrderEmails)->handle($orderDTO->order);
         }
 
         return response()->json([
-            "success" => $orderDTO->success,
-            "message" => $orderDTO->success
-                ? "Your order has been created."
-                : $orderDTO->error?->getMessage() ?? "Failed to create your order.",
-            "order" => $orderDTO->order,
+            'success' => $orderDTO->success,
+            'message' => $orderDTO->success
+                ? 'Your order has been created.'
+                : $orderDTO->error?->getMessage() ?? 'Failed to create your order.',
+            'order' => $orderDTO->order,
         ]);
     }
 
     public function show(Order $order)
     {
-        Gate::define("can-view", function (User $user, Order $order) {
+        Gate::define('can-view', function (User $user, Order $order) {
             return $user->is($order->user);
         });
 
-        if (Gate::denies("can-view", $order)) {
+        if (Gate::denies('can-view', $order)) {
             return abort(403);
         }
 
-        return $order->with("order_items");
+        return $order->with('order_items');
     }
 
     public function showUserOrderHistory(User $user, int $page = 1, int $limit = 10)
     {
-        Gate::define("can-view", function (User $authUser, $user) {
+        Gate::define('can-view', function (User $authUser, $user) {
             return $authUser->is($user);
         });
 
-        if (Gate::denies("can-view", $user)) {
+        if (Gate::denies('can-view', $user)) {
             return abort(403);
         }
 

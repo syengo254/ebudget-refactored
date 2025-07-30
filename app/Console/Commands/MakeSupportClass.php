@@ -25,12 +25,12 @@ class MakeSupportClass extends GeneratorCommand
 
     protected function getStub()
     {
-        return __DIR__ . '/stubs/support.stub';
+        return __DIR__.'/stubs/support.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\\Support';
+        return $rootNamespace.'\\Support';
     }
 
     protected function getArguments()

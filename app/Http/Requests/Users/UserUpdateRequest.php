@@ -15,7 +15,7 @@ class UserUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard("web")->user();
+        return Auth::guard('web')->user();
     }
 
     /**
@@ -26,9 +26,9 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "sometimes|string",
-            "password" => "sometimes|string|confirmed|min:8",
-            "logo" => ["sometimes", File::types(["jpg", "jpeg", "png", "webp", "bmp"])->min(1)->max(1024 * 5)],
+            'name' => 'sometimes|string',
+            'password' => 'sometimes|string|confirmed|min:8',
+            'logo' => ['sometimes', File::types(['jpg', 'jpeg', 'png', 'webp', 'bmp'])->min(1)->max(1024 * 5)],
         ];
     }
 }

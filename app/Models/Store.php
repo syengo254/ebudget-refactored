@@ -17,15 +17,14 @@ class Store extends Authenticatable
 
     protected $fillable = [
         'user_id',
-        'name', 
-        'logo', 
+        'name',
+        'logo',
     ];
-    
 
     protected function logo(): CastsAttribute
     {
         return CastsAttribute::make(
-            get: fn ($value) => asset('storage/' . $value),
+            get: fn ($value) => asset('storage/'.$value),
         );
     }
 

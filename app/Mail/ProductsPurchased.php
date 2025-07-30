@@ -2,14 +2,12 @@
 
 namespace App\Mail;
 
-use App\Models\OrderItem;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class ProductsPurchased extends Mailable
@@ -18,7 +16,6 @@ class ProductsPurchased extends Mailable
 
     /**
      * Create a new message instance.
-     * @param Collection $orderItems
      *
      * @return void
      */
@@ -37,8 +34,8 @@ class ProductsPurchased extends Mailable
         $orderNo = $this->orderItems->first()->order->order_no;
 
         return new Envelope(
-            from: new Address(env("SALES_EMAIL_ADDRESS", "sales@e-budget.jubatus.co.ke"), env("SALES_EMAIL_ADDRESS_NAME", "E-budget Sales Team")),
-            subject: 'Products Purchased - Order No: ' . $orderNo,
+            from: new Address(env('SALES_EMAIL_ADDRESS', 'sales@e-budget.jubatus.co.ke'), env('SALES_EMAIL_ADDRESS_NAME', 'E-budget Sales Team')),
+            subject: 'Products Purchased - Order No: '.$orderNo,
         );
     }
 
@@ -49,7 +46,7 @@ class ProductsPurchased extends Mailable
      */
     public function content()
     {
-        $total = $this->orderItems->reduce(function($acc, $curr){
+        $total = $this->orderItems->reduce(function ($acc, $curr) {
             return $acc + (($curr->item_count ?? 0) * ($curr->price_at_order ?? 0));
         }, 0);
 

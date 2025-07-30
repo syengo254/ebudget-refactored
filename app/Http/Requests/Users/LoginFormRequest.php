@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Users;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
@@ -16,7 +15,7 @@ class LoginFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard("web")->guest();
+        return Auth::guard('web')->guest();
     }
 
     /**
@@ -27,8 +26,8 @@ class LoginFormRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => "required|email|min:8",
-            "password" => Password::defaults(),
+            'email' => 'required|email|min:8',
+            'password' => Password::defaults(),
         ];
     }
 }

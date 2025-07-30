@@ -27,23 +27,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        RateLimiter::for("login-attempts", function (Request $request) {
+        RateLimiter::for('login-attempts', function (Request $request) {
             return Limit::perMinute(5)
                 ->by($request->user()->id ?? $request->ip)
                 ->response(function (Request $request, array $headers) {
                     return response()->json([
-                        "message" => "Max login attempts exceeded. Retry after 5 minutes."
+                        'message' => 'Max login attempts exceeded. Retry after 5 minutes.',
                     ], 429, $headers);
                 });
         });
 
         // custom reset password link
         ResetPassword::createUrlUsing(function (\App\Models\User $user, string $token) {
-            $url = env("UI_APP_URL");
+            $url = env('UI_APP_URL');
             $url = "{$url}/reset-password?";
             $email = $user->email;
 
-            return $url . http_build_query(compact("email", "token"));
+            return $url.http_build_query(compact('email', 'token'));
         });
     }
 }

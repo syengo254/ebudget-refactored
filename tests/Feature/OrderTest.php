@@ -2,18 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Product;
-use App\Models\Profile;
-use App\Models\Address;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCreated;
 use App\Mail\ProductsPurchased;
+use App\Models\Address;
+use App\Models\Product;
+use App\Models\Profile;
 use App\Models\Store;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use Tests\TestCase;
 
 // use Laravel\Sanctum\Sanctum;
 
@@ -24,7 +24,7 @@ class OrderTest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withHeaders([
@@ -147,7 +147,7 @@ class OrderTest extends TestCase
             'order' => [
                 [
                     'product_id' => 1,
-                    'count' => 1,   
+                    'count' => 1,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),
@@ -160,7 +160,7 @@ class OrderTest extends TestCase
         });
     }
 
-    public function test_that_vendor_productPuchased_email_is_sent_upon_succesful_order()
+    public function test_that_vendor_product_puchased_email_is_sent_upon_succesful_order()
     {
         Mail::fake();
         Queue::fake();
@@ -168,22 +168,22 @@ class OrderTest extends TestCase
         $vendor = Store::factory()->create();
 
         $product = Product::factory()->create([
-            "store_id" => $vendor->id,
+            'store_id' => $vendor->id,
         ]);
 
         $payload = [
             'order' => [
                 [
                     'product_id' => $product->id,
-                    'count' => 1,   
+                    'count' => 1,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),
         ];
 
-        $this->postJson("/api/orders", $payload);
-        
-        Mail::assertQueued(ProductsPurchased::class, function($mail) use ($vendor) {
+        $this->postJson('/api/orders', $payload);
+
+        Mail::assertQueued(ProductsPurchased::class, function ($mail) use ($vendor) {
             return $mail->hasTo($vendor->user->email);
         });
     }
@@ -195,21 +195,21 @@ class OrderTest extends TestCase
         $orderAmt = 2;
 
         $product = Product::factory()->create([
-            "store_id" => $vendor->id,
-            "stock_amount" => $initialAmt,
+            'store_id' => $vendor->id,
+            'stock_amount' => $initialAmt,
         ]);
 
         $payload = [
             'order' => [
                 [
                     'product_id' => $product->id,
-                    'count' => $orderAmt,   
+                    'count' => $orderAmt,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),
         ];
 
-        $this->postJson("/api/orders", $payload);
+        $this->postJson('/api/orders', $payload);
 
         $this->assertEquals($initialAmt - $orderAmt, $product->fresh()->stock_amount);
     }
@@ -219,25 +219,25 @@ class OrderTest extends TestCase
         $vendor = Store::factory()->create();
 
         $product = Product::factory()->create([
-            "store_id" => $vendor->id,
-            "stock_amount" => 0,
+            'store_id' => $vendor->id,
+            'stock_amount' => 0,
         ]);
 
         $payload = [
             'order' => [
                 [
                     'product_id' => $product->id,
-                    'count' => 1,   
+                    'count' => 1,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),
         ];
 
-        $response = $this->postJson("/api/orders", $payload);
+        $response = $this->postJson('/api/orders', $payload);
         $response->assertJson([
-            "success" => false,
-            "order" => null,
-            "message" => "Stock amount for '{$product->name}' is below the requested product amount '1'!",
+            'success' => false,
+            'order' => null,
+            'message' => "Stock amount for '{$product->name}' is below the requested product amount '1'!",
         ]);
     }
 }

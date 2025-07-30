@@ -21,7 +21,7 @@ return new class extends Migration
             $table->mediumText('name');
             $table->foreignIdFor(Category::class);
             $table->decimal('price')->default(0);
-            $table->integer("stock_amount")->default(100);
+            $table->integer('stock_amount')->default(100);
             $table->text('image')->nullable();
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
