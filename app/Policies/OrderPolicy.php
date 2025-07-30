@@ -36,11 +36,11 @@ class OrderPolicy
      *
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user, $order)
+    public function create(User $user, Order $order)
     {
-        return $user->email_verified_at
+        return $user->email_verified_at && !$user->has_store
             ? Response::allow()
-            : Response::deny('You need to verify your account.');
+            : Response::deny('You are not authorised to make an order.');
     }
 
     /**

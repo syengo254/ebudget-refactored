@@ -18,7 +18,7 @@ class UserSettingsFactory extends Factory
     public function definition()
     {
         return [
-            // 'user_id' => User::inRandomOrder()->first() ??User::factory(),
+            'user_id' => User::inRandomOrder()->first() ?? User::factory(),
             'is_admin' => false,
             'is_staff' => false,
             'is_blocked' => false,

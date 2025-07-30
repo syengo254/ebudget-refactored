@@ -36,7 +36,7 @@ class ProductFactory extends Factory
             'category_id' => Category::inRandomOrder()->first() ?? Category::factory(),
             'price' => fake()->numberBetween(50_000, 250_000),
             'store_id' => Store::inRandomOrder()->first() ?? Store::factory(),
-            'stock_amount' => fake()->numberBetween(1, 10),
+            'stock_amount' => fake()->numberBetween(5, 10),
             'image' => fake()->randomElement([
                 'products/colgate-toothpaste.jpg',
                 'products/geisha.jpg',
