@@ -7,6 +7,7 @@ use App\Http\Requests\Products\ProductRequest;
 use App\Http\Resources\ProductViewResource;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\ProductService;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ use Illuminate\Validation\Rules\File;
 
 class ProductController extends Controller
 {
+    public function __construct(protected ProductService $productService) {}
+
     public function index(Request $request, int $page = 1, int $limit = 12)
     {
         $limit = request()->limit ?? $limit;
@@ -23,7 +26,7 @@ class ProductController extends Controller
         $products = Product::query();
 
         if ($request->filled('q')) {
-            $products->where('name', 'LIKE', '%'.$request->q.'%');
+            $products->where('name', 'LIKE', '%' . $request->q . '%');
             $products->orWhereHas('category', function (Builder $query) use ($request) {
                 $query->where('name', 'LIKE', "%{$request->q}%");
             });
@@ -71,18 +74,10 @@ class ProductController extends Controller
                     'name' => ucfirst($validated['categoryname']),
                 ]);
             }
-            $product = Product::create([
-                'name' => $validated['name'],
-                'price' => $validated['price'],
-                'image' => '',
-                'stock_amount' => $validated['stock'],
-                'category_id' => $category ? $category->id : $validated['category'] ?? 1,
-                'store_id' => $store->id,
-            ]);
 
-            $path = $validated['image']->store('product-images');
-            $product->image = $path;
-            $product->save();
+            $validated["category"] = $category ? $category->id : $validated["category"];
+
+            $product = $this->productService->createProduct($store, $validated);
         });
 
         return response()->json([

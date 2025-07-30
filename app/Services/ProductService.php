@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\StockUpdateType;
 use App\Exceptions\ProductStockException;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Support\Collection;
 
 class ProductService
@@ -27,5 +28,23 @@ class ProductService
     public function getProductsById(array|Collection $productIds)
     {
         return Product::whereIn('id', $productIds)->get();
+    }
+
+    public function createProduct(Store $store, array $attributes): Product
+    {
+        $product = Product::create([
+            'name' => $attributes['name'],
+            'price' => $attributes['price'],
+            'image' => '',
+            'stock_amount' => $attributes['stock'],
+            'category_id' => $attributes['category'] ?? 1,
+            'store_id' => $store->id,
+        ]);
+
+        $path = $attributes['image']->store('product-images');
+        $product->image = $path;
+        $product->save();
+
+        return $product;
     }
 }
