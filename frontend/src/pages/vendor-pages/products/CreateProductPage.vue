@@ -92,7 +92,7 @@ async function handleSubmit() {
 }
 
 onMounted(async () => {
-  await productStore.fetchCategories()
+  await productStore.fetchCategories(true)
 
   if (route.name == 'edit-product') {
     mode.value = 'edit'

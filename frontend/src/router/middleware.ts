@@ -9,8 +9,9 @@ async function auth(to: RouteLocationNormalizedGeneric): Promise<[boolean, Route
   return [authStore.loggedIn, { name: 'login', query: { redirect: to.fullPath } }]
 }
 
-function verified(to: RouteLocationNormalizedGeneric): [boolean, RouteLocationNamedRaw] {
+async function verified(to: RouteLocationNormalizedGeneric): Promise<[boolean, RouteLocationNamedRaw]> {
   const authStore = useAuthStore()
+  await authStore.checkSessionAuthenticated(true)
   return [authStore.verified, { name: 'verify-account', query: { redirect: to.fullPath } }]
 }
 
