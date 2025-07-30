@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import BaseTable from '../../components/table/BaseTable.vue'

@@ -8,10 +8,11 @@ const toastString = 'A simple toast notification'
 vi.mock('../composables/useToast', () => ({
   default: () => ({
     toastQueue: computed(() => [new Toast(toastString, true, {})]),
+    show: vi.fn(),
   }),
 }))
 
-test('that a toastnotification is shown', () => {
+test('that a toast notification renders properly', () => {
   // Arrange & Act
   mount(ToastMessageNotification, { props: { position: 'center' } })
 
