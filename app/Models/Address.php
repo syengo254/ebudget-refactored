@@ -19,6 +19,11 @@ class Address extends Model
         'profile_id',
     ];
 
+    protected $hidden = [
+        "created_at",
+        "updated_at",
+    ];
+
     public function profile(): BelongsTo
     {
         return $this->belongsTo(Profile::class);

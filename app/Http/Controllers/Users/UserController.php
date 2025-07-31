@@ -55,7 +55,7 @@ class UserController extends Controller
 
             return [
                 'success' => true,
-                'user' => new UserResource($user),
+                'user' => new UserResource(Auth::user()->with('userSettings')->get()->first()),
             ];
         }
 
@@ -71,7 +71,7 @@ class UserController extends Controller
             abort(401);
         }
 
-        return UserResource::make($user);
+        return UserResource::make(Auth::user()->with('userSettings')->get()->first());
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -115,19 +115,14 @@ class UserController extends Controller
 
             return [
                 'success' => $saved,
-                'user' => new UserResource($user),
+                'user' => new UserResource(Auth::user()->with("userSettings")->get()->first()),
             ];
         } catch (Exception $e) {
             return [
                 'success' => false,
-                'user' => new UserResource($user),
+                'user' => new UserResource(Auth::user()->with("userSettings")->get()->first()),
                 'Exception' => $e->getMessage(),
             ];
         }
-    }
-
-    public function destroy(User $user)
-    {
-        //
     }
 }

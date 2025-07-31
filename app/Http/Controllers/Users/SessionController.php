@@ -20,7 +20,7 @@ class SessionController extends Controller
         if (Auth::user()) {
             return response()->json([
                 'authenticated' => true,
-                'user' => new UserResource(Auth::user()->fresh()),
+                'user' => new UserResource(Auth::user()->with('userSettings')->get()->first()),
             ]);
         }
 
@@ -41,7 +41,7 @@ class SessionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'user' => new UserResource(Auth::user()),
+                'user' => new UserResource(Auth::user()->with('userSettings')->get()->first()),
             ]);
         } else {
             return response()->json([

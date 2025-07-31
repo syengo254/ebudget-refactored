@@ -12,6 +12,12 @@ class UserSettings extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_admin' => 'bool',
+        'is_staff' => 'bool',
+        'is_blocked' => 'bool',
+        'two_fa_enabled' => 'bool',
+    ];
 
     public function user(): BelongsTo
     {
