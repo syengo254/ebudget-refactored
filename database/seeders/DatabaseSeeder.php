@@ -14,15 +14,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory()->count(5)->create();
+        \App\Models\User::factory()->count(1)->create([
+            "email" => "david@example.com",
+            "name" => "David Syengo",
+            "has_store" => false,
+        ]);
+        \App\Models\User::factory()->count(1)->create([
+            "email" => "wyda.super@example.com",
+            "name" => "Wyda & Sons LTD",
+            "has_store" => true,
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        //     'has_store' => false,
-        // ]);
-
-        \App\Models\Category::factory(6)->create();
-        \App\Models\Product::factory(20)->create();
+        \App\Models\Category::factory(8)->create();
+        \App\Models\Product::factory(32)->create();
     }
 }

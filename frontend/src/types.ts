@@ -7,6 +7,15 @@ export type UserType = {
   address?: AddressType
   profile?: ProfileType
   verified: boolean
+  userSettings: UserSettingsType
+}
+
+export type UserSettingsType = {
+  id: number
+  isAdmin: boolean
+  isStaff: boolean
+  isBlocked: boolean
+  twoFaEnabled: boolean
 }
 
 export type ProfileType = {

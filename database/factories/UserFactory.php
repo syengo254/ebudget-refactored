@@ -54,7 +54,9 @@ class UserFactory extends Factory
 
             // create store if true
             if($user->has_store){
-                $user->store()->save(Store::factory()->make());
+                $user->store()->save(Store::factory()->make([
+                    "name" => $user->name,
+                ]));
             }
 
             // create user_settings

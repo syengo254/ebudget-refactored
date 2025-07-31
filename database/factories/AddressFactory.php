@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Address;
 use App\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -25,5 +26,13 @@ class AddressFactory extends Factory
             'floor' => $this->faker->numberBetween(1, 10),
             'additional_info' => $this->faker->sentence(8),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function(Address $addr){
+            $addr->profile->active_address_id = $addr->id;
+            $addr->profile->save();
+        });
     }
 }
