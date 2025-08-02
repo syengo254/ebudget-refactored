@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeMount, ref, watch } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import SearchIcon from '../assets/search.png'
 import Logo from '../assets/footer_logo.png'
@@ -16,17 +16,25 @@ const searchQuery = ref('')
 const authStore = useAuthStore()
 const productStore = useProductStore()
 
+const isReady = ref(false)
+
 const showCategoriesBar = computed(() => !['register', 'login'].includes(route.name as string))
 const isLoggedIn = computed(() => authStore.isLoggedIn)
+const showLogout = ref(false)
 
 // handlers
 const handleLogout = async () => {
+  showLogout.value = true
   const success = await authStore.authLogout()
   if (success) {
-    router.push({
-      path: '/login',
-      replace: true,
-    })
+    router
+      .push({
+        path: '/login',
+        replace: true,
+      })
+      .finally(() => {
+        showLogout.value = false
+      })
   }
 }
 
@@ -46,10 +54,16 @@ watch(productStore.filters, (val) => {
     searchQuery.value = ''
   }
 })
+
+onBeforeMount(async () => {
+  await authStore.checkSessionAuthenticated()
+
+  isReady.value = true
+})
 </script>
 
 <template>
-  <div class="header-wrapper">
+  <div v-if="isReady" class="header-wrapper">
     <header>
       <div class="logo">
         <RouterLink :to="authStore.hasStore ? { name: 'dashboard' } : '/'"
@@ -77,7 +91,7 @@ watch(productStore.filters, (val) => {
         <div v-else>
           <nav>
             <RouterLink to="/login">Login</RouterLink>
-            <RouterLink to="register">Register</RouterLink>
+            <RouterLink to="/register">Register</RouterLink>
           </nav>
           <ul class="small-nav">
             <li>
@@ -99,7 +113,10 @@ watch(productStore.filters, (val) => {
   </div>
   <UserMenu v-if="showCategoriesBar" />
   <main>
-    <slot />
+    <div v-if="showLogout">
+      <p>Signing you out, please wait...</p>
+    </div>
+    <slot v-else />
   </main>
   <footer>
     <div class="footer-logo"><img :src="Logo" alt="logo" /></div>

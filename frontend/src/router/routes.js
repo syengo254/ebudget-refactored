@@ -5,6 +5,7 @@ import AllProductsPage from '../pages/products/AllProductsPage.vue'
 import ShoppingCartPage from '../pages/shopping-cart/ShoppingCartPage.vue'
 
 import vendorRoutes from './vendor-routes'
+import staffRoutes from './staff-routes'
 
 export const routes = [
   {
@@ -116,4 +117,7 @@ export const routes = [
       title: 'Playground | E-budget.com | Best Online Shoping Experience',
     },
   },
+  //========= Staff Routes =============
+  staffRoutes,
+  //========= End Staff Routes =============
 ]

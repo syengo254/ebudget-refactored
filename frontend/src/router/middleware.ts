@@ -36,6 +36,10 @@ async function guest(): Promise<[boolean, RouteLocationNamedRaw]> {
   return [authStore.loggedIn === false, authStore.hasStore ? { name: 'dashboard' } : { name: 'home' }]
 }
 
+function staff(_to?: RouteLocationNormalizedGeneric, fallback?: string): [boolean, RouteLocationNamedRaw] {
+  return [useAuthStore().isStaff, { name: fallback ?? '/staff/login' }]
+}
+
 const MAP: Record<
   string,
   (
@@ -49,6 +53,7 @@ const MAP: Record<
   unverified,
   store,
   user,
+  staff,
 }
 
 export async function resolve(guard: string, to: RouteLocationNormalizedGeneric, fallback?: string) {
