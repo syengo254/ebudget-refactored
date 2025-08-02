@@ -15,17 +15,21 @@ defineProps({
     <div v-if="open" class="backdrop">
       <div class="modal dialog">
         <div class="head">
-          <p>Confirm product deletion</p>
+          <p>
+            <slot name="head"> Confirm product deletion </slot>
+          </p>
         </div>
         <div class="body">
-          <p>Do you wish to proceed?</p>
+          <p>
+            <slot name="body"> Do you wish to proceed? </slot>
+          </p>
         </div>
         <div class="footer">
           <div class="footer-buttons">
             <BaseButton variant="outlined" style="border-radius: 3.5px; font-size: 1rem" @click="$emit('cancel')"
               >Cancel</BaseButton
             >
-            <BaseButton @click="$emit('confirmed')">Confirm</BaseButton>
+            <BaseButton variant="danger" @click="$emit('confirmed')">Confirm</BaseButton>
           </div>
         </div>
       </div>
