@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 import ProductForm from './components/ProductForm.vue'
 
@@ -10,11 +10,11 @@ import useToast from '../../../composables/useToast'
 import ToastMessageNotification from '../../../components/ToastMessageNotification.vue'
 
 const route = useRoute()
-const router = useRouter()
 
 const mode = ref<'edit' | 'create'>('create')
 const productId = ref<number | undefined>(undefined)
 const toast = useToast()
+const enableInputs = ref(true)
 
 const { createError, success, createOrUpdateProduct, validationErrors, loading } = useCreateorUpdateProduct()
 
@@ -56,18 +56,29 @@ function setPreviewSrc(url: string) {
 
 const cancelCreate = () => {
   if (mode.value === 'edit') {
-    router.push({
-      name: 'catalog',
-    })
+    enableInputs.value = false
   }
 }
 
 onMounted(async () => {
   if (route.name == 'edit-product') {
     mode.value = 'edit'
+    enableInputs.value = false
     productId.value = parseInt(route.params.id as string)
+  } else {
+    enableInputs.value = true
   }
 })
+
+watch(
+  route,
+  () => {
+    if (route.name == 'add-product') {
+      window.location.reload()
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -80,8 +91,10 @@ onMounted(async () => {
         :loading
         :response
         :set-preview-image="setPreviewSrc"
+        :enable-inputs
         @submit="handleSubmit"
         @cancel="cancelCreate"
+        @on-edit="enableInputs = true"
       />
       <div class="preview">
         <h4>Product Image</h4>

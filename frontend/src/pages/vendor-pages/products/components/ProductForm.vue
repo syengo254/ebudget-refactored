@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, PropType, reactive, ref, watch } from 'vue'
+
 import FormTextArea from '../../../../components/forms/FormTextArea.vue'
 import FormInput from '../../../../components/forms/FormInput.vue'
 import Error from '../../../../components/forms/Error.vue'
@@ -8,13 +9,13 @@ import BaseButton from '../../../../components/buttons/BaseButton.vue'
 import SuccessAlert from '../../../../components/SuccessAlert.vue'
 import ErrorAlert from '../../../../components/ErrorAlert.vue'
 
-import { ProductFormValidationErrorType } from '../../../../composables/useCreateUpdateProduct'
 import { useProductStore } from '../../../../stores/productStore'
 import { useVendorStore } from '../../../../stores/vendorStore'
-import { CategoryType, ProductType } from '../../../../types'
 import { useAuthStore } from '../../../../stores/authStore'
 
-const emit = defineEmits(['submit', 'cancel'])
+import { CategoryType, ProductFormValidationErrorType, ProductType } from '../../../../types'
+
+const emit = defineEmits(['submit', 'cancel', 'on-edit'])
 
 const { productId, mode, response, setPreviewImage } = defineProps({
   mode: {
@@ -27,6 +28,10 @@ const { productId, mode, response, setPreviewImage } = defineProps({
     default: () => ({ success: false, error: false }),
   },
   loading: {
+    type: Boolean,
+    required: true,
+  },
+  enableInputs: {
     type: Boolean,
     required: true,
   },
@@ -185,6 +190,7 @@ watch(
             placeholder="Samsung 24' TV - 2025 Model - Specifications: ..."
             rows="3"
             required
+            :disabled="!enableInputs"
           >
             <Error :form-errors="allFormErrors?.name" />
           </FormTextArea>
@@ -197,6 +203,7 @@ watch(
                 type="number"
                 placeholder="e.g. 60000"
                 required
+                :disabled="!enableInputs"
               >
                 <Error :form-errors="allFormErrors?.price" />
               </FormInput>
@@ -209,6 +216,7 @@ watch(
                 type="number"
                 placeholder="e.g. 10"
                 required
+                :disabled="!enableInputs"
               >
                 <Error :form-errors="allFormErrors?.stock" />
               </FormInput>
@@ -219,6 +227,7 @@ watch(
                 label="An image of the product (.png, .jpg, .jpeg & .webp)"
                 type="file"
                 :required="mode === 'create'"
+                :disabled="!enableInputs"
                 @file-changed="handleFileChange"
               >
                 <Error :form-errors="allFormErrors?.image" />
@@ -230,6 +239,7 @@ watch(
             name="category"
             label="Select Product Category"
             :required="(product.category?.name?.length ?? 0) < 2"
+            :disabled="!enableInputs"
           >
             <template #options>
               <option value="0" selected>Select a category</option>
@@ -251,12 +261,13 @@ watch(
               name="category-name"
               label="or Add a category (Optional if selected above)"
               placeholder="e.g. Beverages, Tables, etc."
+              :disabled="!enableInputs"
             >
               <Error :form-errors="allFormErrors?.categoryname" />
             </FormInput>
           </div>
         </div>
-        <div class="submit-btns flex flex-row gap-1">
+        <div v-if="enableInputs" class="submit-btns flex flex-row gap-1">
           <BaseButton variant="outlined" style="border-radius: 3.5px" @click="handleCancel">Cancel</BaseButton>
           <BaseButton
             v-if="mode === 'edit'"
@@ -269,6 +280,9 @@ watch(
           <BaseButton v-else type="submit" style="margin-left: auto" variant="primary" :disabled="loading">{{
             loading ? 'Adding...' : 'Add'
           }}</BaseButton>
+        </div>
+        <div v-else class="flex" style="justify-content: flex-end">
+          <BaseButton variant="primary" @click="$emit('on-edit')">Edit</BaseButton>
         </div>
       </fieldset>
       <div class="response flex flex-column">

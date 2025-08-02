@@ -82,6 +82,7 @@ function showConfirmDialog(product: ProductType) {
           >
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem">
               <BaseButton
+                size="sm"
                 type="button"
                 variant="primary"
                 @click="
@@ -92,7 +93,9 @@ function showConfirmDialog(product: ProductType) {
                 "
                 >Edit</BaseButton
               >
-              <BaseButton type="button" variant="danger" @click="showConfirmDialog(product)">Delete</BaseButton>
+              <BaseButton type="button" variant="danger" size="sm" @click="showConfirmDialog(product)"
+                >Delete</BaseButton
+              >
             </div>
           </SimpleProductCard>
         </div>
@@ -122,7 +125,7 @@ section.products-head {
 
 div.my-products {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
   gap: 1.5rem;
   padding-bottom: 2rem;
 }

@@ -1,6 +1,7 @@
 import { AxiosError, isAxiosError } from 'axios'
 import useProducts from './useProducts'
 import { ref } from 'vue'
+import { ProductFormValidationErrorType } from '../types'
 
 type CreateProductType = {
   name: string
@@ -11,15 +12,6 @@ type CreateProductType = {
   image: File
   productId?: number
 }
-
-export type ProductFormValidationErrorType = {
-  name?: string[]
-  price?: string[]
-  category?: string[]
-  stock?: string[]
-  image?: string[]
-  categoryname?: string[]
-} | null
 
 export default function useCreateUpdateProduct() {
   const { addProduct, updateProduct } = useProducts()
