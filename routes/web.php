@@ -1,12 +1,10 @@
 <?php
 
-use App\Actions\SendOrderEmails;
-use App\Http\Resources\UserResource;
-use App\Services\OrderService;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,16 +21,6 @@ Route::get('/', function () {
     return view('index');
 });
 
-// SPA home for redirects
-Route::get('/home', function () {
-    return response()->json([
-        'success' => true,
-        'user' => UserResource::make(Auth::user()),
-        'message' => 'You are already logged in.',
-    ], headers: [
-        'Access-Control-Allow-Origin' => '*',
-    ]);
-})->name('home');
 
 // email verification URLs
 Route::get('/email/verify', function () {
@@ -60,27 +48,13 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/preview', function () {
-    $validated = [
-        'order' => [
-            [
-                'product_id' => 51,
-                'count' => 1,
-            ],
-            [
-                'product_id' => 52,
-                'count' => 2,
-            ],
-            [
-                'product_id' => 53,
-                'count' => 1,
-            ],
-        ],
-        'cart_id' => fake()->uuid(),
-    ];
-    $orderDTO = (new OrderService)->create($validated);
-    if ($orderDTO->success) {
-        (new SendOrderEmails)->handle($orderDTO->order);
-    }
+    //
+});
 
-    return $orderDTO->toArray();
+// useful for cpanel hosting as SSH terminal access is not available
+Route::get('/setup', function () {
+    Artisan::call('storage:link');
+    Artisan::call('route:cache');
+
+    return 'storage linked and routes cached!';
 });
