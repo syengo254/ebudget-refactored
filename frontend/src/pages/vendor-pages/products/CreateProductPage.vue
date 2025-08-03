@@ -1,235 +1,104 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '../../../stores/authStore'
-import { useProductStore } from '../../../stores/productStore'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-import BaseButton from '../../../components/buttons/BaseButton.vue'
-import Error from '../../../components/forms/Error.vue'
-import FormInput from '../../../components/forms/FormInput.vue'
-import FormSelect from '../../../components/forms/FormSelect.vue'
-import FormTextArea from '../../../components/forms/FormTextArea.vue'
-import SuccessAlert from '../../../components/SuccessAlert.vue'
-import ErrorAlert from '../../../components/ErrorAlert.vue'
+import ProductForm from './components/ProductForm.vue'
+
 import useCreateorUpdateProduct from '../../../composables/useCreateUpdateProduct'
 import { ProductType } from '../../../types'
-import { useVendorStore } from '../../../stores/vendorStore'
+import useToast from '../../../composables/useToast'
+import ToastMessageNotification from '../../../components/ToastMessageNotification.vue'
 
-const authStore = useAuthStore()
-const productStore = useProductStore()
-const vendorStore = useVendorStore()
-const router = useRouter()
 const route = useRoute()
 
-/**
- * This SFC is used for both editing or creating a product
- * The @var mode is used to distinguish whether to edit or create
- *
- */
 const mode = ref<'edit' | 'create'>('create')
+const productId = ref<number | undefined>(undefined)
+const toast = useToast()
+const enableInputs = ref(true)
 
-const name = ref('')
-const productId = ref(0)
-const categoryName = ref('')
-const price = ref('')
-const stock = ref('')
-const category = ref('')
-const image = ref<File | null>(null)
-const previewSrc = ref('')
+const { createError, success, createOrUpdateProduct, validationErrors, loading } = useCreateorUpdateProduct()
 
-const { loading, createError, success, createOrUpdateProduct, validationErrors } = useCreateorUpdateProduct()
-
-function handleFileChange(event: string | undefined) {
-  if (event !== 'image') return
-
-  const target = document.getElementById(event) as HTMLInputElement
-  if (target && target.files && target.files.length > 0) {
-    image.value = target.files[0]
-    previewSrc.value = URL.createObjectURL(image.value)
-  } else {
-    image.value = null
-  }
-}
-
-const cancelCreate = () => {
-  if (mode.value === 'create') {
-    resetForm()
-  }
-  router.push({
-    name: 'catalog',
-  })
-}
-
-function resetForm() {
-  const form = document.querySelector('div.product-form > form') as HTMLFormElement
-  form.reset()
-  image.value = null
-}
-
-async function handleSubmit() {
-  validationErrors.value = null
+async function handleSubmit(product: ProductType, image: File) {
   createError.value = null
   success.value = false
 
-  await createOrUpdateProduct({
-    name: name.value,
-    categoryName: categoryName.value,
-    price: parseFloat(price.value),
-    stock: parseInt(stock.value),
-    category: category.value,
-    image: image.value as File,
-    ...(mode.value === 'edit' ? { productId: productId.value } : {}),
-  })
+  await createOrUpdateProduct(
+    {
+      productId: product.id,
+      name: product.name,
+      stock: product.stock_amount,
+      price: product.price,
+      categoryName: product.category?.name as string,
+      category: String(product.category_id),
+      image,
+    },
+    mode.value,
+  )
 
-  if (success.value && mode.value === 'create') {
-    resetForm()
+  if (success.value) {
+    toast.show('Product added successfully!', { variant: 'success', lifeTime: 2000 })
   }
+}
 
-  if (success.value && authStore.user?.store?.name) {
-    // refresh
-    await vendorStore.fetchVendorProducts(authStore.user?.store?.name, 1)
+const response = computed(() => {
+  return {
+    success: success.value,
+    error: !!createError.value,
+    formErrors: validationErrors.value,
+  }
+})
+
+const previewSrc = ref('')
+
+function setPreviewSrc(url: string) {
+  previewSrc.value = url
+}
+
+const cancelCreate = () => {
+  if (mode.value === 'edit') {
+    enableInputs.value = false
   }
 }
 
 onMounted(async () => {
-  await productStore.fetchCategories(true)
-
   if (route.name == 'edit-product') {
     mode.value = 'edit'
-    const product: ProductType = await vendorStore.getOrFetch(parseInt(route.params.id as string))
-
-    name.value = product.name
-    price.value = String(product.price)
-    stock.value = String(product.stock_amount)
-    category.value = String(product.category_id ?? product.category?.id)
-    productId.value = product.id
-    previewSrc.value = product.image
+    enableInputs.value = false
+    productId.value = parseInt(route.params.id as string)
+  } else {
+    enableInputs.value = true
   }
 })
+
+watch(
+  route,
+  () => {
+    if (route.name == 'add-product') {
+      window.location.reload()
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
+  <ToastMessageNotification position="top" />
   <div id="main">
     <div class="main-viewport">
-      <div class="product-form">
-        <h4>Add a product ({{ authStore.user?.store?.name }})</h4>
-        <form @submit.prevent="handleSubmit">
-          <fieldset>
-            <legend><h5>Product Details</h5></legend>
-            <div class="form-group">
-              <FormTextArea
-                v-model="name"
-                name="name"
-                label="Product Name & Description"
-                placeholder="Samsung 24' TV - 2025 Model - Specifications: ..."
-                rows="3"
-                required
-              >
-                <Error :form-errors="validationErrors?.name" />
-              </FormTextArea>
-              <div class="flex flex-row flex-wrap" style="column-gap: 2rem">
-                <div class="form-group">
-                  <FormInput
-                    v-model="price"
-                    name="price"
-                    label="Price of the product (KES)"
-                    type="number"
-                    placeholder="e.g. 60000"
-                    required
-                  >
-                    <Error :form-errors="validationErrors?.price" />
-                  </FormInput>
-                </div>
-                <div class="form-group">
-                  <FormInput
-                    v-model="stock"
-                    name="stock"
-                    label="Available Stock"
-                    type="number"
-                    placeholder="e.g. 10"
-                    required
-                  >
-                    <Error :form-errors="validationErrors?.stock" />
-                  </FormInput>
-                </div>
-                <div class="form-group">
-                  <FormInput
-                    name="image"
-                    label="An image of the product (.png, .jpg, .jpeg & .webp)"
-                    type="file"
-                    :required="mode === 'create'"
-                    @file-changed="handleFileChange"
-                  >
-                    <Error :form-errors="validationErrors?.image" />
-                  </FormInput>
-                </div>
-              </div>
-              <FormSelect
-                v-model="category"
-                name="category"
-                label="Select Product Category"
-                :required="categoryName.length < 2"
-              >
-                <option value="" selected>Select a category</option>
-                <template #options>
-                  <option
-                    v-for="_category in productStore.getCategories"
-                    :key="_category.name"
-                    :value="String(_category.id)"
-                  >
-                    {{ _category.name }}
-                  </option>
-                </template>
-                <template #error-slot>
-                  <Error :form-errors="validationErrors?.category" />
-                </template>
-              </FormSelect>
-              <div class="form-group">
-                <FormInput
-                  v-model="categoryName"
-                  name="category-name"
-                  label="or Add a category (Optional if selected above)"
-                  placeholder="e.g. Beverages, Tables, etc."
-                >
-                  <Error :form-errors="validationErrors?.categoryname" />
-                </FormInput>
-              </div>
-            </div>
-            <div class="submit-btns flex flex-row gap-1">
-              <BaseButton variant="outlined" style="border-radius: 3.5px" @click="cancelCreate">Cancel</BaseButton>
-              <BaseButton
-                v-if="mode === 'edit'"
-                type="submit"
-                variant="primary"
-                style="margin-left: auto"
-                :disabled="loading"
-                >{{ loading ? 'Save...' : 'Save' }}</BaseButton
-              >
-              <BaseButton v-else type="submit" style="margin-left: auto" variant="primary" :disabled="loading">{{
-                loading ? 'Adding...' : 'Add'
-              }}</BaseButton>
-            </div>
-          </fieldset>
-          <div class="response flex flex-column">
-            <SuccessAlert
-              :show="success"
-              :msg="mode === 'edit' ? 'Changes saved.' : 'Product added successfully'"
-              :show-tick="true"
-            />
-            <ErrorAlert
-              :show="!!createError"
-              :msg="
-                mode === 'edit'
-                  ? 'Unable to save your changes'
-                  : 'Could not create your product, please reload the page and try again.'
-              "
-            />
-          </div>
-        </form>
-      </div>
+      <ProductForm
+        :mode="mode"
+        :product-id
+        :loading
+        :response
+        :set-preview-image="setPreviewSrc"
+        :enable-inputs
+        @submit="handleSubmit"
+        @cancel="cancelCreate"
+        @on-edit="enableInputs = true"
+      />
       <div class="preview">
         <h4>Product Image</h4>
-        <div v-show="previewSrc?.length ?? false" class="preview-img">
+        <div v-show="previewSrc?.length > 0" class="preview-img">
           <img :src="previewSrc" alt="preview-product-image" />
         </div>
       </div>
@@ -251,22 +120,8 @@ div#main {
   gap: 2rem;
 }
 
-.product-form {
-  position: relative;
-  min-width: 450px;
-}
-
 h4 {
   margin: 1rem 0.75rem;
-}
-
-h5 {
-  margin: 0.2rem;
-}
-
-.submit-btns {
-  width: 100%;
-  align-items: center;
 }
 
 /* preview section */

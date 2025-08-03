@@ -10,13 +10,14 @@ import SimpleProductCard from '../../../components/SimpleProductCard.vue'
 import BaseButton from '../../../components/buttons/BaseButton.vue'
 import LoadingComponent from '../../../components/LoadingComponent.vue'
 import ConfirmDialog from '../../../components/dialogs/ConfirmDialog.vue'
+import { ProductType } from '../../../types'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const vendorStore = useVendorStore()
 const loading = ref(false)
 const dialogOpen = ref(false)
-const productIdToDelete = ref(0)
+const productToDelete = ref<ProductType | null>(null)
 
 onMounted(async () => {
   if (vendorStore.vendorProducts.length < 1) {
@@ -37,25 +38,28 @@ function openEditPage(productId: number) {
 }
 
 async function handleDelete() {
-  if (productIdToDelete.value == 0) return
-  await vendorStore.destroyProduct(productIdToDelete.value)
-  productIdToDelete.value = 0
+  if (!productToDelete.value) return
+  await vendorStore.destroyProduct(productToDelete.value.id)
+  productToDelete.value = null
   dialogOpen.value = false
 }
 
 function handleCancel() {
-  productIdToDelete.value = 0
+  productToDelete.value = null
   dialogOpen.value = false
 }
 
-function showConfirmDialog(productId: number) {
-  productIdToDelete.value = productId
+function showConfirmDialog(product: ProductType) {
+  productToDelete.value = product
   dialogOpen.value = true
 }
 </script>
 <template>
   <!-- modal goes here -->
-  <ConfirmDialog :open="dialogOpen" @confirmed="handleDelete" @cancel="handleCancel" />
+  <ConfirmDialog :open="dialogOpen" @confirmed="handleDelete" @cancel="handleCancel">
+    <template #head>Deleting '{{ productToDelete?.name }}'</template>
+    <template #body>This action is not reversible, do you wish to proceed?</template>
+  </ConfirmDialog>
   <!-- modal goes here -->
   <section id="main-view">
     <div class="my-product-viewport">
@@ -78,6 +82,7 @@ function showConfirmDialog(productId: number) {
           >
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem">
               <BaseButton
+                size="sm"
                 type="button"
                 variant="primary"
                 @click="
@@ -88,7 +93,9 @@ function showConfirmDialog(productId: number) {
                 "
                 >Edit</BaseButton
               >
-              <BaseButton type="button" variant="danger" @click="showConfirmDialog(product.id)">Delete</BaseButton>
+              <BaseButton type="button" variant="danger" size="sm" @click="showConfirmDialog(product)"
+                >Delete</BaseButton
+              >
             </div>
           </SimpleProductCard>
         </div>
@@ -118,7 +125,7 @@ section.products-head {
 
 div.my-products {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
   gap: 1.5rem;
   padding-bottom: 2rem;
 }

@@ -66,7 +66,7 @@ function handleCardClick() {
 .simple.product-card {
   position: relative;
   /* background-color: rgb(248, 248, 248); */
-  width: 210px;
+  width: 220px;
   height: fit-content;
   /* border: 1px solid rgb(237, 237, 237); */
   cursor: pointer;
@@ -75,13 +75,13 @@ function handleCardClick() {
 
 .simple.product-card > .product-image {
   position: relative;
-  height: 208px;
+  height: 218px;
 }
 
 .simple.product-card > .product-image > img.image {
   position: relative;
-  width: 208px;
-  height: 208px;
+  width: 218px;
+  height: 213px;
   object-fit: fill;
 }
 

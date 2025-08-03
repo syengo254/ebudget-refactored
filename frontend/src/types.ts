@@ -150,3 +150,12 @@ export interface UserStoreType {
   isLoggedIn: boolean
   nextAuthCheck: number
 }
+
+export type ProductFormValidationErrorType = {
+  name?: string[]
+  price?: string[]
+  category?: string[]
+  stock?: string[]
+  image?: string[]
+  categoryname?: string[]
+} | null
