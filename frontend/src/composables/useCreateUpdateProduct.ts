@@ -1,6 +1,7 @@
 import { AxiosError, isAxiosError } from 'axios'
 import useProducts from './useProducts'
 import { ref } from 'vue'
+import { ProductFormValidationErrorType } from '../types'
 
 type CreateProductType = {
   name: string
@@ -14,79 +15,18 @@ type CreateProductType = {
 
 export default function useCreateUpdateProduct() {
   const { addProduct, updateProduct } = useProducts()
-  const validationErrors = ref<{
-    name?: string[]
-    price?: string[]
-    category?: string[]
-    stock?: string[]
-    image?: string[]
-    categoryname?: string[]
-  } | null>(null)
 
   const createError = ref<null | Error | AxiosError>(null)
   const success = ref<boolean>(false)
   const loading = ref<boolean>(false)
+  const validationErrors = ref<ProductFormValidationErrorType | null>(null)
 
-  function validate({ productId, name, stock, price, categoryName, category, image }: CreateProductType): boolean {
-    // console.table({ productId, name, stock, price, categoryName, category, image })
-    // validate
-    if (name.length < 8) {
-      validationErrors.value = {
-        name: ['Name should be a minimum of 8 characters'],
-      }
-      return false
-    }
-    if (price < 10) {
-      validationErrors.value = {
-        price: ['Price minimum should be KES 10'],
-      }
-      return false
-    }
-    if (stock < 3) {
-      validationErrors.value = {
-        stock: ['Stock minimum should be 3'],
-      }
-      return false
-    }
-    if (categoryName === '' && category === '') {
-      validationErrors.value = {
-        category: ['You must select or add a category'],
-      }
-      return false
-    }
-    if (!image && !productId) {
-      validationErrors.value = {
-        image: ['You must set the product image'],
-      }
-      return false
-    }
-
-    if (image && image.size > 1000 * 1000 * 5) {
-      validationErrors.value = {
-        image: ['Image size cannot be more than 5MB'],
-      }
-      return false
-    }
-
-    return true
-  }
-
-  async function createOrUpdateProduct({
-    productId,
-    name,
-    stock,
-    price,
-    categoryName,
-    category,
-    image,
-  }: CreateProductType) {
-    if (!validate({ productId, name, stock, price, categoryName, category, image })) {
-      return
-    }
-
+  async function createOrUpdateProduct(
+    { productId, name, stock, price, categoryName, category, image }: CreateProductType,
+    mode: 'create' | 'edit',
+  ) {
     // submit
     validationErrors.value = null
-
     const formData = new FormData()
     formData.append('name', name)
     formData.append('price', String(price))
@@ -96,7 +36,7 @@ export default function useCreateUpdateProduct() {
     } else {
       formData.append('category', category)
     }
-    if (productId) {
+    if (mode === 'edit') {
       formData.append('id', String(productId))
     }
     if (image) {
@@ -107,7 +47,7 @@ export default function useCreateUpdateProduct() {
     let response = null
 
     loading.value = true
-    response = !productId ? await addProduct(formData) : await updateProduct(productId, formData)
+    response = mode === 'create' ? await addProduct(formData) : await updateProduct(productId as number, formData)
     loading.value = false
 
     // handle response
