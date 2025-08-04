@@ -120,4 +120,13 @@ export const routes = [
   //========= Staff Routes =============
   staffRoutes,
   //========= End Staff Routes =============
+
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../pages/error-pages/NotFound.vue'),
+    meta: {
+      title: 'Error: 404 Not Found | E-budget.com | Best Online Shoping Experience',
+    },
+  },
 ]
