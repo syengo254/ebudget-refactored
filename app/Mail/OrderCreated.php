@@ -5,13 +5,11 @@ namespace App\Mail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
 class OrderCreated extends Mailable
 {
@@ -35,8 +33,8 @@ class OrderCreated extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: new Address(env("SALES_EMAIL_ADDRESS", "sales@e-budget.jubatus.co.ke"),  env("SALES_EMAIL_ADDRESS_NAME", "E-budget Sales Team")),
-            subject: 'Your Order Has Been Received - No: ' . $this->order->order_no,
+            from: new Address(env('SALES_EMAIL_ADDRESS', 'sales@e-budget.jubatus.co.ke'), env('SALES_EMAIL_ADDRESS_NAME', 'E-budget Sales Team')),
+            subject: 'Your Order Has Been Received - No: '.$this->order->order_no,
         );
     }
 
@@ -52,10 +50,10 @@ class OrderCreated extends Mailable
             ->withCount('orderItems')
             ->addSelect(
                 [
-                    "order_total" => OrderItem::whereColumn("order_id", 'orders.id')
-                        ->selectRaw("sum(item_count * price_at_order) as cost"),
-                    "all_items_count" => OrderItem::whereColumn("order_id", 'orders.id')
-                        ->selectRaw("sum(item_count) as total_items"),
+                    'order_total' => OrderItem::whereColumn('order_id', 'orders.id')
+                        ->selectRaw('sum(item_count * price_at_order) as cost'),
+                    'all_items_count' => OrderItem::whereColumn('order_id', 'orders.id')
+                        ->selectRaw('sum(item_count) as total_items'),
                 ]
             )
             ->where('id', $this->order->id)

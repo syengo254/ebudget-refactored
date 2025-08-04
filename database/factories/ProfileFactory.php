@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Address;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,4 +19,9 @@ class ProfileFactory extends Factory
             'active_address_id' => null, // can be set after creating address
         ];
     }
-} 
+
+    public function hasAddresses(int $count = 1)
+    {
+        return $this->has(Address::factory()->count($count), 'addresses'); // 'addresses' is the relationship name on the Profile model
+    }
+}

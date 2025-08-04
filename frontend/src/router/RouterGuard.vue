@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RouteLocationNamedRaw, useRouter } from 'vue-router'
 import { resolve } from './middleware'
+import guardDefinitions from './guards'
 
 const router = useRouter()
 
@@ -10,25 +11,23 @@ router.beforeEach(async (to, from, next) => {
   const guards: string[] = Array.isArray(to.meta.guards) ? to.meta.guards : []
 
   if (guards.length > 0) {
-    let failPath: RouteLocationNamedRaw = {}
-    let validated = true // Initialize as true, similar to how .every works
+    let result = [true, {}] as [boolean, RouteLocationNamedRaw]
+
     for (let i = 0; i < guards.length; i++) {
-      const guard = guards[i]
-      const [success, routeTo] = await resolve(guard, to)
-      if (!success) {
-        validated = false
-        failPath = routeTo // Update failPath only if a guard fails
-        break // Exit the loop early as soon as one guard fails
+      const fallback = guardDefinitions[guards[i]] ? guardDefinitions[guards[i]].fallback : undefined
+      result = await resolve(guards[i], to, fallback)
+      if (!result[0]) {
+        break
       }
     }
 
-    if (validated) {
+    if (result[0]) {
       next()
     } else {
-      if (failPath.name === 'back') {
+      if (result[1].name === 'back') {
         next(from.path)
       } else {
-        next(failPath)
+        next(result[1])
       }
     }
   } else {

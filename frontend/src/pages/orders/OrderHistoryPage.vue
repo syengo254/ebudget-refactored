@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import BaseTable from '../../components/table/BaseTable.vue'
@@ -40,7 +39,9 @@ onMounted(async () => {
       <ErrorBoundary :is-page="false">
         <LoadingComponent v-if="loading" />
         <BaseTable v-else class="rounded stripped">
-          <template #caption>These are the orders you have placed with us</template>
+          <template #caption>
+            {{ orders.length ? 'These are the orders you have placed with us' : 'You have not placed any orders yet.' }}
+          </template>
           <template #thead>
             <th>#</th>
             <th>Order Number</th>

@@ -14,7 +14,7 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'item_count',
-        'price_at_order'
+        'price_at_order',
     ];
 
     public function order(): BelongsTo

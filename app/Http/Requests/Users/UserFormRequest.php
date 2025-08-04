@@ -15,7 +15,7 @@ class UserFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::guard("web")->guest();;
+        return Auth::guard('web')->guest();
     }
 
     /**
@@ -26,10 +26,10 @@ class UserFormRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => 'required|string|min:8',
-            "email" => 'required|email|unique:users,email',
-            "password" => [Password::defaults()->min(6)->symbols()->numbers()->mixedCase(), "confirmed"],
-            "has_store" => "sometimes|boolean"
+            'name' => 'required|string|min:8',
+            'email' => 'required|email|unique:users,email',
+            'password' => [Password::defaults()->min(6)->symbols()->numbers()->mixedCase(), 'confirmed'],
+            'has_store' => 'sometimes|boolean',
         ];
     }
 }

@@ -18,9 +18,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string("order_no", length:12)->unique();
+            $table->string('order_no', length: 12)->unique();
             $table->foreignIdFor(User::class);
-            $table->enum('status', array_column(OrderStatus::cases(), "value"))->default(OrderStatus::NEW->value);
+            $table->enum('status', array_column(OrderStatus::cases(), 'value'))->default(OrderStatus::NEW->value);
             $table->date('expected_delivery_date');
             $table->date('latest_delivery_date');
             $table->date('actual_delivery_date')->nullable();

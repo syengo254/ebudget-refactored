@@ -25,7 +25,7 @@ class SendOrderEmails
         // we shall first need to group orderitems per vendor so as to send only one email per order to vendor
         $orderItems = $order->orderItems()->with('product', 'order')->get();
         $vendors = $orderItems->pluck('product.store.user')->unique();
-        
+
         foreach ($vendors as $vendor) {
             Mail::to($vendor->email)
                 ->queue(

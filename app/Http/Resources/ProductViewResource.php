@@ -15,13 +15,13 @@ class ProductViewResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "id" => $this->id,
-            "name" => $this->name,
-            "price" => $this->price,
-            "stock_amount" => $this->stock_amount,
-            "image" => $this->image,
-            "category" => CategoryViewResource::make($this->category),
-            "store" => StoreViewResource::make($this->store),
+            'id' => $this->id,
+            'name' => $this->name,
+            'price' => $this->price,
+            'stock_amount' => $this->stock_amount,
+            'image' => $this->image,
+            'category' => CategoryViewResource::make($this->category),
+            'store' => StoreViewResource::make($this->store),
         ];
     }
 }

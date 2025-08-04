@@ -20,7 +20,7 @@ const emit = defineEmits(['addToCart', 'remove'])
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
-const inCart = computed(() => cartStore.isInCart(product.id))
+const isStocked = computed(() => product.stock_amount > 0)
 
 function handleAddToCart() {
   emit('addToCart')
@@ -56,6 +56,9 @@ function navigateToProduct() {
         </p>
       </div>
       <div class="product-price">{{ getFormattedNumber(product.price) }}/=</div>
+      <div :class="'stock-info ' + (isStocked ? 'green' : 'red')">
+        <span>{{ isStocked ? 'In Stock' : 'Out Of Stock' }}</span>
+      </div>
       <div class="store-info">
         <p class="text-sm">
           Available at:
@@ -65,11 +68,11 @@ function navigateToProduct() {
         </p>
       </div>
       <div v-show="!authStore.hasStore" class="buy-btn">
-        <button class="add-cart-btn" @click="handleAddToCart">
-          {{ inCart ? 'Added' : 'Add to cart' }}
+        <button class="add-cart-btn" :disabled="!isStocked" @click="handleAddToCart">
+          {{ cartStore.isInCart(product.id) ? 'Added' : 'Add to cart' }}
         </button>
         <BaseButton
-          v-if="inCart"
+          v-if="cartStore.isInCart(product.id)"
           variant="danger"
           size="sm"
           style="border-radius: 14px; font-weight: 400; font-size: 0.9rem"
@@ -159,6 +162,10 @@ function navigateToProduct() {
   color: inherit;
   text-decoration: none;
   color: rgb(51, 97, 224);
+}
+
+.stock-info {
+  font-size: 0.9rem;
 }
 
 .buy-btn {

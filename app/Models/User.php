@@ -32,11 +32,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
     protected function hasStore(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => boolval($value)
+            get: fn ($value) => boolval($value)
         );
     }
 
@@ -45,7 +44,6 @@ class User extends Authenticatable
         return boolval($this->email_verified_at);
     }
 
-    
     public function store(): HasOne
     {
         return $this->hasOne(Store::class);
@@ -54,6 +52,11 @@ class User extends Authenticatable
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function userSettings(): HasOne
+    {
+        return $this->hasOne(UserSettings::class);
     }
 
     public function sendEmailVerificationNotification()

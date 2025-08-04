@@ -9,10 +9,9 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-
 
 class SessionController extends Controller
 {
@@ -20,14 +19,14 @@ class SessionController extends Controller
     {
         if (Auth::user()) {
             return response()->json([
-                "authenticated" => true,
-                "user" => new UserResource(Auth::user()->fresh()),
+                'authenticated' => true,
+                'user' => new UserResource(Auth::user()->with('userSettings')->get()->first()),
             ]);
         }
 
         return [
-            "authenticated" => false,
-            "user" => null,
+            'authenticated' => false,
+            'user' => null,
         ];
     }
 
@@ -41,47 +40,47 @@ class SessionController extends Controller
             request()->session()->regenerate();
 
             return response()->json([
-                "success" => true,
-                "user" => new UserResource(Auth::user()),
+                'success' => true,
+                'user' => new UserResource(Auth::user()->with('userSettings')->get()->first()),
             ]);
         } else {
             return response()->json([
-                "success" => false,
-                "message" => 'Login failed. Invalid credentials'
+                'success' => false,
+                'message' => 'Login failed. Invalid credentials',
             ], 401);
         }
     }
 
     public function destroy(Request $request)
     {
-        Auth::guard("web")->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
         return response()->json([
-            "success" => true,
-            "message" => 'logged out'
+            'success' => true,
+            'message' => 'logged out',
         ]);
     }
 
     public function sendResetEmail(Request $request)
     {
         $validated = $request->validate([
-            "email" => "required|email",
+            'email' => 'required|email',
         ]);
 
         $status = Password::sendResetLink($validated);
 
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
-                "success" => true,
+                'success' => true,
             ]);
         } else {
             return response()->json([
-                "success" => false,
-                "status" => $status,
+                'success' => false,
+                'status' => $status,
             ]);
         }
     }
@@ -89,7 +88,7 @@ class SessionController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            "email" => "required|email",
+            'email' => 'required|email',
             'token' => 'required',
             'password' => 'required|min:8|confirmed',
         ]);
@@ -98,7 +97,7 @@ class SessionController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user, string $password) {
                 $user->forceFill([
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));
 
                 $user->save();
@@ -109,12 +108,12 @@ class SessionController extends Controller
 
         if ($status === Password::PASSWORD_RESET) {
             return response()->json([
-                "success" => true,
+                'success' => true,
             ]);
         } else {
             return response()->json([
-                "success" => false,
-                "status" => $status,
+                'success' => false,
+                'status' => $status,
             ]);
         }
     }

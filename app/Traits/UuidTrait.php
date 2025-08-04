@@ -12,7 +12,7 @@ trait UuidTrait
         parent::boot();
 
         static::creating(function (Model $model) {
-            if (!$model->getKey() && $model->getTable() == "customer_orders") {
+            if (! $model->getKey() && $model->getTable() == 'customer_orders') {
                 $model->setAttribute($model->getKeyName(), Str::uuid()->toString());
             }
         });

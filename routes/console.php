@@ -21,22 +21,22 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Artisan::command('fixuserprofiles', function () {
-    $this->comment("Starting to fix...");
+    $this->comment('Starting to fix...');
 
     $users = User::with('profile')->get();
-    $users_without_profiles = $users->filter(function($user, $key) {
-        return $user->profile == NULL;
+    $users_without_profiles = $users->filter(function ($user, $key) {
+        return $user->profile == null;
     });
 
     $this->comment("Found {$users_without_profiles->count()} users without profiles");
 
     $command = $this;
-    $users_without_profiles->each(function($user, $key) use ($command) {
+    $users_without_profiles->each(function ($user, $key) use ($command) {
         $pf = Profile::create([
-                'user_id' => $user->id,
-                'phone' => NULL,
-                'active_address_id' => NULL,
-            ]);
+            'user_id' => $user->id,
+            'phone' => null,
+            'active_address_id' => null,
+        ]);
         $command->comment("Created profile entry for user '{$user->name}' with profile id: {$pf->id}");
     });
 

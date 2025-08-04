@@ -13,17 +13,17 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category_id', 
-        'name', 
-        'price', 
-        'store_id', 
+        'category_id',
+        'name',
+        'price',
+        'store_id',
         'stock_amount',
         'image',
         'is_deleted',
     ];
 
     protected $hidden = [
-        "remember_token",
+        'remember_token',
     ];
 
     public function category(): BelongsTo
@@ -31,7 +31,7 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function store() 
+    public function store()
     {
         return $this->belongsTo(Store::class);
     }
@@ -44,7 +44,7 @@ class Product extends Model
     protected function image(): CastsAttribute
     {
         return CastsAttribute::make(
-            get: fn ($value) => asset('storage/' . $value),
+            get: fn ($value) => asset('storage/'.$value),
         );
     }
 }

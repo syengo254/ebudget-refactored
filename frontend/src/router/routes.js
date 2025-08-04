@@ -5,6 +5,7 @@ import AllProductsPage from '../pages/products/AllProductsPage.vue'
 import ShoppingCartPage from '../pages/shopping-cart/ShoppingCartPage.vue'
 
 import vendorRoutes from './vendor-routes'
+import staffRoutes from './staff-routes'
 
 export const routes = [
   {
@@ -114,6 +115,18 @@ export const routes = [
     component: () => import('../pages/Playground.vue'),
     meta: {
       title: 'Playground | E-budget.com | Best Online Shoping Experience',
+    },
+  },
+  //========= Staff Routes =============
+  staffRoutes,
+  //========= End Staff Routes =============
+
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../pages/error-pages/NotFound.vue'),
+    meta: {
+      title: 'Error: 404 Not Found | E-budget.com | Best Online Shoping Experience',
     },
   },
 ]

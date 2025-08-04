@@ -2,18 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Product;
-use App\Models\Profile;
-use App\Models\Address;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderCreated;
 use App\Mail\ProductsPurchased;
+use App\Models\Product;
 use App\Models\Store;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use Tests\TestCase;
 
 // use Laravel\Sanctum\Sanctum;
 
@@ -24,7 +22,7 @@ class OrderTest extends TestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withHeaders([
@@ -33,24 +31,16 @@ class OrderTest extends TestCase
         ])
             ->withSession([]);
 
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->create([
+            "has_store" => false,
+        ]);
+
         $this->actingAs($this->user);
-
-        // create profile
-        $profile = Profile::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
-
-        // create address
-        $address = Address::factory()->create([
-            'profile_id' => $profile->id,
-        ]);
-
-        // set active address
-        $profile->active_address_id = $address->id;
+        
+        $profile = $this->user->profile;
+        $profile->active_address_id = $profile->addresses()->first()->id;
         $profile->save();
 
-        // create products
         Product::factory()->count(2)->create();
     }
 
@@ -86,11 +76,8 @@ class OrderTest extends TestCase
 
     public function test_unverified_user_cannot_create_order()
     {
-        // create products
-        Product::factory()->count(2)->create();
-
-        $this->user = User::factory()->unverified()->create();
-        $this->actingAs($this->user);
+        $user = User::factory()->unverified()->create();
+        $this->actingAs($user);
 
         $orderPayload = [
             'order' => [
@@ -112,7 +99,39 @@ class OrderTest extends TestCase
             ->assertJson([
                 'success' => false,
                 'order' => null,
-                'message' => 'You need to verify your account.',
+                'message' => 'You are not authorised to make an order.',
+            ]);
+    }
+
+    public function test_that_vendor_cannot_make_order()
+    {
+        $user = User::factory()->unverified()->create([
+            'has_store' => true,
+        ]);
+
+        $this->actingAs($user);
+
+        $orderPayload = [
+            'order' => [
+                [
+                    'product_id' => 2,
+                    'count' => 1,
+                ],
+                [
+                    'product_id' => 1,
+                    'count' => 2,
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $response = $this->postJson('/api/orders', $orderPayload);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => false,
+                'order' => null,
+                'message' => 'You are not authorised to make an order.',
             ]);
     }
 
@@ -147,44 +166,89 @@ class OrderTest extends TestCase
             'order' => [
                 [
                     'product_id' => 1,
-                    'count' => 1,   
+                    'count' => 1,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),
         ];
 
-        $response = $this->postJson('/api/orders', $orderPayload);
+        $this->postJson('/api/orders', $orderPayload);
 
         Mail::assertQueued(OrderCreated::class, function ($mail) {
             return $mail->hasTo($this->user->email);
         });
     }
 
-    public function test_that_vendor_productPuchased_email_is_sent_upon_succesful_order()
+    public function test_that_vendor_product_puchased_email_is_sent_upon_succesful_order()
     {
         Mail::fake();
         Queue::fake();
 
-        $vendor = Store::factory()->create();
+        $vendor = Store::factory()->has(Product::factory()->count(2))->create();
+        $product = $vendor->products->first();
+
+        $payload = [
+            'order' => [
+                [
+                    'product_id' => $product->id,
+                    'count' => 2,
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $this->postJson('/api/orders', $payload);
+
+        Mail::assertQueued(ProductsPurchased::class, function ($mail) use ($vendor) {
+            return $mail->hasTo($vendor->user->email);
+        });
+    }
+
+    public function test_that_when_order_item_is_created_product_stock_amount_is_updated()
+    {
+        $initialAmt = 5;
+        $orderAmt = 2;
 
         $product = Product::factory()->create([
-            "store_id" => $vendor->id,
+            'stock_amount' => $initialAmt,
         ]);
 
         $payload = [
             'order' => [
                 [
                     'product_id' => $product->id,
-                    'count' => 1,   
+                    'count' => $orderAmt,
                 ],
             ],
             'cart_id' => $this->faker->uuid(),
         ];
 
-        $this->postJson("/api/orders", $payload);
-        
-        Mail::assertQueued(ProductsPurchased::class, function($mail) use ($vendor) {
-            return $mail->hasTo($vendor->user->email);
-        });
+        $this->postJson('/api/orders', $payload);
+
+        $this->assertEquals($initialAmt - $orderAmt, $product->fresh()->stock_amount);
+    }
+
+    public function test_that_when_product_out_of_stock_order_creation_throws_exception()
+    {
+        $product = Product::factory()->create([
+            'stock_amount' => 0,
+        ]);
+
+        $payload = [
+            'order' => [
+                [
+                    'product_id' => $product->id,
+                    'count' => 1,
+                ],
+            ],
+            'cart_id' => $this->faker->uuid(),
+        ];
+
+        $response = $this->postJson('/api/orders', $payload);
+        $response->assertJson([
+            'success' => false,
+            'order' => null,
+            'message' => "Stock amount for '{$product->name}' is below the requested product amount '1'!",
+        ]);
     }
 }

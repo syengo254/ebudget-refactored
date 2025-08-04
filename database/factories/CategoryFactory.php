@@ -17,24 +17,28 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            "name" => fake()->unique()->randomElement([
-                "Furniture",
-                "Electronics",
-                "Phones",
-                "TVs",
-                "Fridges",
-                "Cookware",
-                "Doors",
-                "Appliances",
-                "Clothes",
-                "Gaming",
-                "Board Games",
-                "Tablets",
-                "Stereo Systems",
-                "Audio",
-                "Monitors",
-                "Keyboards",
-                "Graphic cards"
+            'name' => fake()->unique()->randomElement([
+                'Furniture',
+                'Electronics',
+                'Phones',
+                'TVs',
+                'Fridges',
+                'Cookware',
+                'Doors',
+                'Appliances',
+                'Clothes',
+                'Gaming',
+                'Board Games',
+                'Tablets',
+                'Stereo Systems',
+                'Audio',
+                'Monitors',
+                'Keyboards',
+                'Graphic cards',
+                'Vegetables',
+                'Radios',
+                'Detergents',
+                'Grooming'
             ]),
         ];
     }

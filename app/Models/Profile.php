@@ -17,7 +17,12 @@ class Profile extends Model
         'active_address_id',
     ];
 
-    public function user() : BelongsTo
+    protected $hidden = [
+        "created_at",
+        "updated_at",
+    ];
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -29,7 +34,9 @@ class Profile extends Model
 
     public function getActiveAddress()
     {
-        if(! $this->active_address_id) return NULL;
+        if (! $this->active_address_id) {
+            return null;
+        }
 
         return Address::find($this->active_address_id);
     }

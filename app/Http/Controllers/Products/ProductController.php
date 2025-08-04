@@ -7,6 +7,7 @@ use App\Http\Requests\Products\ProductRequest;
 use App\Http\Resources\ProductViewResource;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\ProductService;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ use Illuminate\Validation\Rules\File;
 
 class ProductController extends Controller
 {
+    public function __construct(protected ProductService $productService) {}
+
     public function index(Request $request, int $page = 1, int $limit = 12)
     {
         $limit = request()->limit ?? $limit;
@@ -23,30 +26,29 @@ class ProductController extends Controller
         $products = Product::query();
 
         if ($request->filled('q')) {
-            $products->where("name", "LIKE", "%" . $request->q . "%");
-            $products->orWhereHas("category", function (Builder $query) use ($request) {
-                $query->where("name", "LIKE", "%{$request->q}%");
+            $products->where('name', 'LIKE', '%' . $request->q . '%');
+            $products->orWhereHas('category', function (Builder $query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->q}%");
             });
-            $products->orWhereHas("store", function (Builder $query) use ($request) {
-                $query->where("name", "LIKE", "%{$request->q}%");
+            $products->orWhereHas('store', function (Builder $query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->q}%");
             });
         } else {
-            $request->filled('category') && $products->whereHas("category", function (Builder $query) use ($request) {
-                $query->where("name", "LIKE", "%{$request->category}%");
+            $request->filled('category') && $products->whereHas('category', function (Builder $query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->category}%");
             });
 
-            $request->filled('store') && $products->whereHas("store", function (Builder $query) use ($request) {
-                $query->where("name", "LIKE", "%{$request->store}%");
+            $request->filled('store') && $products->whereHas('store', function (Builder $query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->store}%");
             });
 
-            $request->filled('price') && $products->where("price", "<=", intval($request->price));
+            $request->filled('price') && $products->where('price', '<=', intval($request->price));
         }
 
-        $products->where('is_deleted', '=', FALSE);
+        $products->where('is_deleted', '=', false);
 
         return ProductViewResource::collection($products->latest()->paginate($limit));
     }
-
 
     public function store(ProductRequest $request)
     {
@@ -54,54 +56,46 @@ class ProductController extends Controller
 
         if (Gate::denies('create', new Product)) {
             return response()->json([
-                "success" => false,
-                "message" => 'You are not authorised!',
-                "product" => NULL,
+                'success' => false,
+                'message' => 'You are not authorised!',
+                'product' => null,
             ], 403);
         }
 
         $user = auth()->user();
         $store = $user->store;
-        $product = NULL;
+        $product = null;
 
         DB::transaction(function () use ($validated, $store, &$product) {
-            $category = NULL;
+            $category = null;
 
-            if (request()->filled("categoryname")) {
+            if (request()->filled('categoryname')) {
                 $category = Category::firstOrCreate([
-                    "name" => ucfirst($validated["categoryname"]),
+                    'name' => ucfirst($validated['categoryname']),
                 ]);
             }
-            $product = Product::create([
-                'name' => $validated['name'],
-                'price' => $validated['price'],
-                "image" => '',
-                'stock_amount' => $validated['stock'],
-                'category_id' => $category ? $category->id : $validated['category'] ?? 1,
-                'store_id' => $store->id,
-            ]);
 
-            $path = $validated["image"]->store('product-images');
-            $product->image = $path;
-            $product->save();
+            $validated["category"] = $category ? $category->id : $validated["category"];
+
+            $product = $this->productService->createProduct($store, $validated);
         });
 
         return response()->json([
-            "success" => boolval($product),
-            "message" => boolval($product) ? "Product added." : "Failed to add product. Try again.",
-            "product" => $product,
+            'success' => boolval($product),
+            'message' => boolval($product) ? 'Product added.' : 'Failed to add product. Try again.',
+            'product' => $product,
         ], boolval($product) ? 201 : 500);
     }
 
     public function show(Product $product)
     {
-        if($product->is_deleted){
+        if ($product->is_deleted) {
             return response()->json([
-                "data" => null,
-                "message" => "This product is deleted",
+                'data' => null,
+                'message' => 'This product is deleted',
             ], 404);
         }
-        
+
         return ProductViewResource::make($product);
     }
 
@@ -111,28 +105,28 @@ class ProductController extends Controller
             'name' => 'required|string|max:400',
             'price' => 'required|numeric|min:1',
             'stock' => 'required|numeric|min:1',
-            "image" => ["sometimes", File::types(["jpg", "jpeg", "png", "webp"])->min(2)->max(1024 * 5)],
-            'category' => "sometimes|integer|min:1|exists:categories,id",
-            'categoryname' => "sometimes|string|min:4",
+            'image' => ['sometimes', File::types(['jpg', 'jpeg', 'png', 'webp'])->min(2)->max(1024 * 5)],
+            'category' => 'sometimes|integer|min:1|exists:categories,id',
+            'categoryname' => 'sometimes|string|min:4',
             'id' => 'sometimes|exists:products,id',
             'imageHasChanged' => 'sometimes|boolean',
         ]);
 
         if (Gate::denies('update', $product)) {
             return response()->json([
-                "success" => false,
-                "message" => 'You are not authorised!',
+                'success' => false,
+                'message' => 'You are not authorised!',
             ], 403);
         }
 
         $success = false;
 
         DB::transaction(function () use ($validated, &$product, &$success) {
-            $category = NULL;
+            $category = null;
 
-            if (request()->filled("categoryname")) {
+            if (request()->filled('categoryname')) {
                 $category = Category::firstOrCreate([
-                    "name" => ucfirst($validated["categoryname"]),
+                    'name' => ucfirst($validated['categoryname']),
                 ]);
             }
 
@@ -144,20 +138,20 @@ class ProductController extends Controller
             ]);
 
             if ($success) {
-                if (request()->has("image") && $validated["imageHasChanged"] == TRUE) {
-                    $path = $validated["image"]->store('product-images');
+                if (request()->has('image') && $validated['imageHasChanged'] == true) {
+                    $path = $validated['image']->store('product-images');
                     $product->image = $path;
                     $product->save();
                 }
             } else {
-                throw new Exception("Could not update product image.");
+                throw new Exception('Could not update product image.');
             }
         });
 
         return response()->json([
-            "success" => $success,
-            "message" => $success ? "Product updated." : "Failed to add product. Try again.",
-            "product" => $product,
+            'success' => $success,
+            'message' => $success ? 'Product updated.' : 'Failed to add product. Try again.',
+            'product' => $product,
         ], $success ? 201 : 500);
     }
 
@@ -165,17 +159,17 @@ class ProductController extends Controller
     {
         if (Gate::denies('delete', $product)) {
             return response()->json([
-                "success" => false,
-                "message" => 'You are not authorised!',
+                'success' => false,
+                'message' => 'You are not authorised!',
             ], 403);
         }
 
-        $product->is_deleted = TRUE;
+        $product->is_deleted = true;
         $product->save();
 
         return response()->json([
-            "success" => true,
-            "message" => 'Product deleted!',
+            'success' => true,
+            'message' => 'Product deleted!',
         ]);
     }
 }

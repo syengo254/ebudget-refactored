@@ -16,7 +16,12 @@ class Address extends Model
         'building',
         'floor',
         'additional_info',
-        'profile_id'
+        'profile_id',
+    ];
+
+    protected $hidden = [
+        "created_at",
+        "updated_at",
     ];
 
     public function profile(): BelongsTo

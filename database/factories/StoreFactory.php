@@ -18,9 +18,9 @@ class StoreFactory extends Factory
     public function definition()
     {
         return [
-            "name" => fake()->company(),
-            "user_id" => User::factory(),
-            "logo" => fake()->imageUrl()
+            'user_id' => User::inRandomOrder()->first() ?? User::factory(),
+            'name' => fake()->company(),
+            'logo' => fake()->imageUrl(),
         ];
     }
 }

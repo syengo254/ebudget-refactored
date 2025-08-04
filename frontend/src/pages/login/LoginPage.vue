@@ -114,6 +114,10 @@ const handleLogin = async () => {
             Not registered?
             <RouterLink to="/register">Click here to register.</RouterLink>
           </p>
+          <p style="margin-top: 3rem">
+            Return to
+            <RouterLink :to="{ name: 'home' }">Home.</RouterLink>
+          </p>
         </div>
       </div>
     </form>

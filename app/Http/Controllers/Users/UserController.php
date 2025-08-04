@@ -23,7 +23,7 @@ class UserController extends Controller
     public function store(UserFormRequest $request)
     {
         $validated = $request->validated();
-        $validated["password"] = Hash::make($validated["password"]);
+        $validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
 
@@ -31,41 +31,47 @@ class UserController extends Controller
             // create profile entry
             Profile::create([
                 'user_id' => $user->id,
-                'phone' => NULL,
-                'active_address_id' => NULL,
+                'phone' => null,
+                'active_address_id' => null,
             ]);
 
             // if has_store create store entry
             if ($user->has_store) {
                 Store::create([
-                    "user_id" => $user->id,
-                    "logo" => NULL,
-                    "name" => $user->name,
+                    'user_id' => $user->id,
+                    'logo' => null,
+                    'name' => $user->name,
                 ]);
             }
 
+            // create user_settings entry
+            $user->userSettings()->create([]);
+
             // login user
-            Auth::guard("web")->login($user);
+            Auth::guard('web')->login($user);
 
             // send verify email
             $user->sendEmailVerificationNotification();
 
             return [
-                "success" => true,
-                "user" => new UserResource($user),
+                'success' => true,
+                'user' => new UserResource(Auth::user()->with('userSettings')->get()->first()),
             ];
         }
+
         return [
-            "success" => false,
-            "message" => "Failed to create your user account. Try again later."
+            'success' => false,
+            'message' => 'Failed to create your user account. Try again later.',
         ];
     }
 
     public function show(User $user)
     {
-        if (Auth::user()->isNot($user)) abort(401);
+        if (Auth::user()->isNot($user)) {
+            abort(401);
+        }
 
-        return UserResource::make($user);
+        return UserResource::make(Auth::user()->with('userSettings')->get()->first());
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -73,53 +79,50 @@ class UserController extends Controller
         $validated = $request->validated();
 
         try {
-            if (Auth::user()->isNot($user)) abort(401);
+            if (Auth::user()->isNot($user)) {
+                abort(401);
+            }
             $passwordChanged = false;
 
-            if (array_key_exists("name", $validated) && $validated["name"] !== $user->name) {
-                $user->name = $validated["name"];
+            if (array_key_exists('name', $validated) && $validated['name'] !== $user->name) {
+                $user->name = $validated['name'];
                 $user->save();
 
-                if($user->has_store){
-                    $user->store->name = $validated["name"];
+                if ($user->has_store) {
+                    $user->store->name = $validated['name'];
                     $user->store->save();
                 }
             }
 
-            if (array_key_exists("logo", $validated)) {
+            if (array_key_exists('logo', $validated)) {
                 $path = $request->logo->store('logos');
                 $user->store->logo = $path;
                 $user->store->save();
             }
 
-            if (array_key_exists("password", $validated)) {
-                $user->password = Hash::make($validated["password"]);
+            if (array_key_exists('password', $validated)) {
+                $user->password = Hash::make($validated['password']);
                 $passwordChanged = true;
             }
 
             $saved = $user->save();
             $user->refresh();
-            
-            if($passwordChanged){
-                Auth::guard("web")->login($user);
+
+            if ($passwordChanged) {
+                Auth::guard('web')->login($user);
                 request()->session()->regenerate();
             }
 
             return [
-                "success" => $saved,
-                "user" => new UserResource($user),
+                'success' => $saved,
+                'user' => new UserResource(Auth::user()->with("userSettings")->get()->first()),
             ];
         } catch (Exception $e) {
             return [
-                "success" => false,
-                "user" => new UserResource($user),
-                "Exception" => $e->getMessage(),
+                'success' => false,
+                'user' => new UserResource(Auth::user()->with("userSettings")->get()->first()),
+                'Exception' => $e->getMessage(),
             ];
         }
-    }
-
-    public function destroy(User $user)
-    {
-        //
     }
 }

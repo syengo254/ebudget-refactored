@@ -8,7 +8,7 @@ const productStore = useProductStore()
 const authStore = useAuthStore()
 
 function checkFilters() {
-  // if clicked filters shoudl be cleared
+  // if clicked filters should be cleared
   if (productStore.hasFilters) {
     productStore.clearFilters()
   }

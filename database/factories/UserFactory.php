@@ -2,7 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Address;
+use App\Models\Profile;
+use App\Models\Store;
+use App\Models\User;
+use App\Models\UserSettings;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -22,7 +28,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'has_store' => fake()->randomElement([TRUE, FALSE]),
+            'has_store' => fake()->randomElement([true, false]),
             'password' => Hash::make('Password1234!'),
             'remember_token' => Str::random(10),
         ];
@@ -38,5 +44,23 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function(User $user){
+            // create profile & addresses
+            $user->profile()->save(Profile::factory()->hasAddresses()->create());
+
+            // create store if true
+            if($user->has_store){
+                $user->store()->save(Store::factory()->make([
+                    "name" => $user->name,
+                ]));
+            }
+
+            // create user_settings
+            $user->userSettings()->save(UserSettings::factory()->make());
+        });
     }
 }

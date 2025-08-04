@@ -27,7 +27,7 @@ const isStocked = computed(() => cartItem.product.stock_amount > 0)
           <p>{{ cartItem.product.name }}</p>
         </div>
         <div :class="'stock-info ' + (isStocked ? 'green' : 'red')">
-          <span>{{ isStocked ? 'In Stock' : 'Out Of Stock' }}</span>
+          <span>{{ isStocked ? 'In Stock' : 'You have purchased all the stock for this item' }}</span>
         </div>
         <div class="actions">
           <div class="buttons">
@@ -133,16 +133,10 @@ const isStocked = computed(() => cartItem.product.stock_amount > 0)
   font-size: 1.2rem;
   cursor: pointer;
 }
+
 .stock-info {
   font-size: 0.9rem;
   margin-bottom: auto;
   margin-top: 1rem;
-}
-
-.stock-info.green {
-  color: rgb(2, 155, 104);
-}
-.stock-info.red {
-  color: orangered;
 }
 </style>
